@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace DataStructures
+namespace ThreeDimensionalChess
 {
     class Stack<T>
     {
