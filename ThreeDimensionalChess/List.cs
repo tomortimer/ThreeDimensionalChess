@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DataStructures
+namespace ThreeDimensionalChess
 {
     class List<T>
     {
