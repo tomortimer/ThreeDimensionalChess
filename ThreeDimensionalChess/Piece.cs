@@ -41,11 +41,22 @@ namespace ThreeDimensionalChess
             // if this method doesn't receive a three dimensional vector in array form, it will throw an argument exception - thankfully this should never happen
             if(arr.Length != 3){ throw new ArgumentException(); }
             int[] currentPosVect = convertPtrToVect(currentPosition);
-            // uses base 8 system to convert three dimensional vectors into pointers for the list of board squares
             int movePtr = 0;
-            movePtr += arr[0];
-            movePtr += arr[1] * 8;
-            movePtr += arr[2] * 64;
+            
+            //checks that move is legal (compares against 8 since 0,0,0 is origin and 7,7,7 is max)
+            if((arr[0] + currentPosVect[0] ) < 8 && (arr[1] + currentPosVect[1]) < 8 && (arr[2] + currentPosVect[2]) < 8)
+            {
+                // uses base 8 system to convert three dimensional vectors into pointers for the list of board squares
+                movePtr += arr[0];
+                movePtr += arr[1] * 8;
+                movePtr += arr[2] * 64;
+            }
+            else
+            {
+                //sets return variable to -1 if invalid move, in generateMoves() this will need to be parsed and not added to the list if it is an invalid move
+                movePtr = -1;
+            }
+
             return movePtr;
         }
     }
