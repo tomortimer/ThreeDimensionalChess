@@ -9,13 +9,14 @@ namespace ThreeDimensionalChess
     {
         //one dimensional list used to store board - used modular arithmetic on vectors to navigate it
         private List<Square> board = new List<Square>();
+        private List<Piece> pieces = new List<Piece>();
 
         public Board()
         {
             //intialise all 512 squares of the 3D board
             for(int x = 0; x < 512; x++)
             {
-                //adds a new square to the board, performs mod on x to get colour, Colours enum is stored in Square.cs even squares are black, odd are white
+                //adds a new square to the board, performs mod on x to get colour, Colours enum is stored in Square.cs even squares are black(with 0 also being black), odd are white
                 board.Add(new Square(x % 2));
             }
         }

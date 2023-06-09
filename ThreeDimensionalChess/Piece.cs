@@ -3,28 +3,37 @@ using System.Linq;
 
 namespace ThreeDimensionalChess
 {
+    //neat little enum to help with generating moves
+    enum Directions
+    {
+        Right, // 0- Positive movement on x
+        Left, // 1 - Negative Movement on X
+        Up, // 2 - Positive movement on Y
+        Down, // 3 - Negative movement on y
+        Forwards, // 4 - Positive movement on z
+        Backwards, // 5 - Negative movement on z
+    }
+
     abstract class Piece
     {
-        //store movement as a three dimensional vector [x, y, z]
+        //store movement as a three dimensional vector [x, y, z] - can be implemented in constructor of a piece, some don't need this
         int[] movementVect = new int[3];
-        //boolean to store if piece can move backwards
-        bool vectCanBeNegated;
         //stores current position on board
         int currentPosition;
+        int colour;
 
         //constructor for piece
-        public Piece(int[] vector, bool negation, int startPos)
+        public Piece(int startPos, int col)
         {
-            movementVect = vector;
-            vectCanBeNegated = negation;
             currentPosition = startPos;
+            colour = col;
         }
 
         //method to calculate all possible moves by a piece - returns a list, must be implemented on a per piece basis
-        abstract public List<int> generatePossibleMoves();
+        public abstract List<int> generatePossibleMoves(List<Square> board);
 
         //self explanatory names, useful for eachother
-        private int[] convertPtrToVect(int inp)
+        public int[] convertPtrToVect(int inp)
         {
             //uses modular arithmetic around base 8 to convert a position in the list of squares to a 3D coordinate/vector of the piece's position
             int[] vect = { 0, 0, 0 };
@@ -36,28 +45,24 @@ namespace ThreeDimensionalChess
             return vect;
         }
 
-        private int convertVectToPtr(int[] arr)
+        public int convertVectToPtr(int[] arr)
         {
             // if this method doesn't receive a three dimensional vector in array form, it will throw an argument exception - thankfully this should never happen
             if(arr.Length != 3){ throw new ArgumentException(); }
             int[] currentPosVect = convertPtrToVect(currentPosition);
             int movePtr = 0;
             
-            //checks that move is legal (compares against 8 since 0,0,0 is origin and 7,7,7 is max)
-            if((arr[0] + currentPosVect[0] ) < 8 && (arr[1] + currentPosVect[1]) < 8 && (arr[2] + currentPosVect[2]) < 8)
-            {
-                // uses base 8 system to convert three dimensional vectors into pointers for the list of board squares
-                movePtr += arr[0];
-                movePtr += arr[1] * 8;
-                movePtr += arr[2] * 64;
-            }
-            else
-            {
-                //sets return variable to -1 if invalid move, in generateMoves() this will need to be parsed and not added to the list if it is an invalid move
-                movePtr = -1;
-            }
+            // uses base 8 system to convert three dimensional vectors into pointers for the list of board squares
+            movePtr += arr[0];
+            movePtr += arr[1] * 8;
+            movePtr += arr[2] * 64;
 
             return movePtr;
+        }
+
+        public int getColour()
+        {
+            return colour;
         }
     }
 }

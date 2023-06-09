@@ -28,5 +28,8 @@ namespace ThreeDimensionalChess
             //-1 represents a lack of piece - converter for data binding will handle the displaying of this
             piecePointer = -1;
         }
+
+        public int getPiecePointer() { return piecePointer;}
+        public void setPiecePointer(int ptr) { piecePointer = ptr; }
     }
 }
