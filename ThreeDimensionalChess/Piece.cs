@@ -17,10 +17,10 @@ namespace ThreeDimensionalChess
     abstract class Piece
     {
         //store movement as a three dimensional vector [x, y, z] - can be implemented in constructor of a piece, some don't need this
-        int[] movementVect = new int[3];
+        public int[] movementVect = new int[3];
         //stores current position on board
-        int currentPosition;
-        int colour;
+        public int currentPosition;
+        public int colour;
 
         //constructor for piece
         public Piece(int startPos, int col)
@@ -30,7 +30,7 @@ namespace ThreeDimensionalChess
         }
 
         //method to calculate all possible moves by a piece - returns a list, must be implemented on a per piece basis
-        public abstract List<int> generatePossibleMoves(List<Square> board);
+        public abstract List<int> generatePossibleMoves(List<Square> board, List<Piece> pieces);
 
         //self explanatory names, useful for eachother
         public int[] convertPtrToVect(int inp)
@@ -48,10 +48,10 @@ namespace ThreeDimensionalChess
         public int convertVectToPtr(int[] arr)
         {
             // if this method doesn't receive a three dimensional vector in array form, it will throw an argument exception - thankfully this should never happen
-            if(arr.Length != 3){ throw new ArgumentException(); }
+            if (arr.Length != 3) { throw new ArgumentException(); }
             int[] currentPosVect = convertPtrToVect(currentPosition);
             int movePtr = 0;
-            
+
             // uses base 8 system to convert three dimensional vectors into pointers for the list of board squares
             movePtr += arr[0];
             movePtr += arr[1] * 8;

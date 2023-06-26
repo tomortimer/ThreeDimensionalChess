@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace ThreeDimensionalChess
 {
@@ -48,6 +49,7 @@ namespace ThreeDimensionalChess
             }
             return tmp.GetData();
         }
+
 
         //private set method - didn't work when recursive so need to fix this to work with while I think - it may have work recursively but I just didn't put the method in the indexer... oh well, while is probably safer
         private void SetAt(int i, ListNode<T> node, T inp)

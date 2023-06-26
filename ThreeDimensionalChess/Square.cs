@@ -29,7 +29,7 @@ namespace ThreeDimensionalChess
             piecePointer = -1;
         }
 
-        public int getPiecePointer() { return piecePointer;}
+        public int getPiecePointer() { return piecePointer; }
         public void setPiecePointer(int ptr) { piecePointer = ptr; }
     }
 }

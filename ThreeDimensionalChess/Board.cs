@@ -20,5 +20,19 @@ namespace ThreeDimensionalChess
                 board.Add(new Square(x % 2));
             }
         }
+        public void addPiece(string type, int pos, int colour)
+        {
+            Piece p = null;
+            switch (type)
+            {
+                case "Rook":
+                    p = new Rook(pos, colour);
+                    break;
+            }
+
+            pieces.Add(p);
+
+            board[pos].setPiecePointer(pieces.Count() - 1);
+        }
     }
 }
