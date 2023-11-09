@@ -191,7 +191,11 @@ namespace ThreeDimensionalChess
                 pointersMovedToFrom.Add(targetSquarePtr);
                 //resets selection data
                 currentPieceIndex = -1;
-                for (int x = 0; x < currentPossibleMoves.Count(); x++) { board[currentPossibleMoves[x]].notUnderThreat(); }
+                for (int x = 0; x < currentPossibleMoves.Count(); x++) 
+                { 
+                    board[currentPossibleMoves[x]].notUnderThreat();
+                    if (pointersMovedToFrom.Contains(currentPossibleMoves[x])) { board[currentPossibleMoves[x]].pieceMoved(); }
+                }
                 currentPossibleMoves = new List<int>();
                 //check if a pawn has reached end rank  
                 //FIXME : string promotion = checkLastRank();
