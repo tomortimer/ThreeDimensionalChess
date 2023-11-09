@@ -114,6 +114,9 @@ namespace ThreeDimensionalChess
                 //deselects piece if its already selected
                 if (piecePtr != currentPieceIndex)
                 {
+                    //clear colours on squares first
+                    for (int x = 0; x < currentPossibleMoves.Count(); x++) { board[currentPossibleMoves[x]].notUnderThreat(); }
+
                     currentPieceIndex = piecePtr;
                     moveList = pieces[piecePtr].generatePossibleMoves(board, pieces); //this only returns physically possible moves
                     //should show moves protecting a piece????? highlight different colour : yellow
