@@ -135,7 +135,7 @@ namespace ThreeDimensionalChess
                     currentPossibleMoves = filteredMoves;
                     bool friendly = true;
                     if (pieces[currentPieceIndex].getColour() != currentPlayer) { friendly = false; }
-                    displayMoves(moveList, friendly);
+                    displayMoves(currentPossibleMoves, friendly);
                 }
             }
             else

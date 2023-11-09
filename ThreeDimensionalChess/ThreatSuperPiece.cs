@@ -452,33 +452,34 @@ namespace ThreeDimensionalChess
             List<int> moves = new List<int>();
             int[] vect = convertPtrToVect(currentPosition);
 
+            //might need to add extra conditions e.g. for black check that vect[1] != 7
             if (colour == (int)Colours.White)
             {
                 //generate black captures here
                 //front view captures:
-                if (vect[0] != 0 && vect[1] != 0)
+                if (vect[0] != 0 && vect[1] != 7)
                 {
                     int pos = currentPosition + 8 - 1;
                     moves.Add(pos);
                 }
-                if (vect[0] != 7 && vect[1] != 0)
+                if (vect[0] != 7 && vect[1] != 7)
                 {
                     int pos = currentPosition + 8 + 1;
                     moves.Add(pos);
                 }
                 //top down captures:
-                if (vect[0] != 0 && vect[2] != 0)
+                if (vect[0] != 0 && vect[2] != 7)
                 {
                     int pos = currentPosition + 64 - 1;
                     moves.Add(pos);
                 }
-                if (vect[0] != 7 && vect[2] != 0)
+                if (vect[0] != 7 && vect[2] != 7)
                 {
                     int pos = currentPosition + 64 + 1;
                     moves.Add(pos);
                 }
                 //side view capture
-                if (vect[1] != 0 && vect[2] != 0)
+                if (vect[1] != 7 && vect[2] != 7)
                 {
                     int pos = currentPosition + 64 + 8;
                     moves.Add(pos);
@@ -487,6 +488,34 @@ namespace ThreeDimensionalChess
             else
             {
                 //generate white captures here
+                //front view captures
+                if (vect[0] != 0 && vect[1] != 0)
+                {
+                    int pos = currentPosition - 8 - 1;
+                    moves.Add(pos);
+                }
+                if (vect[0] != 7 && vect[1] != 0)
+                {
+                    int pos = currentPosition - 8 + 1;
+                    moves.Add(pos);
+                }
+                //top down captures
+                if (vect[0] != 0 && vect[2] != 0)
+                {
+                    int pos = currentPosition - 64 - 1;
+                    moves.Add(pos);
+                }
+                if (vect[0] != 7 && vect[2] != 0)
+                {
+                    int pos = currentPosition - 64 + 1;
+                    moves.Add(pos);
+                }
+                //side view capture
+                if (vect[1] != 0 && vect[2] != 0)
+                {
+                    int pos = currentPosition - 64 - 8;
+                    moves.Add(pos);
+                }
             }
 
             List<int> finalMoves = new List<int>();

@@ -145,7 +145,7 @@ namespace ThreeDimensionalChess
                 {
                     Piece targetPiece = pieces[targetPos];
                     //if piece of same colour on square remove move
-                    if (targetPiece.getColour() != colour)
+                    if (targetPiece.getColour() == colour)
                     {
                         moves.RemoveAt(x);
                         x--;

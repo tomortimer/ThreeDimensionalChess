@@ -24,6 +24,7 @@ namespace ThreeDimensionalChess
             //make it so esc doesn't close window
             Raylib.SetExitKey(0);
             Chess game = new Chess(8232, 121);
+            game.addPiece("P", 12, 0); // pawn for testing
 
             while (!Raylib.WindowShouldClose())
             {
