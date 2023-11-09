@@ -115,7 +115,11 @@ namespace ThreeDimensionalChess
                 if (piecePtr != currentPieceIndex)
                 {
                     //clear colours on squares first
-                    for (int x = 0; x < currentPossibleMoves.Count(); x++) { board[currentPossibleMoves[x]].notUnderThreat(); }
+                    for (int x = 0; x < currentPossibleMoves.Count(); x++) 
+                    { 
+                        board[currentPossibleMoves[x]].notUnderThreat();
+                        if (pointersMovedToFrom.Contains(currentPossibleMoves[x])) { board[currentPossibleMoves[x]].pieceMoved(); }
+                    }
 
                     currentPieceIndex = piecePtr;
                     moveList = pieces[piecePtr].generatePossibleMoves(board, pieces); //this only returns physically possible moves
@@ -142,7 +146,11 @@ namespace ThreeDimensionalChess
             {
                 //resets selection data
                 currentPieceIndex = -1;
-                for (int x = 0; x < currentPossibleMoves.Count(); x++) { board[currentPossibleMoves[x]].notUnderThreat(); }
+                for (int x = 0; x < currentPossibleMoves.Count(); x++) 
+                { 
+                    board[currentPossibleMoves[x]].notUnderThreat();
+                    if (pointersMovedToFrom.Contains(currentPossibleMoves[x])) { board[currentPossibleMoves[x]].pieceMoved(); }
+                }
                 currentPossibleMoves = new List<int>();
             }
 

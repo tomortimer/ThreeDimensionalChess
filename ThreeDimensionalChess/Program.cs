@@ -94,7 +94,7 @@ namespace ThreeDimensionalChess
                             Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.RED);
                             break;
                         case (int)Colours.BlackYellow:
-                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.YELLOW);
+                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.ORANGE);
                             break;
                         case (int)Colours.WhiteYellow:
                             Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.YELLOW);
