@@ -72,15 +72,33 @@ namespace ThreeDimensionalChess
                     int xPos = UIConstants.boardXOrigin + (x * offset);
                     int yPos = UIConstants.boardYOrigin - (y * offset);
                     //draw filled if black square, draw outline if white square
-                    if (cell.getColour() == (int)Colours.Black) { Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.BLACK); }
-                    else if (cell.getColour() == (int)Colours.BlackBlue){ Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.BLUE); }
-                    else if (cell.getColour() == (int)Colours.White){ Raylib.DrawRectangleLines(xPos, yPos, offset, offset, Color.BLACK); }
-                    else if (cell.getColour() == (int)Colours.WhiteBlue) { Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.BLUE); }
-                    else if (cell.getColour() == (int)Colours.BlackRed) { Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.RED); }
-                    else if (cell.getColour() == (int)Colours.WhiteRed) { Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.RED); }
-                    else if (cell.getColour() == (int)Colours.BlackYellow) { Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.YELLOW); }
-                    else /*(cell.getColour() == (int)Colours.WhiteYellow)*/ { Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.YELLOW); }
-                    //draw pieces onto squares
+                    switch (cell.getColour())
+                    {
+                        case (int)Colours.Black:
+                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.BLACK);
+                            break;
+                        case (int)Colours.White:
+                            Raylib.DrawRectangleLines(xPos, yPos, offset, offset, Color.BLACK);
+                            break;
+                        case (int)Colours.BlackBlue:
+                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.DARKBLUE);
+                            break;
+                        case (int)Colours.WhiteBlue:
+                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.BLUE);
+                            break;
+                        case (int)Colours.BlackRed:
+                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.MAROON);
+                            break;
+                        case (int)Colours.WhiteRed:
+                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.RED);
+                            break;
+                        case (int)Colours.BlackYellow:
+                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.YELLOW);
+                            break;
+                        case (int)Colours.WhiteYellow:
+                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.YELLOW);
+                            break;
+                    }
                     if (cell.getPiecePointer() != -1)
                     {
                         Piece p = game.getPieceDirect(cell.getPiecePointer());
