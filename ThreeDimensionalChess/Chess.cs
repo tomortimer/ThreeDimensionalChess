@@ -163,7 +163,7 @@ namespace ThreeDimensionalChess
         {
             //if piece is selected, use that piece's relevant co-ord as layer value
             viewDir = mode;
-            if (board.isPieceSelected())
+            if (board.isPieceSelected()) 
             {
                 int[] pieceVect = board.getSelectedPiece().getCurrentPosAsVect();
                 switch (mode)
@@ -183,7 +183,7 @@ namespace ThreeDimensionalChess
         }
 
         public void incrementViewLayer() { if (viewLayer < 7) { viewLayer++; updateViewport(); } }
-        public void decrementViewLayer() { if (viewLayer > 0) { viewLayer--; updateViewport(); } }
+        public void decrementViewLayer() { if(viewLayer > 0) { viewLayer--; updateViewport(); } }
 
         private void updateViewport()
         {
@@ -195,9 +195,9 @@ namespace ThreeDimensionalChess
                     // first transform origin by viewlayer
                     originPointer += (viewLayer * 64);
                     //then fill out viewport coords from origin pointer
-                    for (int y = 0; y < 8; y++)
+                    for(int y = 0; y < 8; y++)
                     {
-                        for (int x = 0; x < 8; x++)
+                        for(int x = 0; x < 8; x++)
                         {
                             viewport[(8 * y) + x] = originPointer + x + (y * 8);
                         }
@@ -208,7 +208,7 @@ namespace ThreeDimensionalChess
                     originPointer += viewLayer; // is actually viewLayer * 1
                     for (int y = 0; y < 8; y++)
                     {
-                        for (int x = 0; x < 8; x++)
+                        for(int x = 0; x < 8; x++)
                         {
                             //maps depth coordinates to x coordinates of viewport
                             viewport[(8 * y) + x] = originPointer + (x * 64) + (y * 8);
@@ -218,9 +218,9 @@ namespace ThreeDimensionalChess
                 case (int)viewDirections.Top:
                     //transform origin by viewlayer
                     originPointer += (viewLayer * 8);
-                    for (int y = 0; y < 8; y++)
+                    for(int y = 0; y < 8; y++)
                     {
-                        for (int x = 0; x < 8; x++)
+                        for(int x = 0; x < 8; x++)
                         {
                             //maps depth coordinates to y coordinates of viewport
                             viewport[(8 * y) + x] = originPointer + x + (y * 64);
@@ -234,7 +234,7 @@ namespace ThreeDimensionalChess
         {
             //takes a one dimensional pointer for the viewport
             //defensive programming
-            if (ptr > -1 && ptr < 64)
+            if(ptr > -1 && ptr < 64)
             {
                 return board.getSquare(viewport[ptr]);
             }

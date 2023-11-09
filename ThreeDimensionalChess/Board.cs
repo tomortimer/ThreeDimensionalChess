@@ -1,7 +1,5 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,7 +61,7 @@ namespace ThreeDimensionalChess
         public Piece getPieceDirect(int ptr)
         {
             Piece tmp = null;
-            if (ptr != -1)
+            if(ptr != -1)
             {
                 tmp = pieces[ptr];
             }

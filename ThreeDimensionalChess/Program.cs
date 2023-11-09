@@ -1,5 +1,4 @@
 ﻿using Raylib_cs;
-using System.Drawing;
 
 namespace ThreeDimensionalChess
 {
@@ -49,7 +48,7 @@ namespace ThreeDimensionalChess
                 if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN)) { game.decrementViewLayer(); }
                 // ------ draw here ------
                 Raylib.BeginDrawing();
-                Raylib.ClearBackground(Raylib_cs.Color.WHITE);
+                Raylib.ClearBackground(Color.WHITE);
 
                 updateBoard(game);
 
@@ -75,18 +74,18 @@ namespace ThreeDimensionalChess
                     //draw filled if black square, draw outline if white square
                     if (cell.getColour() == (int)Colours.Black)
                     {
-                        Raylib.DrawRectangle(xPos, yPos, offset, offset, Raylib_cs.Color.BLACK);
+                        Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.BLACK);
                     }
                     else if (cell.getColour() == (int)Colours.BlackBlue)
                     {
-                        Raylib.DrawRectangle(xPos, yPos, offset, offset, Raylib_cs.Color.BLUE);
+                        Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.BLUE);
                     }
-                    else { Raylib.DrawRectangleLines(xPos, yPos, offset, offset, Raylib_cs.Color.BLACK); }
+                    else { Raylib.DrawRectangleLines(xPos, yPos, offset, offset, Color.BLACK); }
                     //draw pieces onto squares
                     if (cell.getPiecePointer() != -1)
                     {
                         Piece p = game.getPieceDirect(cell.getPiecePointer());
-                        Raylib.DrawText(p.getPieceType(), xPos + (offset / 2), yPos + (offset / 2), 30, Raylib_cs.Color.LIME);
+                        Raylib.DrawText(p.getPieceType(), xPos + (offset / 2), yPos + (offset / 2), 30, Color.LIME);
                     }
                 }
             }
