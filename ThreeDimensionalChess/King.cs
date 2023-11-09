@@ -17,7 +17,7 @@ namespace ThreeDimensionalChess
             List<int> moves = new List<int>();
 
             //process up down and across moves here
-            for (int dir = 0; dir <= (int)Directions.Backwards; dir++)
+            for (int dir = (int)Directions.Right; dir <= (int)Directions.Backwards; dir++)
             {
                 int pos = currentPosition;
                 int[] vect = convertPtrToVect(pos);
@@ -136,6 +136,7 @@ namespace ThreeDimensionalChess
                 if (edgeCheck(vect)) { moves.Add(pos); }
             }
 
+
             //loop to check if pieces on squares
             for (int x = 0; x < moves.Count(); x++)
             {
@@ -144,9 +145,10 @@ namespace ThreeDimensionalChess
                 {
                     Piece targetPiece = pieces[targetPos];
                     //if piece of same colour on square remove move
-                    if (targetPiece.getColour() == colour)
+                    if (targetPiece.getColour() != colour)
                     {
                         moves.RemoveAt(x);
+                        x--;
                     }
                 }
             }

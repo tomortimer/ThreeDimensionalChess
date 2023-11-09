@@ -45,11 +45,11 @@ namespace ThreeDimensionalChess
             notUnderThreat();
             if (friendly)
             {
-                squareColour += 4;
+                squareColour += 2;
             }
             else
             {
-                squareColour += 2;
+                squareColour += 4;
             }
         }
         public void notUnderThreat()
