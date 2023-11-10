@@ -241,6 +241,16 @@ namespace ThreeDimensionalChess
             else { throw new ArgumentOutOfRangeException(); }
         }
 
+        public int getViewDirection()
+        {
+            return viewDir;
+        }
+
+        public int getViewLayer()
+        {
+            return viewLayer;
+        }
+
         private void selectPiece(int squareIndex)
         {
             board.selectPiece(squareIndex, playerTurn);

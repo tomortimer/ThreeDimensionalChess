@@ -6,13 +6,20 @@ namespace ThreeDimensionalChess
     {
         static class UIConstants
         {
-            //origin points to start drawing for board - 550x550
-            //top left: (225, 24)(due to integer div) bottom left: (225, 500)
-            //top right: (769, 24)(769 due to 550/8 = 68.75) bottom right: (769, 500)
-            //is close enough to desired values
+            /* ----- graphical notes -----
+            origin points to start drawing for board - 550x550
+            top left: (225, 24)(due to integer div) bottom left: (225, 500)
+            top right: (769, 24)(769 due to 550/8 = 68.75) bottom right: (769, 500)
+            is close enough to desired values
+            -------------------------------
+            viewport controls area:
+            (225, 24) to (769, 500)
+             */
+            
             public const int boardXOrigin = 225;
             public const int boardYOrigin = 500;
             public const int squareSide = 550 / 8;
+
 
             public const int windowWidth = 1000;
             public const int windowHeight = 680;
@@ -52,6 +59,7 @@ namespace ThreeDimensionalChess
                 Raylib.ClearBackground(Color.WHITE);
 
                 updateBoard(game);
+                updateViewPortControls(game);
 
 
                 Raylib.EndDrawing();
@@ -94,7 +102,8 @@ namespace ThreeDimensionalChess
                             Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.RED);
                             break;
                         case (int)Colours.BlackYellow:
-                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.ORANGE);
+                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.BLACK);
+                            Raylib.DrawRectangle(xPos, yPos, offset, offset, Raylib.Fade(Color.YELLOW, 0.8f));
                             break;
                         case (int)Colours.WhiteYellow:
                             Raylib.DrawRectangle(xPos, yPos, offset, offset, Color.YELLOW);
@@ -107,6 +116,24 @@ namespace ThreeDimensionalChess
                     }
                 }
             }
+        }
+
+        static void updateViewPortControls(Chess game)
+        {
+            string coordText = "X: x, Y: x, Z: x";
+            switch (game.getViewDirection())
+            {
+                case (int)viewDirections.Front:
+                    coordText = coordText.Substring(0, 14) + game.getViewLayer();
+                    break;
+                case (int)viewDirections.Side:
+                    coordText = coordText.Substring(0, 3) + game.getViewLayer() + coordText.Substring(4);
+                    break;
+                case (int)viewDirections.Top:
+                    coordText = coordText.Substring(0, 8) + game.getViewLayer() + coordText.Substring(9);
+                    break;
+            }
+            Raylib.DrawText(coordText, 225, 600, 25, Color.BLACK);
         }
 
     }
