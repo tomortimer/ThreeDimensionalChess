@@ -248,7 +248,8 @@ namespace ThreeDimensionalChess
 
         public int getViewLayer()
         {
-            return viewLayer;
+            //add one for user readability
+            return viewLayer + 1;
         }
 
         private void selectPiece(int squareIndex)
