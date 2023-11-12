@@ -33,6 +33,7 @@ namespace ThreeDimensionalChess
     {
         public int playerTurn;
         private bool inCheck;
+        private bool changeBoardDir;
         private Board board;
         private Stack<string> moveList;
         private int whitePlayerID;
@@ -54,6 +55,8 @@ namespace ThreeDimensionalChess
             whitePlayerID = whiteID;
             blackPlayerID = blackID;
             state = (int)Gamestates.Ongoing;
+            //init gamerules
+            changeBoardDir = true;
             //init viewport (as front view white)
             viewLayer = 0;
             viewDir = 0;
@@ -159,7 +162,7 @@ namespace ThreeDimensionalChess
             if (state != (int)Gamestates.Ongoing) { playerTurn = -1; } //FIXME: BEHAVIOUR WITH -1 PLAYER IS UNDEFINED -> ADD DEFENSIVE PROGRAMMING
         }
 
-        public void changeView(int mode)
+        public void setViewDirection(int mode)
         {
             //if piece is selected, use that piece's relevant co-ord as layer value
             viewDir = mode;
@@ -177,6 +180,17 @@ namespace ThreeDimensionalChess
                     case (int)viewDirections.Top:
                         viewLayer = pieceVect[1];
                         break;
+                }
+            }
+            else
+            {
+                //default for side viewlayer is 7 because I just can't understand the game otherwise for some reason
+                if(viewDir == (int)viewDirections.Side) { viewLayer = 7; }
+                else if(changeBoardDir)
+                {
+                    //otherwise sets viewlayer to 0/7 depending on player turn - can be toggled as a gamerule
+                    if(playerTurn == 0) { viewLayer = 7; }
+                    else { viewLayer = 0; }
                 }
             }
             updateViewport();

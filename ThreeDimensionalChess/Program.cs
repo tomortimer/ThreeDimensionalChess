@@ -41,20 +41,43 @@ namespace ThreeDimensionalChess
                 if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
                 {
                     //take mouse x y and find which element was clicked using coordinate geometry
-                    int[] mousePos = { Raylib.GetMouseX(), Raylib.GetMouseY() };
+                    Vector2 mousePos = Raylib.GetMousePosition();
 
                     //this is if mouse is in board borders
-                    if (225 <= mousePos[0] && mousePos[0] <= 769 && 24 <= mousePos[1] && mousePos[1] <= (500 + UIConstants.squareSide))
+                    if (225 <= mousePos.X && mousePos.X <= 769 && 24 <= mousePos.Y && mousePos.Y <= (500 + UIConstants.squareSide))
                     {
                         //calculate square index
-                        int x = (mousePos[0] - 225) / UIConstants.squareSide;
-                        int y = 7 - ((mousePos[1] - 25) / UIConstants.squareSide);
+                        int x = (Convert.ToInt32(mousePos.X) - 225) / UIConstants.squareSide;
+                        int y = 7 - ((Convert.ToInt32(mousePos.Y) - 25) / UIConstants.squareSide);
                         game.viewportClick(x + (y * 8));
                     }
+
+                    //step through board using triangle buttons
+                    bool upButtonPressed = Raylib.CheckCollisionPointTriangle(mousePos, new Vector2(360, 570), new Vector2(330, 600), new Vector2(390, 600));
+                    bool downButtonPressed = Raylib.CheckCollisionPointTriangle(mousePos, new Vector2(610, 570), new Vector2(640, 600), new Vector2(670, 570));
+                    //could list all buttons and give them numerical values then switch statement here?
+                    if (upButtonPressed) { game.incrementViewLayer(); }
+                    if (downButtonPressed) { game.decrementViewLayer(); }
+
+                    //check collision with viewDirection buttons
+                    if(10 <= mousePos.X && mousePos.X <= 210 && 10 <= mousePos.Y && mousePos.Y <= 85)
+                    {
+                        game.setViewDirection((int)viewDirections.Front);
+                    }else if (10 <= mousePos.X && mousePos.X <= 210 && 95 <= mousePos.Y && mousePos.Y <= 170)
+                    {
+                        game.setViewDirection((int)viewDirections.Top);
+                    }else if (10 <= mousePos.X && mousePos.X <= 210 && 180 <= mousePos.Y && mousePos.Y <= 255)
+                    {
+                        game.setViewDirection((int)viewDirections.Side);
+                    }
                 }
-                //step through board
+
+                //step through board using keys
                 if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP)) { game.incrementViewLayer(); }
                 if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN)) { game.decrementViewLayer(); }
+
+                
+
                 // ------ draw here ------
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.WHITE);
@@ -122,7 +145,26 @@ namespace ThreeDimensionalChess
         static void updateViewPortControls(Chess game)
         {
             //draw control triangles
-            Raylib.DrawTriangle(new Vector2(100, 10), new Vector2(10, 100), new Vector2(190, 100), Color.RED);
+            //up triangle
+            Color upCol = Color.BLACK;
+            if(game.getViewLayer() == 8) { upCol = Color.GRAY; }
+            Raylib.DrawTriangle(new Vector2(360, 570), new Vector2(330, 600), new Vector2(390, 600), upCol);
+            //down triangle
+            Color downCol = Color.BLACK;
+            if(game.getViewLayer() == 1) { downCol = Color.GRAY; }
+            Raylib.DrawTriangle(new Vector2(610, 570), new Vector2(640, 600), new Vector2(670, 570), downCol);
+
+            //draw view buttons
+            //front view button
+            Raylib.DrawRectangleLines(10, 10, 200, 75, Color.BLACK);
+            Raylib.DrawText("Front", 68, 35, 30, Color.BLACK);
+            //top view button
+            Raylib.DrawRectangleLines(10, 95, 200, 75, Color.BLACK);
+            Raylib.DrawText("Top", 68, 120, 30, Color.BLACK);
+            //side view button
+            Raylib.DrawRectangleLines(10, 180, 200, 75, Color.BLACK);
+            Raylib.DrawText("Side", 68, 205, 30, Color.BLACK);
+
             //draw text to show 3d coords
             string coordText = "X: x, Y: x, Z: x";
             switch (game.getViewDirection())
@@ -137,7 +179,7 @@ namespace ThreeDimensionalChess
                     coordText = coordText.Substring(0, 8) + game.getViewLayer() + coordText.Substring(9);
                     break;
             }
-            Raylib.DrawText(coordText, 420, 575, 25, Color.BLACK);
+            Raylib.DrawText(coordText, 395, 575, 30, Color.BLACK);
         }
 
     }
