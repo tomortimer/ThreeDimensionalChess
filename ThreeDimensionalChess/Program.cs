@@ -1,4 +1,5 @@
 ﻿using Raylib_cs;
+using System.Numerics;
 
 namespace ThreeDimensionalChess
 {
@@ -120,11 +121,14 @@ namespace ThreeDimensionalChess
 
         static void updateViewPortControls(Chess game)
         {
+            //draw control triangles
+            Raylib.DrawTriangle(new Vector2(100, 10), new Vector2(10, 100), new Vector2(190, 100), Color.RED);
+            //draw text to show 3d coords
             string coordText = "X: x, Y: x, Z: x";
             switch (game.getViewDirection())
             {
                 case (int)viewDirections.Front:
-                    coordText = coordText.Substring(0, 14) + game.getViewLayer();
+                    coordText = coordText.Substring(0, 15) + game.getViewLayer();
                     break;
                 case (int)viewDirections.Side:
                     coordText = coordText.Substring(0, 3) + game.getViewLayer() + coordText.Substring(4);
@@ -133,7 +137,7 @@ namespace ThreeDimensionalChess
                     coordText = coordText.Substring(0, 8) + game.getViewLayer() + coordText.Substring(9);
                     break;
             }
-            Raylib.DrawText(coordText, 225, 600, 25, Color.BLACK);
+            Raylib.DrawText(coordText, 420, 575, 25, Color.BLACK);
         }
 
     }
