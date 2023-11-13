@@ -19,7 +19,8 @@ namespace ThreeDimensionalChess
         Stalemate, // 0
         WhiteW, // 1 - White wins by black being checkmated
         BlackW, // 2 - Black wins by white being checkmated
-        Ongoing // 3
+        Ongoing, // 3
+        PendingPromo // 4 - Used to wait program for pawn promotion
     }
 
     enum viewDirections
@@ -36,6 +37,7 @@ namespace ThreeDimensionalChess
         private bool changeBoardDir;
         private Board board;
         private Stack<string> moveList;
+        private int pendingMove;
         private int whitePlayerID;
         //array of pointers that compose the 2D viewport
         private int[] viewport;
@@ -51,6 +53,7 @@ namespace ThreeDimensionalChess
             board = new Board();
             inCheck = false;
             moveList = new Stack<string>();
+            pendingMove = 0;
             //init player objects, grab name based on ID from db
             whitePlayerID = whiteID;
             blackPlayerID = blackID;
@@ -67,7 +70,7 @@ namespace ThreeDimensionalChess
         public void click(int squareIndex)
         {
             //can't do anything once game is over - separate method for rewind and view buttons
-            if (playerTurn != -1)
+            if (playerTurn != -1 && state != (int)Gamestates.PendingPromo)
             {
                 bool pieceSelected = board.isPieceSelected();
                 if (pieceSelected == true)
@@ -150,6 +153,15 @@ namespace ThreeDimensionalChess
                         }
                         break;
                 }
+                if (move.Contains("=")) 
+                { 
+                    state = (int)Gamestates.PendingPromo;
+                    //holding square int here to ref piece down the line
+                    pendingMove = squareIndex;
+                    //select piece so that player is more aware of it
+                    selectPiece(squareIndex);
+                    //push move if promo, just don't forget to pop it later
+                }
                 moveList.Push(move);
             }
 
@@ -160,6 +172,19 @@ namespace ThreeDimensionalChess
             state = board.getGamestate(playerTurn);
             //end game if gamestate isn't ongoing
             if (state != (int)Gamestates.Ongoing) { playerTurn = -1; } //FIXME: BEHAVIOUR WITH -1 PLAYER IS UNDEFINED -> ADD DEFENSIVE PROGRAMMING
+        }
+
+        public void promotePawn(string pieceType)
+        {
+            bool success = board.promotePawn(pieceType, pendingMove);
+            if (success)
+            {
+                pendingMove = -1;
+                string move = moveList.Pop();
+                move = move + pieceType;
+                moveList.Push(move);    
+            }
+            updateViewport();
         }
 
         public void setViewDirection(int mode)

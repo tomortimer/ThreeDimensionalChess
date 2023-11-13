@@ -32,7 +32,7 @@ namespace ThreeDimensionalChess
             //make it so esc doesn't close window
             Raylib.SetExitKey(0);
             Chess game = new Chess(8232, 121);
-            game.addPiece("N", 13, 0); // knight for testing
+            game.addPiece("P", 14, 0);
 
             while (!Raylib.WindowShouldClose())
             {
@@ -81,9 +81,11 @@ namespace ThreeDimensionalChess
                 // ------ draw here ------
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.WHITE);
+                int state = game.getGamestate();
 
                 updateBoard(game);
                 updateViewPortControls(game);
+                if(state == (int)Gamestates.PendingPromo) { updatePromoWindow(game); }
 
 
                 Raylib.EndDrawing();
@@ -137,6 +139,14 @@ namespace ThreeDimensionalChess
                     {
                         Piece p = game.getPieceDirect(cell.getPiecePointer());
                         Raylib.DrawText(p.getPieceType(), xPos + (offset / 2), yPos + (offset / 2), 30, Color.LIME);
+
+                        string type = p.getPieceType();
+                        Image piece;
+                        switch (type)
+                        {
+                            case "K":
+                                piece = Raylib.LoadImage()
+                        }
                     }
                 }
             }
@@ -180,6 +190,11 @@ namespace ThreeDimensionalChess
                     break;
             }
             Raylib.DrawText(coordText, 395, 575, 30, Color.BLACK);
+        }
+
+        static void updatePromoWindow(Chess game)
+        {
+
         }
 
     }

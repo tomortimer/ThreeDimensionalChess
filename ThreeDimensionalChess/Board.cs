@@ -206,10 +206,10 @@ namespace ThreeDimensionalChess
                 }
                 currentPossibleMoves = new List<int>();
                 //check if a pawn has reached end rank  
-                //FIXME : string promotion = checkLastRank();
+                string promotion = checkLastRank();
 
                 //aggregate string parts - don't forget to add promotion back here
-                move = moveDataFirstHalf + moveDataSecondHalf;
+                move = moveDataFirstHalf + moveDataSecondHalf + promotion;
 
             }
             else
@@ -274,8 +274,52 @@ namespace ThreeDimensionalChess
 
         private string checkLastRank()
         {
-            //FIXME
-            throw new NotImplementedException();
+            string ret = "";
+            //check promotion linearly
+            for(int x = 0; x < 8; x++)
+            {
+                //white pieces
+                int piecePtr = board[x + (7 * 64) + (7 * 8)].getPiecePointer();
+                if(piecePtr != -1 && pieces[piecePtr].getPieceType() == "P" && pieces[piecePtr].getColour() == (int)Colours.White)
+                {
+                    ret = "=";
+                }
+
+                //black pieces
+                piecePtr = board[x].getPiecePointer();
+                if(piecePtr != -1 && pieces[piecePtr].getPieceType() == "P" && pieces[piecePtr].getColour() == (int)Colours.Black)
+                {
+                    ret = "=";
+                }
+            }
+            return ret;
+        }
+
+        public bool promotePawn(string pieceType, int squarePtr)
+        {
+            int piecePtr = board[squarePtr].getPiecePointer();
+            bool success = false;
+            ///rereference piece in list to a new piece of promoted variant
+            switch (pieceType)
+            {
+                case "Q":
+                    pieces[piecePtr] = new Queen(squarePtr, pieces[piecePtr].getColour());
+                    success = true;
+                    break;
+                case "B":
+                    pieces[piecePtr] = new Bishop(squarePtr, pieces[piecePtr].getColour());
+                    success = true;
+                    break;
+                case "R":
+                    pieces[piecePtr] = new Rook(squarePtr, pieces[piecePtr].getColour());
+                    success = true;
+                    break;
+                case "N":
+                    pieces[piecePtr] = new Knight(squarePtr, pieces[piecePtr].getColour());
+                    success = true;
+                    break;
+            }
+            return success;
         }
 
         private bool checkThreat(int squarePtr, int currentPlayer)
