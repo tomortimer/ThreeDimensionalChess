@@ -316,7 +316,7 @@ namespace ThreeDimensionalChess
             if (move.Contains("=")) { promotionFlag = true; }
             string[] halves = move.Split('X', '-');
 
-
+            //WIP
         }
 
         public string getPossibleMoveListRep()
