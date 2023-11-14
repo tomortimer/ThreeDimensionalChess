@@ -34,6 +34,33 @@ namespace ThreeDimensionalChess
             Chess game = new Chess(8232, 121);
             game.addPiece("P", 14, 0);
 
+            //load textures
+            List<Texture2D> textures = new List<Texture2D>();
+            Texture2D WhitePawn = Raylib.LoadTexture("resources/WhP.png");
+            textures.Add(WhitePawn); // 0
+            Texture2D WhiteRook = Raylib.LoadTexture("resources/WhR.png");
+            textures.Add(WhiteRook); // 1
+            Texture2D WhiteKnight = Raylib.LoadTexture("resources/WhN.png");
+            textures.Add(WhiteKnight); // 2
+            Texture2D WhiteBishop = Raylib.LoadTexture("resources/WhB.png");
+            textures.Add(WhiteBishop); // 3
+            Texture2D WhiteQueen = Raylib.LoadTexture("resources/WhQ.png");
+            textures.Add(WhiteQueen); // 4
+            Texture2D WhiteKing = Raylib.LoadTexture("resources/WhK.png");
+            textures.Add(WhiteKing); // 5
+            Texture2D BlackPawn = Raylib.LoadTexture("resources/BlP.png");
+            textures.Add(BlackPawn); // 6
+            Texture2D BlackRook = Raylib.LoadTexture("resources/BlR.png");
+            textures.Add(BlackRook); // 7
+            Texture2D BlackKnight = Raylib.LoadTexture("resources/BlN.png");
+            textures.Add(BlackKnight); // 8
+            Texture2D BlackBishop = Raylib.LoadTexture("resources/BlB.png");
+            textures.Add(BlackBishop); // 9
+            Texture2D BlackQueen = Raylib.LoadTexture("resources/BlQ.png");
+            textures.Add(BlackQueen); //10
+            Texture2D BlackKing = Raylib.LoadTexture("resources/BlK.png");
+            textures.Add(BlackKing); //11
+
             while (!Raylib.WindowShouldClose())
             {
                 // ------ update and input here ------
@@ -83,7 +110,7 @@ namespace ThreeDimensionalChess
                 Raylib.ClearBackground(Color.WHITE);
                 int state = game.getGamestate();
 
-                updateBoard(game);
+                updateBoard(game, textures);
                 updateViewPortControls(game);
                 if(state == (int)Gamestates.PendingPromo) { updatePromoWindow(game); }
 
@@ -91,10 +118,17 @@ namespace ThreeDimensionalChess
                 Raylib.EndDrawing();
             }
 
+            //unload textures
+            for(int i = 0; i < textures.Count(); i++)
+            {
+                Raylib.UnloadTexture(textures[i]);
+            }
+
+
             Raylib.CloseWindow();
         }
 
-        static void updateBoard(Chess game)
+        static void updateBoard(Chess game, List<Texture2D> textures)
         {
             int offset = UIConstants.squareSide;
             for (int y = 0; y < 8; y++)
@@ -138,15 +172,58 @@ namespace ThreeDimensionalChess
                     if (cell.getPiecePointer() != -1)
                     {
                         Piece p = game.getPieceDirect(cell.getPiecePointer());
-                        Raylib.DrawText(p.getPieceType(), xPos + (offset / 2), yPos + (offset / 2), 30, Color.LIME);
 
                         string type = p.getPieceType();
-                        Image piece;
-                        switch (type)
+                        int col = p.getColour();
+                        if (col == (int)Colours.White)
                         {
-                            case "K":
-                                piece = Raylib.LoadImage()
+                            //draw each texture, referencing list using above indices, + 4 to each pos to centre 60x60 texture
+                            switch (type)
+                            {
+                                case "P":
+                                    Raylib.DrawTexture(textures[0], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                                case "R":
+                                    Raylib.DrawTexture(textures[1], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                                case "N":
+                                    Raylib.DrawTexture(textures[2], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                                case "B":
+                                    Raylib.DrawTexture(textures[3], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                                case "Q":
+                                    Raylib.DrawTexture(textures[4], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                                case "K":
+                                    Raylib.DrawTexture(textures[5], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                            }
                         }
+                        else
+                        {
+                            switch (type) {
+                                case "P":
+                                    Raylib.DrawTexture(textures[6], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                                case "R":
+                                    Raylib.DrawTexture(textures[7], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                                case "N":
+                                    Raylib.DrawTexture(textures[8], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                                case "B":
+                                    Raylib.DrawTexture(textures[9], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                                case "Q":
+                                    Raylib.DrawTexture(textures[10], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                                case "K":
+                                    Raylib.DrawTexture(textures[11], xPos + 4, yPos + 4, Color.WHITE);
+                                    break;
+                            } 
+                        }
+                        
                     }
                 }
             }
