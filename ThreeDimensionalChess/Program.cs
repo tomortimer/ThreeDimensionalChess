@@ -24,6 +24,24 @@ namespace ThreeDimensionalChess
 
             public const int windowWidth = 1000;
             public const int windowHeight = 680;
+
+        }
+
+        enum PieceTextureIndices
+        {
+            //another neat little enum to deal with loading textures from the texture list
+            WhitePawn, // 0
+            WhiteRook, // 1
+            WhiteKnight, // 2
+            WhiteBishop, // 3
+            WhiteQueen, // 4
+            WhiteKing, // 5
+            BlackPawn, // 6
+            BlackRook, // 7
+            BlackKnight, // 8
+            BlackBishop, // 9
+            BlackQueen, // 10
+            BlackKing // 11
         }
 
         static void Main()
@@ -33,6 +51,7 @@ namespace ThreeDimensionalChess
             Raylib.SetExitKey(0);
             Chess game = new Chess(8232, 121);
             game.addPiece("P", 14, 0);
+            game.addPiece("P", 511 - 8, 1);
 
             //load textures
             List<Texture2D> textures = new List<Texture2D>();
@@ -61,6 +80,19 @@ namespace ThreeDimensionalChess
             Texture2D BlackKing = Raylib.LoadTexture("resources/BlK.png");
             textures.Add(BlackKing); //11
 
+            //some button placements, store Rec structures here to make life easier
+            // rectangle struct - {xOrigin, yOrigin, width, height
+            // can't place in constants because they are objects
+            Rectangle frontButton = new Rectangle(10, 10, 200, 75);
+            Rectangle topButton = new Rectangle(10, 95, 200, 75);
+            Rectangle sideButton = new Rectangle(10, 180, 200, 75);
+
+            Rectangle queenPromoRec = new Rectangle(10, 265, 100, 100);
+            Rectangle rookPromoRec = new Rectangle(110, 265, 100, 100);
+            Rectangle bishopPromoRec = new Rectangle(10, 365, 100, 100);
+            Rectangle knightPromoRec = new Rectangle(110, 365, 100, 100);
+
+
             while (!Raylib.WindowShouldClose())
             {
                 // ------ update and input here ------
@@ -87,15 +119,31 @@ namespace ThreeDimensionalChess
                     if (downButtonPressed) { game.decrementViewLayer(); }
 
                     //check collision with viewDirection buttons
-                    if(10 <= mousePos.X && mousePos.X <= 210 && 10 <= mousePos.Y && mousePos.Y <= 85)
+                    bool frontButtonPressed = Raylib.CheckCollisionPointRec(mousePos, frontButton);
+                    bool topButtonPressed = Raylib.CheckCollisionPointRec(mousePos, topButton);
+                    bool sideButtonPressed = Raylib.CheckCollisionPointRec(mousePos, sideButton);
+                    if (frontButtonPressed)
                     {
                         game.setViewDirection((int)viewDirections.Front);
-                    }else if (10 <= mousePos.X && mousePos.X <= 210 && 95 <= mousePos.Y && mousePos.Y <= 170)
+                    }else if (topButtonPressed)
                     {
                         game.setViewDirection((int)viewDirections.Top);
-                    }else if (10 <= mousePos.X && mousePos.X <= 210 && 180 <= mousePos.Y && mousePos.Y <= 255)
+                    }else if (sideButtonPressed)
                     {
                         game.setViewDirection((int)viewDirections.Side);
+                    }
+
+                    if (game.getGamestate() == (int)Gamestates.PendingPromo)
+                    {
+                        //check for pawn promotion selection ehre
+                        bool queenSelected = Raylib.CheckCollisionPointRec(mousePos, queenPromoRec);
+                        bool rookSelected = Raylib.CheckCollisionPointRec(mousePos, rookPromoRec);
+                        bool bishopSelected = Raylib.CheckCollisionPointRec(mousePos, bishopPromoRec);
+                        bool knightSelected = Raylib.CheckCollisionPointRec(mousePos, knightPromoRec);
+                        if (queenSelected) { game.promotePawn("Q"); }
+                        else if (rookSelected) { game.promotePawn("R"); }
+                        else if (bishopSelected) { game.promotePawn("B"); }
+                        else if (knightSelected) { game.promotePawn("N"); }
                     }
                 }
 
@@ -111,8 +159,8 @@ namespace ThreeDimensionalChess
                 int state = game.getGamestate();
 
                 updateBoard(game, textures);
-                updateViewPortControls(game);
-                if(state == (int)Gamestates.PendingPromo) { updatePromoWindow(game); }
+                updateViewPortControls(game, frontButton, topButton, sideButton);
+                if(state == (int)Gamestates.PendingPromo) { updatePromoWindow(game, queenPromoRec, rookPromoRec, bishopPromoRec, knightPromoRec, textures); }
 
 
                 Raylib.EndDrawing();
@@ -229,7 +277,7 @@ namespace ThreeDimensionalChess
             }
         }
 
-        static void updateViewPortControls(Chess game)
+        static void updateViewPortControls(Chess game, Rectangle frontButton, Rectangle topButton, Rectangle sideButton)
         {
             //draw control triangles
             //up triangle
@@ -243,13 +291,13 @@ namespace ThreeDimensionalChess
 
             //draw view buttons
             //front view button
-            Raylib.DrawRectangleLines(10, 10, 200, 75, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(frontButton, 1, Color.BLACK);
             Raylib.DrawText("Front", 68, 35, 30, Color.BLACK);
             //top view button
-            Raylib.DrawRectangleLines(10, 95, 200, 75, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(topButton, 1, Color.BLACK);
             Raylib.DrawText("Top", 68, 120, 30, Color.BLACK);
             //side view button
-            Raylib.DrawRectangleLines(10, 180, 200, 75, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(sideButton, 1, Color.BLACK);
             Raylib.DrawText("Side", 68, 205, 30, Color.BLACK);
 
             //draw text to show 3d coords
@@ -269,9 +317,33 @@ namespace ThreeDimensionalChess
             Raylib.DrawText(coordText, 395, 575, 30, Color.BLACK);
         }
 
-        static void updatePromoWindow(Chess game)
+        static void updatePromoWindow(Chess game, Rectangle queenRec, Rectangle rookRec, Rectangle bishopRec, Rectangle knightRec, List<Texture2D> textures)
         {
+            //draw cells for promotion - borders make collisions clear            
+            Rectangle sourceRec = new Rectangle(0, 0, 60, 60); // for loading texture from source
 
+            Raylib.DrawRectangleLinesEx(queenRec, 1, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(rookRec, 1, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(bishopRec, 1, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(knightRec, 1, Color.BLACK);
+
+            //draw relevant player's pieces
+            if (game.getCurrentPlayer().getColour() == 0)
+            {
+                Raylib.DrawTexturePro(textures[(int)PieceTextureIndices.BlackQueen], sourceRec, queenRec, new Vector2(0, 0), 0, Color.WHITE);
+                Raylib.DrawTexturePro(textures[(int)PieceTextureIndices.BlackRook], sourceRec, rookRec, new Vector2(0, 0), 0, Color.WHITE);
+                Raylib.DrawTexturePro(textures[(int)PieceTextureIndices.BlackBishop], sourceRec, bishopRec, new Vector2(0, 0), 0, Color.WHITE);
+                Raylib.DrawTexturePro(textures[(int)PieceTextureIndices.BlackKnight], sourceRec, knightRec, new Vector2(0, 0), 0, Color.WHITE);
+            }// this else case should only arise if player is white but doesn't hurt to check
+            else if(game.getCurrentPlayer().getColour() == 1)
+            {
+                Raylib.DrawTexturePro(textures[(int)PieceTextureIndices.WhiteQueen], sourceRec, queenRec, new Vector2(0, 0), 0, Color.WHITE);
+                Raylib.DrawTexturePro(textures[(int)PieceTextureIndices.WhiteRook], sourceRec, rookRec, new Vector2(0, 0), 0, Color.WHITE);
+                Raylib.DrawTexturePro(textures[(int)PieceTextureIndices.WhiteBishop], sourceRec, bishopRec, new Vector2(0, 0), 0, Color.WHITE);
+                Raylib.DrawTexturePro(textures[(int)PieceTextureIndices.WhiteKnight], sourceRec, knightRec, new Vector2(0, 0), 0, Color.WHITE);
+            }
+
+            Raylib.DrawText("Promotion", 40, 467, 30, Color.BLACK);
         }
 
     }

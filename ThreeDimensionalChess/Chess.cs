@@ -38,12 +38,13 @@ namespace ThreeDimensionalChess
         private Board board;
         private Stack<string> moveList;
         private int pendingMove;
-        private int whitePlayerID;
+        private Player whitePlayer;
+        private Player blackPlayer;
         //array of pointers that compose the 2D viewport
         private int[] viewport;
         private int viewDir;
         private int viewLayer;
-        private int blackPlayerID;
+        
         private int state;
 
         public Chess(int whiteID, int blackID)
@@ -55,8 +56,8 @@ namespace ThreeDimensionalChess
             moveList = new Stack<string>();
             pendingMove = 0;
             //init player objects, grab name based on ID from db
-            whitePlayerID = whiteID;
-            blackPlayerID = blackID;
+            whitePlayer = new Player(whiteID, "test1", 1);
+            blackPlayer = new Player(blackID, "test2", 0);
             state = (int)Gamestates.Ongoing;
             //init gamerules
             changeBoardDir = true;
@@ -156,6 +157,8 @@ namespace ThreeDimensionalChess
                 if (move.Contains("=")) 
                 { 
                     state = (int)Gamestates.PendingPromo;
+                    //reverse playerTurn change
+                    playerTurn = (playerTurn - 1) % 2;
                     //holding square int here to ref piece down the line
                     pendingMove = squareIndex;
                     //select piece so that player is more aware of it
@@ -182,7 +185,9 @@ namespace ThreeDimensionalChess
                 pendingMove = -1;
                 string move = moveList.Pop();
                 move = move + pieceType;
-                moveList.Push(move);    
+                moveList.Push(move);
+                playerTurn = (playerTurn + 1) % 2;
+                state = (int)Gamestates.Ongoing;
             }
             updateViewport();
         }
@@ -316,6 +321,14 @@ namespace ThreeDimensionalChess
         public void addPiece(string p, int pos, int col)
         {
             board.addPiece(p, pos, col);
+        }
+
+        public Player getCurrentPlayer()
+        {
+            Player ret;
+            if(playerTurn == 0) { ret = blackPlayer; }
+            else { ret = whitePlayer; }
+            return ret;
         }
 
         public Piece getPieceDirect(int ptr)
