@@ -10,16 +10,29 @@ namespace ThreeDimensionalChess
     {
         private int ID;
         private string name;
+        int whiteLosses;
+        int blackLosses;
+        int draws;
+        int whiteWins;
+        int blackWins;
+        DateTime joinDate;
         private int colour;
 
-        public Player(int IDInp, string nameInp, int col)
+        public Player(int IDInp, string nameInp, int whiteLossesInp, int blackLossesInp, int drawsInp, int whiteWinsInp, int blackWinsInp, DateTime joinDateInp)
         {
             ID = IDInp;
             name = nameInp;
-            colour = col;
+            whiteLosses = whiteLossesInp;
+            blackLosses = blackLossesInp;
+            draws = drawsInp;
+            whiteWins = whiteWinsInp;
+            blackWins = blackWinsInp;
+            joinDate = joinDateInp;
+
         }
 
         public int getColour() { return colour; }
+        public void setColour(int col) { colour = col; }
         public string getName() { return name; }
     }
 }

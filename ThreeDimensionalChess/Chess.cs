@@ -44,7 +44,8 @@ namespace ThreeDimensionalChess
         private int[] viewport;
         private int viewDir;
         private int viewLayer;
-        
+        //extra stuff
+        DatabaseHandler db;
         private int state;
 
         public Chess(int whiteID, int blackID)
@@ -55,9 +56,12 @@ namespace ThreeDimensionalChess
             inCheck = false;
             moveList = new Stack<string>();
             pendingMove = 0;
+            db = new DatabaseHandler();
             //init player objects, grab name based on ID from db
-            whitePlayer = new Player(whiteID, "test1", 1);
-            blackPlayer = new Player(blackID, "test2", 0);
+            whitePlayer = db.getPlayer(whiteID);
+            whitePlayer.setColour((int)Colours.White);
+            blackPlayer = db.getPlayer(blackID);
+            blackPlayer.setColour((int)Colours.Black);
             state = (int)Gamestates.Ongoing;
             //init gamerules
             changeBoardDir = true;
