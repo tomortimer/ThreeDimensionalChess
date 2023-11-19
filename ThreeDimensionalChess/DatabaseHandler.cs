@@ -50,7 +50,7 @@ VALUES ('testPlayer1', 0, 0, 0, 0, 0, $date);
 
 INSERT INTO player (name, whiteLosses, blackLosses, draws, whiteWins, blackWins, date) 
 VALUES ('testPlayer2', 0, 0, 0, 0, 0, $date);";
-            comm.Parameters.AddWithValue("$date", DateOnly.FromDateTime(DateTime.Today));
+            comm.Parameters.AddWithValue("$date", DateTime.Today);
             comm.ExecuteNonQuery();
             dbConnection.Close();
         }
@@ -67,7 +67,7 @@ VALUES ('testPlayer2', 0, 0, 0, 0, 0, $date);";
 INSERT INTO player (name, whiteLosses, blackLosses, draws, whiteWins, blackWins, date) 
 VALUES ($name, 0, 0, 0, 0, 0, $date);";
             comm.Parameters.AddWithValue("$name", name);
-            comm.Parameters.AddWithValue("$date", DateOnly.FromDateTime(DateTime.Today));
+            comm.Parameters.AddWithValue("$date", DateTime.Today);
 
             comm.ExecuteNonQuery();
             dbConnection.Close();
@@ -141,7 +141,7 @@ VALUES ($name, $empty, $state, $date)";
             comm.Parameters.AddWithValue("$name", name);
             comm.Parameters.AddWithValue("$empty", "");
             comm.Parameters.AddWithValue("$state", (int)Gamestates.Ongoing);
-            comm.Parameters.AddWithValue("$date", DateOnly.FromDateTime(DateTime.Today));
+            comm.Parameters.AddWithValue("$date", DateTime.Today);
 
             comm.ExecuteNonQuery();
 
