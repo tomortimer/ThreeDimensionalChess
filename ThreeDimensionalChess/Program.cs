@@ -50,8 +50,6 @@ namespace ThreeDimensionalChess
             //make it so esc doesn't close window
             Raylib.SetExitKey(0);
             Chess game = new Chess(2, 1);
-            game.addPiece("P", 14, 0);
-            game.addPiece("P", 511 - 8, 1);
 
             //load textures
             List<Texture2D> textures = new List<Texture2D>();

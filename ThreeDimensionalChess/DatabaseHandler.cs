@@ -127,6 +127,31 @@ VALUES ($name, 0, 0, 0, 0, 0, $date);";
             return ret;
         }
 
+        //returns false if unsuccessful, true if successful
+        public bool deletePlayer(int inp)
+        {
+            SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
+            dbConnection.Open();
+            SQLiteCommand comm = dbConnection.CreateCommand();
+
+            comm.CommandText = "DELETE FROM player WHERE playerID=$input;";
+            comm.Parameters.AddWithValue("$input", inp);
+
+            bool ret = true; 
+            try
+            {
+                comm.ExecuteNonQuery();
+            }
+            catch(Exception e)
+            {
+                //probably expecting an SQLLogic or SQLArgument exception here
+                ret = false;
+            }
+            dbConnection.Close();
+
+            return true;
+        }
+
         public int createGame(string name)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Date Source=database.db");
@@ -135,7 +160,7 @@ VALUES ($name, 0, 0, 0, 0, 0, $date);";
 
             comm.CommandText = @"
 INSERT INTO GAME (name, moveList, gamestate, lastAccessed) 
-VALUES ($name, $empty, $state, $date)";
+VALUES ($name, $empty, $state, $date);";
 
             //insert params
             comm.Parameters.AddWithValue("$name", name);
