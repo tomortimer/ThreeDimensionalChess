@@ -62,6 +62,10 @@ namespace ThreeDimensionalChess
             whitePlayer.setColour((int)Colours.White);
             blackPlayer = db.getPlayer(blackID);
             blackPlayer.setColour((int)Colours.Black);
+            /*whitePlayer = new Player(0, "name", 0, 0, 0, 0, 0, DateTime.Today);
+            whitePlayer.setColour((int)Colours.White);
+            blackPlayer = new Player(0, "name", 0, 0, 0, 0, 0, DateTime.Today);
+            blackPlayer.setColour((int)Colours.Black);*/
             state = (int)Gamestates.Ongoing;
             //init gamerules
             changeBoardDir = true;

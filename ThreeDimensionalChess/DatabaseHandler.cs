@@ -14,7 +14,7 @@ namespace ThreeDimensionalChess
         public DatabaseHandler()
         {
             //create tables, first init only
-            createTables();
+            //createTables();
         }
 
         private void createTables()
@@ -29,7 +29,7 @@ namespace ThreeDimensionalChess
 CREATE TABLE player (
     playerID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    whiteLossess INTEGER NOT NULL,
+    whiteLosses INTEGER NOT NULL,
     blackLosses INTEGER NOT NULL,
     draws INTEGER NOT NULL,
     whiteWins INTEGER NOT NULL,
@@ -46,10 +46,10 @@ CREATE TABLE game (
 );
 
 INSERT INTO player (name, whiteLosses, blackLosses, draws, whiteWins, blackWins, date) 
-VALUES (testPlayer1, 0, 0, 0, 0, 0, $date);
+VALUES ('testPlayer1', 0, 0, 0, 0, 0, $date);
 
 INSERT INTO player (name, whiteLosses, blackLosses, draws, whiteWins, blackWins, date) 
-VALUES (testPlayer2, 0, 0, 0, 0, 0, $date);";
+VALUES ('testPlayer2', 0, 0, 0, 0, 0, $date);";
             comm.Parameters.AddWithValue("$date", DateOnly.FromDateTime(DateTime.Today));
             comm.ExecuteNonQuery();
             dbConnection.Close();
@@ -105,14 +105,15 @@ VALUES ($name, 0, 0, 0, 0, 0, $date);";
 
         public Player getPlayer(int inp)
         {
-            SQLiteConnection dbConnection = new SQLiteConnection("Date Source=database.db");
+            SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
             SQLiteCommand comm = dbConnection.CreateCommand();
 
             comm.CommandText = "SELECT * FROM player WHERE playerID=$input;";
-            comm.Parameters.AddWithValue("%input", inp);
+            comm.Parameters.AddWithValue("$input", inp);
             SQLiteDataReader reader = comm.ExecuteReader();
 
+            reader.Read();
             int ID = reader.GetInt32(0);
             string name = reader.GetString(1);
             int whiteLosses = reader.GetInt32(2);

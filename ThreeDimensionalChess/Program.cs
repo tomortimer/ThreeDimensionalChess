@@ -49,7 +49,7 @@ namespace ThreeDimensionalChess
             Raylib.InitWindow(1000, 680, "Three-Dimensional Chess");
             //make it so esc doesn't close window
             Raylib.SetExitKey(0);
-            Chess game = new Chess(0, 1);
+            Chess game = new Chess(2, 1);
             game.addPiece("P", 14, 0);
             game.addPiece("P", 511 - 8, 1);
 
