@@ -257,6 +257,11 @@ WHERE gameID=$ID";
             return ret;
         }
 
+        public GameInfo getGame(int inp)
+        {
+
+        }
+
         public bool deleteGame(int inp)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
