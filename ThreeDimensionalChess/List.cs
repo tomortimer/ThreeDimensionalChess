@@ -8,6 +8,17 @@ namespace ThreeDimensionalChess
         //head node poiting to nothing by default
         private ListNode<T> head = null;
 
+        public List() { }
+        public List(T inp)
+        {
+            Add(inp);
+        }
+        //constructor that takes an array as input
+        public List(T[] arr)
+        {
+            foreach (T o in arr) { Add(o); }
+        }
+
         //adds to end of list
         public void Add(T inp)
         {

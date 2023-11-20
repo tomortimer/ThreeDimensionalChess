@@ -15,7 +15,7 @@ namespace ThreeDimensionalChess
         private int currentPieceIndex;
         private List<int> pointersMovedToFrom = new List<int>();
 
-        public Board()
+        public Board(bool custom = false)
         {
             int colourCtr = 0;
             //intialise all 512 squares of the 3D board
@@ -30,46 +30,49 @@ namespace ThreeDimensionalChess
                 colourCtr++;
             }
             //always place kings so that they are first in list
-            //might have to make an alternate constructor for custom positions - custom positions must still have kings
-            addPiece("K", 508, 0);
-            addPiece("K", 4, 1);
-            //place the rest of the pieces in order of complexity (facilitates efficient stalemate checking later)
-            //white pawns
-            for(int i = 0; i < 2; i++)
+            //only place pieces in default positions if not custom setup, otherwise force user to place kings first
+            if (!custom)
             {
-                for(int x = 0; x < Constants.boardDimensions; x++)
+                addPiece("K", 508, 0);
+                addPiece("K", 4, 1);
+                //place the rest of the pieces in order of complexity (facilitates efficient stalemate checking later)
+                //white pawns
+                for (int i = 0; i < 2; i++)
                 {
-                    int pos = 8 + x + (64 * i);
-                    addPiece("P", pos, 1);
+                    for (int x = 0; x < Constants.boardDimensions; x++)
+                    {
+                        int pos = 8 + x + (64 * i);
+                        addPiece("P", pos, 1);
+                    }
                 }
-            }
-            //black pawns
-            for (int i = 0; i < 2; i++)
-            {
-                for (int x = 0; x < Constants.boardDimensions; x++)
+                //black pawns
+                for (int i = 0; i < 2; i++)
                 {
-                    int pos = 496 + x - (64 * i);
-                    addPiece("P", pos, 0);
+                    for (int x = 0; x < Constants.boardDimensions; x++)
+                    {
+                        int pos = 496 + x - (64 * i);
+                        addPiece("P", pos, 0);
+                    }
                 }
+                //rooks
+                addPiece("R", 0, 1);
+                addPiece("R", 7, 1);
+                addPiece("R", 511, 0);
+                addPiece("R", 504, 0);
+                //knights
+                addPiece("N", 1, 1);
+                addPiece("N", 6, 1);
+                addPiece("N", 510, 0);
+                addPiece("N", 505, 0);
+                //bishops
+                addPiece("B", 2, 1);
+                addPiece("B", 5, 1);
+                addPiece("B", 509, 0);
+                addPiece("B", 506, 0);
+                //queens
+                addPiece("Q", 507, 0);
+                addPiece("Q", 3, 1);
             }
-            //rooks
-            addPiece("R", 0, 1);
-            addPiece("R", 7, 1);
-            addPiece("R", 511, 0);
-            addPiece("R", 504, 0);
-            //knights
-            addPiece("N", 1, 1);
-            addPiece("N", 6, 1);
-            addPiece("N", 510, 0);
-            addPiece("N", 505, 0);
-            //bishops
-            addPiece("B", 2, 1);
-            addPiece("B", 5, 1);
-            addPiece("B", 509, 0);
-            addPiece("B", 506, 0);
-            //queens
-            addPiece("Q", 507, 0);
-            addPiece("Q", 3, 1);
             currentPieceIndex = -1;
         }
 
