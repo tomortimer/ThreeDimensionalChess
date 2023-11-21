@@ -21,7 +21,6 @@ namespace ThreeDimensionalChess
             public const int boardYOrigin = 500;
             public const int squareSide = 550 / 8;
 
-
             public const int windowWidth = 1000;
             public const int windowHeight = 680;
 
@@ -64,6 +63,7 @@ namespace ThreeDimensionalChess
             Raylib.SetExitKey(0);
             Chess game = new Chess(2, 1);
             int mode = (int)UIModes.MainMenu;
+            DatabaseHandler database = new DatabaseHandler();
 
             //load textures
             List<Texture2D> textures = new List<Texture2D>();
@@ -93,8 +93,15 @@ namespace ThreeDimensionalChess
             textures.Add(BlackKing); //11
 
             //some button placements, store Rec structures here to make life easier
-            // rectangle struct - {xOrigin, yOrigin, width, height
+            // rectangle struct - {xOrigin, yOrigin, width, height}
             // can't place in constants because they are objects
+            // -- Main Menu Rectangles -- 
+            Vector2 titlePos = new Vector2(200, 200);
+            Rectangle exitButton = new Rectangle(250, 400, 500 / 3, 100);
+            bool exitButtonClicked = false;
+            Rectangle playButton = new Rectangle(250 + (500/3), 400, 500 / 3, 100);
+            Rectangle playerButton = new Rectangle(250 + 2*(500/3), 400, 500 / 3, 100);
+            // -- Game UI 2D Rectangles --
             Rectangle frontButton = new Rectangle(10, 10, 200, 75);
             Rectangle topButton = new Rectangle(10, 95, 200, 75);
             Rectangle sideButton = new Rectangle(10, 180, 200, 75);
@@ -105,75 +112,103 @@ namespace ThreeDimensionalChess
             Rectangle knightPromoRec = new Rectangle(110, 365, 100, 100);
 
 
-            while (!Raylib.WindowShouldClose())
+            while (!Raylib.WindowShouldClose() && !exitButtonClicked)
             {
                 // ------ update and input here ------
-                //track mouse clicks
-                if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
+                // switch for current part of UI
+                switch (mode)
                 {
-                    //take mouse x y and find which element was clicked using coordinate geometry
-                    Vector2 mousePos = Raylib.GetMousePosition();
+                    case (int)UIModes.MainMenu:
+                        if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
+                        {
+                            Vector2 mousePos = Raylib.GetMousePosition();
+                            exitButtonClicked = Raylib.CheckCollisionPointRec(mousePos, exitButton);
+                            bool playButtonClicked = Raylib.CheckCollisionPointRec(mousePos, playButton);
+                            bool playersButtonClicked = Raylib.CheckCollisionPointRec(mousePos, playerButton);
+                            if (playButtonClicked) { mode = (int)UIModes.NewLoadChoice; }
+                            if (playersButtonClicked) { mode = (int)UIModes.PlayersList; }
+                        }
+                        break;
+                    case (int)UIModes.GameUI2D:
+                        //track mouse clicks
+                        if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
+                        {
+                            //take mouse x y and find which element was clicked using coordinate geometry
+                            Vector2 mousePos = Raylib.GetMousePosition();
 
-                    //this is if mouse is in board borders
-                    if (225 <= mousePos.X && mousePos.X <= 769 && 24 <= mousePos.Y && mousePos.Y <= (500 + UIConstants.squareSide))
-                    {
-                        //calculate square index
-                        int x = (Convert.ToInt32(mousePos.X) - 225) / UIConstants.squareSide;
-                        int y = 7 - ((Convert.ToInt32(mousePos.Y) - 25) / UIConstants.squareSide);
-                        game.viewportClick(x + (y * 8));
-                    }
+                            //this is if mouse is in board borders
+                            if (225 <= mousePos.X && mousePos.X <= 769 && 24 <= mousePos.Y && mousePos.Y <= (500 + UIConstants.squareSide))
+                            {
+                                //calculate square index
+                                int x = (Convert.ToInt32(mousePos.X) - 225) / UIConstants.squareSide;
+                                int y = 7 - ((Convert.ToInt32(mousePos.Y) - 25) / UIConstants.squareSide);
+                                game.viewportClick(x + (y * 8));
+                            }
 
-                    //step through board using triangle buttons
-                    bool upButtonPressed = Raylib.CheckCollisionPointTriangle(mousePos, new Vector2(360, 570), new Vector2(330, 600), new Vector2(390, 600));
-                    bool downButtonPressed = Raylib.CheckCollisionPointTriangle(mousePos, new Vector2(610, 570), new Vector2(640, 600), new Vector2(670, 570));
-                    //could list all buttons and give them numerical values then switch statement here?
-                    if (upButtonPressed) { game.incrementViewLayer(); }
-                    if (downButtonPressed) { game.decrementViewLayer(); }
+                            //step through board using triangle buttons
+                            bool upButtonPressed = Raylib.CheckCollisionPointTriangle(mousePos, new Vector2(360, 570), new Vector2(330, 600), new Vector2(390, 600));
+                            bool downButtonPressed = Raylib.CheckCollisionPointTriangle(mousePos, new Vector2(610, 570), new Vector2(640, 600), new Vector2(670, 570));
+                            //could list all buttons and give them numerical values then switch statement here?
+                            if (upButtonPressed) { game.incrementViewLayer(); }
+                            if (downButtonPressed) { game.decrementViewLayer(); }
 
-                    //check collision with viewDirection buttons
-                    bool frontButtonPressed = Raylib.CheckCollisionPointRec(mousePos, frontButton);
-                    bool topButtonPressed = Raylib.CheckCollisionPointRec(mousePos, topButton);
-                    bool sideButtonPressed = Raylib.CheckCollisionPointRec(mousePos, sideButton);
-                    if (frontButtonPressed)
-                    {
-                        game.setViewDirection((int)viewDirections.Front);
-                    }else if (topButtonPressed)
-                    {
-                        game.setViewDirection((int)viewDirections.Top);
-                    }else if (sideButtonPressed)
-                    {
-                        game.setViewDirection((int)viewDirections.Side);
-                    }
+                            //check collision with viewDirection buttons
+                            bool frontButtonPressed = Raylib.CheckCollisionPointRec(mousePos, frontButton);
+                            bool topButtonPressed = Raylib.CheckCollisionPointRec(mousePos, topButton);
+                            bool sideButtonPressed = Raylib.CheckCollisionPointRec(mousePos, sideButton);
+                            if (frontButtonPressed)
+                            {
+                                game.setViewDirection((int)viewDirections.Front);
+                            }
+                            else if (topButtonPressed)
+                            {
+                                game.setViewDirection((int)viewDirections.Top);
+                            }
+                            else if (sideButtonPressed)
+                            {
+                                game.setViewDirection((int)viewDirections.Side);
+                            }
 
-                    if (game.getGamestate() == (int)Gamestates.PendingPromo)
-                    {
-                        //check for pawn promotion selection ehre
-                        bool queenSelected = Raylib.CheckCollisionPointRec(mousePos, queenPromoRec);
-                        bool rookSelected = Raylib.CheckCollisionPointRec(mousePos, rookPromoRec);
-                        bool bishopSelected = Raylib.CheckCollisionPointRec(mousePos, bishopPromoRec);
-                        bool knightSelected = Raylib.CheckCollisionPointRec(mousePos, knightPromoRec);
-                        if (queenSelected) { game.promotePawn("Q"); }
-                        else if (rookSelected) { game.promotePawn("R"); }
-                        else if (bishopSelected) { game.promotePawn("B"); }
-                        else if (knightSelected) { game.promotePawn("N"); }
-                    }
+                            if (game.getGamestate() == (int)Gamestates.PendingPromo)
+                            {
+                                //check for pawn promotion selection ehre
+                                bool queenSelected = Raylib.CheckCollisionPointRec(mousePos, queenPromoRec);
+                                bool rookSelected = Raylib.CheckCollisionPointRec(mousePos, rookPromoRec);
+                                bool bishopSelected = Raylib.CheckCollisionPointRec(mousePos, bishopPromoRec);
+                                bool knightSelected = Raylib.CheckCollisionPointRec(mousePos, knightPromoRec);
+                                if (queenSelected) { game.promotePawn("Q"); }
+                                else if (rookSelected) { game.promotePawn("R"); }
+                                else if (bishopSelected) { game.promotePawn("B"); }
+                                else if (knightSelected) { game.promotePawn("N"); }
+                            }
+                        }
+
+                        //step through board using keys
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP)) { game.incrementViewLayer(); }
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN)) { game.decrementViewLayer(); }
+                        break;
                 }
-
-                //step through board using keys
-                if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP)) { game.incrementViewLayer(); }
-                if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN)) { game.decrementViewLayer(); }
-
-                
 
                 // ------ draw here ------
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.WHITE);
-                int state = game.getGamestate();
+                //switch to draw elements based on Ui mode
+                switch (mode)
+                {
+                    case (int)UIModes.MainMenu:
+                        updateMainMenu(titlePos, exitButton, playButton, playerButton);
+                        break;
+                    case (int)UIModes.PlayersList:
+                        
+                        break;
+                    case (int)UIModes.GameUI2D:
+                        int state = game.getGamestate();
 
-                updateBoard(game, textures);
-                updateViewPortControls(game, frontButton, topButton, sideButton);
-                if(state == (int)Gamestates.PendingPromo) { updatePromoWindow(game, queenPromoRec, rookPromoRec, bishopPromoRec, knightPromoRec, textures); }
-
+                        updateBoard(game, textures);
+                        updateViewPortControls(game, frontButton, topButton, sideButton);
+                        if (state == (int)Gamestates.PendingPromo) { updatePromoWindow(game, queenPromoRec, rookPromoRec, bishopPromoRec, knightPromoRec, textures); }
+                        break;
+                }
 
                 Raylib.EndDrawing();
             }
@@ -186,6 +221,17 @@ namespace ThreeDimensionalChess
 
 
             Raylib.CloseWindow();
+        }
+
+        static void updateMainMenu(Vector2 textPos, Rectangle exit, Rectangle play,  Rectangle player)
+        {
+            Raylib.DrawText("Three Dimensional Chess", (int)textPos.X, (int)textPos.Y, 50, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(exit, 1, Color.BLACK);
+            Raylib.DrawText("Exit", (int)exit.X + 45, (int)exit.Y + 30, 40, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(play, 1, Color.BLACK);
+            Raylib.DrawText("Play", (int)play.X + 45, (int)play.Y + 30, 40, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(player, 1, Color.BLACK);
+            Raylib.DrawText("Players", (int)player.X + 5, (int)player.Y + 30, 40, Color.BLACK);
         }
 
         static void updateBoard(Chess game, List<Texture2D> textures)
