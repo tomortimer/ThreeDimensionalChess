@@ -125,6 +125,7 @@ VALUES ($name, 0, 0, 0, 0, 0, $date);";
             int blackWins = reader.GetInt32(6);
             DateTime joinDate = reader.GetDateTime(7);
             Player ret = new Player(ID, name, whiteLosses, blackLosses, draws, whiteWins, blackWins, joinDate);
+            dbConnection.Close();
 
             return ret;
         }
@@ -253,6 +254,7 @@ WHERE gameID=$ID";
                 GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID);
                 ret.Add(tmp);
             }
+            dbConnection.Close();
 
             return ret;
         }
@@ -268,6 +270,7 @@ WHERE gameID=$ID";
             SQLiteDataReader reader = comm.ExecuteReader();
 
             //pull values
+            reader.Read();
             int ID = reader.GetInt32(0);
             string name = reader.GetString(1);
             string moveListRepr = reader.GetString(2);
@@ -276,6 +279,7 @@ WHERE gameID=$ID";
             int whiteID = reader.GetInt32(5);
             int blackID = reader.GetInt32(6);
             GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID);
+            dbConnection.Close();
 
             return tmp;
         }
