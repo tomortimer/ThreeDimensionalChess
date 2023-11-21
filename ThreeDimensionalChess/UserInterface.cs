@@ -61,7 +61,7 @@ namespace ThreeDimensionalChess
             Raylib.InitWindow(1000, 680, "Three-Dimensional Chess");
             //make it so esc doesn't close window
             Raylib.SetExitKey(0);
-            Chess game = new Chess(2, 1);
+            Chess game = null;
             int mode = (int)UIModes.MainMenu;
             DatabaseHandler database = new DatabaseHandler();
 
