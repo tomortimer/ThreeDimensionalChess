@@ -259,7 +259,25 @@ WHERE gameID=$ID";
 
         public GameInfo getGame(int inp)
         {
+            SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
+            dbConnection.Open();
+            SQLiteCommand comm = dbConnection.CreateCommand();
 
+            comm.CommandText = "SELECT * FROM game WHERE gameID=$input;";
+            comm.Parameters.AddWithValue("$input", inp);
+            SQLiteDataReader reader = comm.ExecuteReader();
+
+            //pull values
+            int ID = reader.GetInt32(0);
+            string name = reader.GetString(1);
+            string moveListRepr = reader.GetString(2);
+            int gamestate = reader.GetInt32(3);
+            DateTime lastAccessed = reader.GetDateTime(4);
+            int whiteID = reader.GetInt32(5);
+            int blackID = reader.GetInt32(6);
+            GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID);
+
+            return tmp;
         }
 
         public bool deleteGame(int inp)
