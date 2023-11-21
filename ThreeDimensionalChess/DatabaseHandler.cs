@@ -42,9 +42,9 @@ CREATE TABLE game (
     name TEXT NOT NULL,
     moveList TEXT NOT NULL,
     gamestate INTEGER NOT NULL,
-    lastAccessed DATE NOT NULL
-    whitePlayerID INTEGER NOT NULL FOREIGN KEY
-    blackPlayerID INTEGER NOT NULL FOREIGN KEY
+    lastAccessed DATE NOT NULL,
+    whitePlayerID INTEGER NOT NULL,
+    blackPlayerID INTEGER NOT NULL
 );
 
 INSERT INTO player (name, whiteLosses, blackLosses, draws, whiteWins, blackWins, date) 

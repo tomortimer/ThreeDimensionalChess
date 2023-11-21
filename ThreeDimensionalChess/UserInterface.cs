@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace ThreeDimensionalChess
 {
-    class Program
+    class UserInterface
     {
         static class UIConstants
         {
@@ -44,12 +44,26 @@ namespace ThreeDimensionalChess
             BlackKing // 11
         }
 
+        enum UIModes
+        {
+            MainMenu, // 0
+            PlayersList, // 1
+            NewLoadChoice, // 2
+            NewGameMenu, // 3
+            GamesList, // 4
+            ConfirmGame, // 5
+            CreatePlayer, // 6
+            GameUI2D, // 7
+            PauseMenu, // 8
+        }
+
         static void Main()
         {
             Raylib.InitWindow(1000, 680, "Three-Dimensional Chess");
             //make it so esc doesn't close window
             Raylib.SetExitKey(0);
             Chess game = new Chess(2, 1);
+            int mode = (int)UIModes.MainMenu;
 
             //load textures
             List<Texture2D> textures = new List<Texture2D>();
