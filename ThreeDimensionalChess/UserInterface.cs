@@ -261,14 +261,19 @@ namespace ThreeDimensionalChess
             {
                 Raylib.DrawRectangleLinesEx(new Rectangle(baseRec.X, baseRec.Y + (y*50), baseRec.Width, baseRec.Height), 1, Color.BLACK);
                 //fill in with values from table
-                try
-                {
-                    Player tmp = players[startIndex + y];
+                if (y > 0 && startIndex + y - 1 < players.Count()) {
+                    Player tmp = players[startIndex + y - 1];
                     //using position values from columns drawn above
-
-                }catch(ArgumentOutOfRangeException e)
-                {
-                    // just leave row blank if end of list is reached
+                    string playerName = tmp.getName();
+                    //shorten name if it would write over column
+                    if(playerName.Length > 11){ playerName = playerName.Substring(0, 11);}
+                    Raylib.DrawText(playerName, 15, 23 + (y * 50), 30, Color.BLACK);
+                    DateOnly joinDate = tmp.getJoinDate();
+                    Raylib.DrawText(joinDate.ToString().Substring(0, joinDate.ToString().Length - 5), 205, 23 + (y * 50), 30, Color.BLACK);
+                    string winRatio = tmp.getTotalWins() + "/" + tmp.getTotalLosses() + "/" + tmp.getDraws();
+                    Raylib.DrawText(winRatio, 305, 23 + (y * 50), 30, Color.BLACK);
+                    string whiteWR = tmp.getWhiteWinrate() + "%";
+                    string blackWR = Convert.ToString(tmp.getBlackWinrate());
                 }
             }
 

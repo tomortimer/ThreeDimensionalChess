@@ -39,21 +39,54 @@ namespace ThreeDimensionalChess
         public int getDraws() { return draws; }
         public int getWhiteWins() { return whiteWins; }
         public int getBlackWins() { return blackWins; }
+        public int getTotalWins() {  return blackWins + whiteWins; }
+        public int getTotalLosses() { return blackLosses + whiteLosses; }
         public int getID() { return ID; }
 
         public int getWinrate()
         {
-            return (whiteWins+blackWins) / (whiteLosses+blackLosses+whiteWins+blackWins+draws);
+            int WR;
+            try 
+            { 
+                WR = (whiteWins + blackWins) / (whiteLosses + blackLosses + whiteWins + blackWins + draws); 
+            } catch(DivideByZeroException e)
+            {
+                WR = 0;
+            }
+            return WR;
+        }
+
+        public DateOnly getJoinDate()
+        {
+            return DateOnly.FromDateTime(joinDate);
         }
 
         public int getWhiteWinrate()
         {
-            return whiteWins / whiteLosses;
+            int WR;
+            try
+            {
+                WR = whiteWins / whiteLosses;
+            }catch(DivideByZeroException e)
+            {
+                if (whiteWins > 0) { WR = 100; }
+                else { WR = 0; }
+            }
+            return WR;
         }
 
         public int getBlackWinrate()
         {
-            return blackWins / blackLosses;
+            int WR;
+            try
+            {
+                WR = blackWins / blackLosses;
+            }catch(DivideByZeroException e)
+            {
+                if (blackWins > 0) { WR = 100; }
+                else { WR = 0; }
+            }
+            return WR;
         }
 
         public int getTotalGames() { return whiteLosses + whiteWins + blackWins + blackLosses + draws; }
