@@ -79,7 +79,7 @@ VALUES ($name, 0, 0, 0, 0, 0, $date);";
         {
             //set up query
             List<Player> ret = new List<Player>();
-            SQLiteConnection dbConnection = new SQLiteConnection("Date Source=database.db");
+            SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
             SQLiteCommand comm = dbConnection.CreateCommand();
 
@@ -185,7 +185,7 @@ DELETE FROM game WHERE whitePlayerID=$input OR blackPlayerID=$input;
 
         public int createGame(string name)
         {
-            SQLiteConnection dbConnection = new SQLiteConnection("Date Source=database.db");
+            SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
             SQLiteCommand comm = dbConnection.CreateCommand();
 

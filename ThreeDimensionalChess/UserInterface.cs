@@ -101,6 +101,8 @@ namespace ThreeDimensionalChess
             bool exitButtonClicked = false;
             Rectangle playButton = new Rectangle(250 + (500/3), 400, 500 / 3, 100);
             Rectangle playerButton = new Rectangle(250 + 2*(500/3), 400, 500 / 3, 100);
+            // -- Players List Values
+            int playerListIndex = 0;
             // -- Game UI 2D Rectangles --
             Rectangle frontButton = new Rectangle(10, 10, 200, 75);
             Rectangle topButton = new Rectangle(10, 95, 200, 75);
@@ -128,6 +130,8 @@ namespace ThreeDimensionalChess
                             if (playButtonClicked) { mode = (int)UIModes.NewLoadChoice; }
                             if (playersButtonClicked) { mode = (int)UIModes.PlayersList; }
                         }
+                        break;
+                    case (int)UIModes.PlayersList:
                         break;
                     case (int)UIModes.GameUI2D:
                         //track mouse clicks
@@ -199,7 +203,8 @@ namespace ThreeDimensionalChess
                         updateMainMenu(titlePos, exitButton, playButton, playerButton);
                         break;
                     case (int)UIModes.PlayersList:
-                        
+                        updatePlayersTable(playerListIndex, database);
+                        //drawPlayersListButtons();
                         break;
                     case (int)UIModes.GameUI2D:
                         int state = game.getGamestate();
@@ -232,6 +237,41 @@ namespace ThreeDimensionalChess
             Raylib.DrawText("Play", (int)play.X + 45, (int)play.Y + 30, 40, Color.BLACK);
             Raylib.DrawRectangleLinesEx(player, 1, Color.BLACK);
             Raylib.DrawText("Players", (int)player.X + 5, (int)player.Y + 30, 40, Color.BLACK);
+        }
+
+        static void updatePlayersTable(int startIndex, DatabaseHandler db) 
+        {
+            //get a list of all players
+            List<Player> players = db.getPlayers();
+            //setup rectangles to be transformed
+            Rectangle baseRec = new Rectangle(10, 10, 790, 50);
+            //draw columns in here
+            Raylib.DrawLine(200, 10, 200, 660, Color.BLACK);
+            Raylib.DrawText("Name", 15, 23, 30, Color.BLACK);
+            Raylib.DrawLine(300, 10, 300, 660, Color.BLACK);
+            Raylib.DrawText("Date", 205, 23, 30, Color.BLACK);
+            Raylib.DrawLine(500, 10, 500, 660, Color.BLACK);
+            Raylib.DrawText("W/L/D", 305, 23, 30, Color.BLACK);
+            Raylib.DrawLine(650, 10, 650, 660, Color.BLACK);
+            Raylib.DrawText("White WR", 505, 23, 30, Color.BLACK);
+            Raylib.DrawText("Black WR", 655, 23, 30, Color.BLACK);
+
+
+            for (int y = 0; y < (660 /50); y++)
+            {
+                Raylib.DrawRectangleLinesEx(new Rectangle(baseRec.X, baseRec.Y + (y*50), baseRec.Width, baseRec.Height), 1, Color.BLACK);
+                //fill in with values from table
+                try
+                {
+                    Player tmp = players[startIndex + y];
+                    //using position values from columns drawn above
+
+                }catch(ArgumentOutOfRangeException e)
+                {
+                    // just leave row blank if end of list is reached
+                }
+            }
+
         }
 
         static void updateBoard(Chess game, List<Texture2D> textures)
