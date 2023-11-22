@@ -273,7 +273,9 @@ namespace ThreeDimensionalChess
                     string winRatio = tmp.getTotalWins() + "/" + tmp.getTotalLosses() + "/" + tmp.getDraws();
                     Raylib.DrawText(winRatio, 305, 23 + (y * 50), 30, Color.BLACK);
                     string whiteWR = tmp.getWhiteWinrate() + "%";
-                    string blackWR = Convert.ToString(tmp.getBlackWinrate());
+                    string blackWR = tmp.getBlackWinrate() + "%";
+                    Raylib.DrawText(whiteWR, 505, 23 + (y * 50), 30, Color.BLACK);
+                    Raylib.DrawText(blackWR, 655, 23 + (y*50), 30, Color.BLACK);
                 }
             }
 
