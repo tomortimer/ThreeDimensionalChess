@@ -27,6 +27,28 @@ namespace ThreeDimensionalChess
             {
                 right.Add(list[x]);
             }
+
+            mergeSortString(left);
+            mergeSortString(right);
+            List<Player> ret = mergeString(left, right);
+            return ret;
+        }
+
+        private List<Player> mergeString(List<Player> left, List<Player> right)
+        {
+            List<Player> ret = new List<Player>();
+            // combine and sort elements
+            while(left.Count()  > 0 || right.Count() > 0) 
+            {
+                //check both lists have elemnts to compare
+                if(left.Count() > 0 && right.Count() > 0)
+                {
+                    if (left[0] <= right[0])
+                    {
+                        ret.Add(left[0])
+                    }
+                }
+            }
         }
     }
 }
