@@ -305,6 +305,7 @@ namespace ThreeDimensionalChess
         {
             //get a list of all players
             List<Player> players = db.getPlayers();
+            Sorter sorter = new Sorter();
             switch (sortMode)
             {
                 case "name":
