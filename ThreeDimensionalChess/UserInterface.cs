@@ -58,7 +58,7 @@ namespace ThreeDimensionalChess
 
         static void Main()
         {
-            Raylib.InitWindow(1000, 680, "Three-Dimensional Chess");
+            Raylib.InitWindow(UIConstants.windowWidth, UIConstants.windowHeight, "Three-Dimensional Chess");
             //make it so esc doesn't close window
             Raylib.SetExitKey(0);
             Chess game = null;
@@ -103,6 +103,9 @@ namespace ThreeDimensionalChess
             Rectangle playerButton = new Rectangle(250 + 2*(500/3), 400, 500 / 3, 100);
             // -- Players List Values
             int playerListIndex = 0;
+            Rectangle deleteButton = new Rectangle(805, 10, 150, 75);
+            Rectangle newPlayerButton = new Rectangle(805, 95, 150, 75);
+            Rectangle backButton = new Rectangle(UIConstants.windowWidth - 85, UIConstants.windowHeight - 85, 75, 75);
             // -- Game UI 2D Rectangles --
             Rectangle frontButton = new Rectangle(10, 10, 200, 75);
             Rectangle topButton = new Rectangle(10, 95, 200, 75);
@@ -204,7 +207,7 @@ namespace ThreeDimensionalChess
                         break;
                     case (int)UIModes.PlayersList:
                         updatePlayersTable(playerListIndex, database);
-                        //drawPlayersListButtons();
+                        updatePlayersListButtons(deleteButton, newPlayerButton, backButton);
                         break;
                     case (int)UIModes.GameUI2D:
                         int state = game.getGamestate();
@@ -255,13 +258,16 @@ namespace ThreeDimensionalChess
             Raylib.DrawLine(650, 10, 650, 660, Color.BLACK);
             Raylib.DrawText("White WR", 505, 23, 30, Color.BLACK);
             Raylib.DrawText("Black WR", 655, 23, 30, Color.BLACK);
+            // draw outline
+            Raylib.DrawRectangleLines(10, 10, 790, 50 + (12*50), Color.BLACK);
 
 
-            for (int y = 0; y < (660 /50); y++)
+            for (int y = 0; y < (660 / 50); y++)
             {
-                Raylib.DrawRectangleLinesEx(new Rectangle(baseRec.X, baseRec.Y + (y*50), baseRec.Width, baseRec.Height), 1, Color.BLACK);
+                
                 //fill in with values from table
                 if (y > 0 && startIndex + y - 1 < players.Count()) {
+                    Raylib.DrawRectangleLinesEx(new Rectangle(baseRec.X, baseRec.Y + (y * 50), baseRec.Width, baseRec.Height), 1, Color.BLACK);
                     Player tmp = players[startIndex + y - 1];
                     //using position values from columns drawn above
                     string playerName = tmp.getName();
@@ -279,6 +285,13 @@ namespace ThreeDimensionalChess
                 }
             }
 
+        }
+
+        static void updatePlayersListButtons(Rectangle delete, Rectangle create, Rectangle back)
+        {
+            Raylib.DrawRectangleLinesEx(delete, 1, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(create, 1, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
         }
 
         static void updateBoard(Chess game, List<Texture2D> textures)
