@@ -190,7 +190,7 @@ namespace ThreeDimensionalChess
                             bool deletePlayerPressed = Raylib.CheckCollisionPointRec(mousePos, deletePlayerButton);
                             bool backFromPlayersPressed = Raylib.CheckCollisionPointRec(mousePos, backFromPlayers);
 
-                            if (createPlayerPressed) { database.addPlayer("TEST"); }
+                            if (createPlayerPressed) { database.addPlayer("aTEST"); }
                             if(deletePlayerPressed && selectedPlayerID != -1) { database.deletePlayer(selectedPlayerID); selectedPlayerID = -1; }
                             if (backFromPlayersPressed) { mode = (int)UIModes.MainMenu; }
                         }
@@ -309,7 +309,7 @@ namespace ThreeDimensionalChess
             switch (sortMode)
             {
                 case "name":
-                    
+                    players = sorter.mergeSortString(players);
                     break;
             }
             //setup rectangles to be transformed

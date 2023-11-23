@@ -43,12 +43,30 @@ namespace ThreeDimensionalChess
                 //check both lists have elemnts to compare
                 if(left.Count() > 0 && right.Count() > 0)
                 {
-                    if (left[0] <= right[0])
+                    //compare and reorder elemnts
+                    if (left[0].getName()[0] <= right[0].getName()[0])
                     {
-                        ret.Add(left[0])
+                        ret.Add(left[0]);
+                        left.RemoveAt(0);
                     }
+                    else
+                    {
+                        ret.Add(right[0]);
+                        right.RemoveAt(0);
+                    }
+                }//otherwise add remaining contents of list
+                else if(left.Count() > 0)
+                {
+                    ret.Add(left[0]);
+                    left.RemoveAt(0);
+                }
+                else 
+                { 
+                    ret.Add(right[0]); 
+                    right.RemoveAt(0);
                 }
             }
+            return ret;
         }
     }
 }
