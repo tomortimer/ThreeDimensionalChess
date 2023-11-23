@@ -312,6 +312,10 @@ namespace ThreeDimensionalChess
                     players = sorter.mergeSortString(players);
                     break;
             }
+            if(sortOrder == 1)
+            {
+                players = sorter.Reverse(players);
+            }
             //setup rectangles to be transformed
             Rectangle baseRec = new Rectangle(10, 10, 790, 50);
             //draw columns in here

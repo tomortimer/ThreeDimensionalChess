@@ -27,7 +27,7 @@ namespace ThreeDimensionalChess
             {
                 right.Add(list[x]);
             }
-
+            //recurse with each half
             mergeSortString(left);
             mergeSortString(right);
             List<Player> ret = mergeString(left, right);
@@ -65,6 +65,22 @@ namespace ThreeDimensionalChess
                     ret.Add(right[0]); 
                     right.RemoveAt(0);
                 }
+            }
+            return ret;
+        }
+
+        public List<Player> Reverse(List<Player> list)
+        {
+            //reverse a list simply, using a stack
+            Stack<Player> stck = new Stack<Player>();
+            for(int x = 0; x < list.Count(); x++)
+            {
+                stck.Push(list[x]);
+            }
+            List<Player> ret = new List<Player>();
+            for (int x = 0; x < list.Count(); x++)
+            {
+                ret.Add(stck.Pop());
             }
             return ret;
         }
