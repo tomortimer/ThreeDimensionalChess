@@ -103,9 +103,13 @@ namespace ThreeDimensionalChess
             Rectangle playerButton = new Rectangle(250 + 2*(500/3), 400, 500 / 3, 100);
             // -- Players List Values
             int playerListIndex = 0;
-            Rectangle deleteButton = new Rectangle(805, 10, 150, 75);
-            Rectangle newPlayerButton = new Rectangle(805, 95, 150, 75);
-            Rectangle backButton = new Rectangle(UIConstants.windowWidth - 85, UIConstants.windowHeight - 85, 75, 75);
+            int selectedPlayerID = -1;
+            string sortMode = "ID"; // 0 is ascending by default, 1 is reverse
+            int sortOrder = 0;
+            List<Player> playersList = new List<Player>();
+            Rectangle deletePlayerButton = new Rectangle(805, 10, UIConstants.windowWidth - 805 - 5, 75);
+            Rectangle newPlayerButton = new Rectangle(805, 95, UIConstants.windowWidth - 805 - 5, 75);
+            Rectangle backFromPlayers = new Rectangle(UIConstants.windowWidth - 85, UIConstants.windowHeight - 85, 75, 75);
             // -- Game UI 2D Rectangles --
             Rectangle frontButton = new Rectangle(10, 10, 200, 75);
             Rectangle topButton = new Rectangle(10, 95, 200, 75);
@@ -135,6 +139,61 @@ namespace ThreeDimensionalChess
                         }
                         break;
                     case (int)UIModes.PlayersList:
+                        if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
+                        {
+                            Vector2 mousePos = Raylib.GetMousePosition();
+
+                            //take clicks on the table
+                            if(10 <= mousePos.X && mousePos.X <= 800 && 10 <= mousePos.Y && mousePos.Y <= (10 + (13*50)))
+                            {
+                                int row = ((int)mousePos.Y - 10) / 50;
+                                int column = -1;
+                                if (10 <= mousePos.X && mousePos.X < 200) { column = 0; }
+                                else if (200 <= mousePos.X && mousePos.X < 300) { column = 1; }
+                                else if (300 <= mousePos.X && mousePos.X < 500) { column = 2; }
+                                else if(500 <= mousePos.X && mousePos.X < 650) { column = 3; }
+                                else { column = 4; }
+
+                                //affect table now
+                                
+                                if(row == 0)
+                                {
+                                    string prevMode = sortMode;
+                                    switch (column)
+                                    {
+                                        case 0:
+                                            sortMode = "name";
+                                            break;
+                                        case 1:
+                                            sortMode = "date";
+                                            break;
+                                        case 2:
+                                            sortMode = "winRatio";
+                                            break;
+                                        case 3:
+                                            sortMode = "whiteWR";
+                                            break;
+                                        case 4:
+                                            sortMode = "blackWR";
+                                            break;
+                                    }
+                                    if (prevMode == sortMode) { sortOrder = (sortOrder + 1) % 2; }
+                                }
+                                else
+                                {
+                                    row--;
+                                    if(row < playersList.Count()) { selectedPlayerID = playersList[row].getID(); }
+                                }
+                            }
+
+                            bool createPlayerPressed = Raylib.CheckCollisionPointRec(mousePos, newPlayerButton);
+                            bool deletePlayerPressed = Raylib.CheckCollisionPointRec(mousePos, deletePlayerButton);
+                            bool backFromPlayersPressed = Raylib.CheckCollisionPointRec(mousePos, backFromPlayers);
+
+                            if (createPlayerPressed) { database.addPlayer("TEST"); }
+                            if(deletePlayerPressed && selectedPlayerID != -1) { database.deletePlayer(selectedPlayerID); selectedPlayerID = -1; }
+                            if (backFromPlayersPressed) { mode = (int)UIModes.MainMenu; }
+                        }
                         break;
                     case (int)UIModes.GameUI2D:
                         //track mouse clicks
@@ -206,8 +265,8 @@ namespace ThreeDimensionalChess
                         updateMainMenu(titlePos, exitButton, playButton, playerButton);
                         break;
                     case (int)UIModes.PlayersList:
-                        updatePlayersTable(playerListIndex, database);
-                        updatePlayersListButtons(deleteButton, newPlayerButton, backButton);
+                        playersList = updatePlayersTable(playerListIndex, database, sortMode, sortOrder);
+                        updatePlayersListButtons(deletePlayerButton, newPlayerButton, backFromPlayers);
                         break;
                     case (int)UIModes.GameUI2D:
                         int state = game.getGamestate();
@@ -242,10 +301,16 @@ namespace ThreeDimensionalChess
             Raylib.DrawText("Players", (int)player.X + 5, (int)player.Y + 30, 40, Color.BLACK);
         }
 
-        static void updatePlayersTable(int startIndex, DatabaseHandler db) 
+        static List<Player> updatePlayersTable(int startIndex, DatabaseHandler db, string sortMode, int sortOrder) 
         {
             //get a list of all players
             List<Player> players = db.getPlayers();
+            switch (sortMode)
+            {
+                case "name":
+                    
+                    break;
+            }
             //setup rectangles to be transformed
             Rectangle baseRec = new Rectangle(10, 10, 790, 50);
             //draw columns in here
@@ -261,13 +326,12 @@ namespace ThreeDimensionalChess
             // draw outline
             Raylib.DrawRectangleLines(10, 10, 790, 50 + (12*50), Color.BLACK);
 
-
             for (int y = 0; y < (660 / 50); y++)
             {
-                
+                Raylib.DrawRectangleLinesEx(new Rectangle(baseRec.X, baseRec.Y + (y * 50), baseRec.Width, baseRec.Height), 1, Color.BLACK);
                 //fill in with values from table
                 if (y > 0 && startIndex + y - 1 < players.Count()) {
-                    Raylib.DrawRectangleLinesEx(new Rectangle(baseRec.X, baseRec.Y + (y * 50), baseRec.Width, baseRec.Height), 1, Color.BLACK);
+                    
                     Player tmp = players[startIndex + y - 1];
                     //using position values from columns drawn above
                     string playerName = tmp.getName();
@@ -284,13 +348,15 @@ namespace ThreeDimensionalChess
                     Raylib.DrawText(blackWR, 655, 23 + (y*50), 30, Color.BLACK);
                 }
             }
-
+            return players;
         }
 
         static void updatePlayersListButtons(Rectangle delete, Rectangle create, Rectangle back)
         {
             Raylib.DrawRectangleLinesEx(delete, 1, Color.BLACK);
+            Raylib.DrawText("Delete", (int)delete.X + 25, (int)delete.Y + 25, 30, Color.BLACK);
             Raylib.DrawRectangleLinesEx(create, 1, Color.BLACK);
+            Raylib.DrawText("Add Player", (int)create.X + 10, (int)create.Y + 25, 30, Color.BLACK);
             Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
         }
 
