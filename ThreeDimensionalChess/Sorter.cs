@@ -23,7 +23,7 @@ namespace ThreeDimensionalChess
             {
                 left.Add(list[x]);
             }
-            for(int x =  midpoint + 1; x < list.Count(); x++)
+            for(int x =  midpoint; x < list.Count(); x++)
             {
                 right.Add(list[x]);
             }
@@ -82,7 +82,7 @@ namespace ThreeDimensionalChess
             {
                 left.Add(list[x]);
             }
-            for (int x = midpoint + 1; x < list.Count(); x++)
+            for (int x = midpoint; x < list.Count(); x++)
             {
                 right.Add(list[x]);
             }
@@ -141,7 +141,7 @@ namespace ThreeDimensionalChess
             {
                 left.Add(list[x]);
             }
-            for (int x = midpoint + 1; x < list.Count(); x++)
+            for (int x = midpoint; x < list.Count(); x++)
             {
                 right.Add(list[x]);
             }
@@ -200,7 +200,7 @@ namespace ThreeDimensionalChess
             {
                 left.Add(list[x]);
             }
-            for (int x = midpoint + 1; x < list.Count(); x++)
+            for (int x = midpoint; x < list.Count(); x++)
             {
                 right.Add(list[x]);
             }
@@ -259,7 +259,7 @@ namespace ThreeDimensionalChess
             {
                 left.Add(list[x]);
             }
-            for (int x = midpoint + 1; x < list.Count(); x++)
+            for (int x = midpoint; x < list.Count(); x++)
             {
                 right.Add(list[x]);
             }

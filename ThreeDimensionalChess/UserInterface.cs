@@ -200,6 +200,15 @@ namespace ThreeDimensionalChess
                             if(deletePlayerPressed && selectedPlayerID != -1) { database.deletePlayer(selectedPlayerID); selectedPlayerID = -1; }
                             if (backButtonPressed) { mode = (int)UIModes.MainMenu; }
                         }
+                        //use arrow keys to move up or down table
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN))
+                        {
+                            if(playerListIndex < playersList.Count() - 1) { playerListIndex++; }
+                        }
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP))
+                        {
+                            if(playerListIndex > 0) { playerListIndex--; }
+                        }
                         break;
                     case (int)UIModes.CreatePlayer:
                         if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
@@ -211,7 +220,13 @@ namespace ThreeDimensionalChess
                             if (finaliseButtonPressed)
                             {
                                 //shouldn't reach this without having moved from another mode so move back to that
-                                if (entryStr != "") { database.addPlayer(entryStr); mode = lastMode; lastMode = 0; }
+                                if (entryStr != "") 
+                                { 
+                                    database.addPlayer(entryStr); 
+                                    mode = lastMode; 
+                                    lastMode = 0;
+                                    entryStr = "";
+                                }
                             }
                             if (backButtonPressed) { mode = lastMode; lastMode = 0; }
                         }
@@ -220,7 +235,7 @@ namespace ThreeDimensionalChess
                         int keyPressed = Raylib.GetCharPressed();
                         while(keyPressed > 0)
                         {
-                            //only accept character keys, limit names to 20 char (only 11 is displayed in table anyway)
+                            //only accept character keys, limit names to 20 char (only 10 is displayed in table anyway)
                             if(keyPressed > 31 && keyPressed < 126 && entryStr.Length < 20)
                             {
                                 entryStr += (char)keyPressed;
@@ -398,7 +413,7 @@ namespace ThreeDimensionalChess
                     //using position values from columns drawn above
                     string playerName = tmp.getName();
                     //shorten name if it would write over column
-                    if(playerName.Length > 11){ playerName = playerName.Substring(0, 11);}
+                    if(playerName.Length > 10){ playerName = playerName.Substring(0, 10);}
                     Raylib.DrawText(playerName, 15, 23 + (y * 50), 30, Color.BLACK);
                     DateOnly joinDate = tmp.getJoinDate();
                     Raylib.DrawText(joinDate.ToString().Substring(0, joinDate.ToString().Length - 5), 205, 23 + (y * 50), 30, Color.BLACK);
