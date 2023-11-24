@@ -215,12 +215,24 @@ namespace ThreeDimensionalChess
                             }
                             if (backButtonPressed) { mode = lastMode; lastMode = 0; }
                         }
-                        if (anyKeysPressed())
+
+                        //raylib uses an input queue for keys(if they are occuring on the same frame), parse this here
+                        int keyPressed = Raylib.GetCharPressed();
+                        while(keyPressed > 0)
                         {
-                            //20 is max name length, 11 chars only get displayed in table anyway
-                            if(entryStr.Length <= 20)
+                            //only accept character keys, limit names to 20 char (only 11 is displayed in table anyway)
+                            if(keyPressed > 31 && keyPressed < 126 && entryStr.Length < 20)
                             {
-                                entryStr = entryStr + Convert.ToChar(Raylib.GetKeyPressed());
+                                entryStr += (char)keyPressed;
+                            }
+                            keyPressed = Raylib.GetCharPressed();
+                        }
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_BACKSPACE))
+                        {
+                            if(entryStr.Length <= 1) { entryStr = ""; }
+                            else
+                            {
+                                entryStr = entryStr.Substring(0, entryStr.Length - 1);
                             }
                         }
                         break;
@@ -320,16 +332,6 @@ namespace ThreeDimensionalChess
 
 
             Raylib.CloseWindow();
-        }
-
-        //small function to test if input is text
-        static bool anyKeysPressed()
-        {
-            bool keyPressed = false;
-
-            if(Raylib.GetKeyPressed() > 33 && Raylib.GetKeyPressed() < 127) { keyPressed = true; }
-
-            return keyPressed;
         }
 
         static void updateMainMenu(Vector2 textPos, Rectangle exit, Rectangle play,  Rectangle player)
