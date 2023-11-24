@@ -28,10 +28,10 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            mergeSortString(left);
-            mergeSortString(right);
-            List<Player> ret = mergeString(left, right);
-            return ret;
+            left = mergeSortString(left);
+            right = mergeSortString(right);
+            List<Player> sorted = mergeString(left, right);
+            return sorted;
         }
 
         private List<Player> mergeString(List<Player> left, List<Player> right)
@@ -87,8 +87,8 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            mergeSortDate(left);
-            mergeSortDate(right);
+            left = mergeSortDate(left);
+            right = mergeSortDate(right);
             List<Player> ret = mergeDate(left, right);
             return ret;
         }
@@ -146,8 +146,8 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            mergeSortWins(left);
-            mergeSortWins(right);
+            left = mergeSortWins(left);
+            right = mergeSortWins(right);
             List<Player> ret = mergeWins(left, right);
             return ret;
         }
@@ -205,8 +205,8 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            mergeSortBlackWR(left);
-            mergeSortBlackWR(right);
+            left = mergeSortBlackWR(left);
+            right = mergeSortBlackWR(right);
             List<Player> ret = mergeBlackWR(left, right);
             return ret;
         }
@@ -264,8 +264,8 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            mergeSortWhiteWR(left);
-            mergeSortWhiteWR(right);
+            left = mergeSortWhiteWR(left);
+            right = mergeSortWhiteWR(right);
             List<Player> ret = mergeWhiteWR(left, right);
             return ret;
         }
