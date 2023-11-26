@@ -40,7 +40,7 @@ namespace ThreeDimensionalChess
         public int getBlackLosses() { return blackLosses; }
         public int getDraws() { return whiteDraws+blackDraws; }
         public int getWhiteDraws() { return whiteDraws; }
-        public int getBlackDraws() { return blackDraw; }
+        public int getBlackDraws() { return blackDraws; }
         public int getWhiteWins() { return whiteWins; }
         public int getBlackWins() { return blackWins; }
         public int getTotalWins() {  return blackWins + whiteWins; }
