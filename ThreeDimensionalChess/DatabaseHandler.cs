@@ -45,7 +45,8 @@ CREATE TABLE game (
     gamestate INTEGER NOT NULL,
     lastAccessed DATE NOT NULL,
     whitePlayerID INTEGER NOT NULL,
-    blackPlayerID INTEGER NOT NULL
+    blackPlayerID INTEGER NOT NULL,
+    undoMoves BOOLEAN NOT NULL
 );
 
 INSERT INTO player (name, whiteLosses, blackLosses, whiteDraws, blackDraws, whiteWins, blackWins, date) 
@@ -188,21 +189,22 @@ DELETE FROM game WHERE whitePlayerID=$input OR blackPlayerID=$input;
             return ret;
         }
 
-        public int createGame(string name)
+        public int createGame(string name, bool undo)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
             SQLiteCommand comm = dbConnection.CreateCommand();
 
             comm.CommandText = @"
-INSERT INTO GAME (name, moveList, gamestate, lastAccessed) 
-VALUES ($name, $empty, $state, $date);";
+INSERT INTO GAME (name, moveList, gamestate, lastAccessed, undoMoves) 
+VALUES ($name, $empty, $state, $date, $undo);";
 
             //insert params
             comm.Parameters.AddWithValue("$name", name);
             comm.Parameters.AddWithValue("$empty", "");
             comm.Parameters.AddWithValue("$state", (int)Gamestates.Ongoing);
             comm.Parameters.AddWithValue("$date", DateTime.Today);
+            comm.Parameters.AddWithValue("$undo", undo);
 
             comm.ExecuteNonQuery();
 
@@ -256,7 +258,8 @@ WHERE gameID=$ID";
                 DateTime lastAccessed = reader.GetDateTime(4);
                 int whiteID = reader.GetInt32(5);
                 int blackID = reader.GetInt32(6);
-                GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID);
+                bool undoMoves = reader.GetBoolean(7);
+                GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID, undoMoves);
                 ret.Add(tmp);
             }
             dbConnection.Close();
@@ -283,7 +286,8 @@ WHERE gameID=$ID";
             DateTime lastAccessed = reader.GetDateTime(4);
             int whiteID = reader.GetInt32(5);
             int blackID = reader.GetInt32(6);
-            GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID);
+            bool undoMoves = reader.GetBoolean(7);
+            GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID, undoMoves);
             dbConnection.Close();
 
             return tmp;

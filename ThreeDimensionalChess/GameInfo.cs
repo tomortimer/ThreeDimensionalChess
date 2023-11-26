@@ -15,7 +15,8 @@ namespace ThreeDimensionalChess
         private DateTime lastAccessed;
         private int whitePlayerID;
         private int blackPlayerID;
-        public GameInfo(int gameIDInp, string nameInp, string movesInp, int gamestateInp, DateTime lastAccessedInp, int whitePlayerInp, int blackPlayerInp) 
+        private bool undoMoves;
+        public GameInfo(int gameIDInp, string nameInp, string movesInp, int gamestateInp, DateTime lastAccessedInp, int whitePlayerInp, int blackPlayerInp, bool undoMovesInp)
         {
             gameID = gameIDInp;
             name = nameInp;
@@ -26,10 +27,12 @@ namespace ThreeDimensionalChess
             lastAccessed = lastAccessedInp;
             whitePlayerID = whitePlayerInp;
             blackPlayerID = blackPlayerInp;
+            undoMoves = undoMovesInp;
         }
 
         public int getGameID() { return gameID; }
         public string getName() { return name; }
+        public bool getUndoMoves() { return undoMoves; }
         public List<string> getMoves() {  return moves; }
         public string getGamestate() 
         {
