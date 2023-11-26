@@ -1,4 +1,6 @@
 ﻿using Raylib_cs;
+using System.ComponentModel.DataAnnotations;
+using System.Net.Http.Headers;
 using System.Numerics;
 
 namespace ThreeDimensionalChess
@@ -114,8 +116,26 @@ namespace ThreeDimensionalChess
             Rectangle backButton = new Rectangle(UIConstants.windowWidth - 85, UIConstants.windowHeight - 85, 75, 75);
             // -- Create Player Values --
             string entryStr = "";
-            Rectangle finaliseNewPlayerButton = new Rectangle(350, 500, 300, 100);
-            Rectangle entryBox = new Rectangle(250, 390, 500, 100);
+            Rectangle finaliseNewPlayerButton = new Rectangle(350, 300, 300, 100);
+            Rectangle entryBox = new Rectangle(250, 190, 500, 100);
+            // -- New / Load Game Choice Menu --
+            Rectangle newGame = new Rectangle(400, 225, 200, 75);
+            Rectangle loadGame = new Rectangle(400, 310, 200, 75);
+            // -- New Game Menu --
+            Rectangle whitePlayerDropDown = new Rectangle(10, 150, 200, 50);
+            Rectangle addWhitePlayer = new Rectangle(220, 150, 50, 50);
+            int whitePlayerID = 0;
+            Rectangle blackPlayerDropDown = new Rectangle(790, 150, 200, 50);
+            Rectangle addBlackPlayer = new Rectangle(730, 150, 50, 50);
+            int blackPlayerID = 0;
+            Rectangle undoMovesTickbox = new Rectangle(10, 410, 75, 75);
+            Rectangle gameNameEntryBox = new Rectangle(250, 410, 500, 100);
+            Rectangle startGameButton = new Rectangle(350, 520, 300, 100);
+            bool gameCanStart = false;
+            bool undoMovesChoice = true;
+            // when -1, drop down is closed
+            int whitePlayerListIndex = 0;
+            int blackPlayerListIndex = -1;
             // -- Game UI 2D Rectangles --
             Rectangle frontButton = new Rectangle(10, 10, 200, 75);
             Rectangle topButton = new Rectangle(10, 95, 200, 75);
@@ -139,7 +159,7 @@ namespace ThreeDimensionalChess
                             exitButtonClicked = Raylib.CheckCollisionPointRec(mousePos, exitButton);
                             bool playButtonClicked = Raylib.CheckCollisionPointRec(mousePos, playButton);
                             bool playersButtonClicked = Raylib.CheckCollisionPointRec(mousePos, playerButton);
-                            if (playButtonClicked) { mode = (int)UIModes.GameUI2D; game = new Chess(1, 2); }
+                            if (playButtonClicked) { mode = (int)UIModes.NewLoadChoice; }
                             if (playersButtonClicked) { mode = (int)UIModes.PlayersList; }
                         }
                         break;
@@ -198,7 +218,7 @@ namespace ThreeDimensionalChess
 
                             if (createPlayerPressed) { mode = (int)UIModes.CreatePlayer; lastMode = (int)UIModes.PlayersList; }
                             if(deletePlayerPressed && selectedPlayerID != -1) { database.deletePlayer(selectedPlayerID); selectedPlayerID = -1; }
-                            if (backButtonPressed) { mode = (int)UIModes.MainMenu; }
+                            if (backButtonPressed) { mode = (int)UIModes.MainMenu; playerListIndex = 0; }
                         }
                         //use arrow keys to move up or down table
                         if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN))
@@ -249,6 +269,31 @@ namespace ThreeDimensionalChess
                             {
                                 entryStr = entryStr.Substring(0, entryStr.Length - 1);
                             }
+                        }
+                        //had to put this here as it wouldn't work as a composite eval with the button bool above for some reason
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
+                        {
+                            if (entryStr != "")
+                            {
+                                database.addPlayer(entryStr);
+                                mode = lastMode;
+                                lastMode = 0;
+                                entryStr = "";
+                            }
+                        }
+                        break;
+                    case (int)UIModes.NewLoadChoice:
+                        if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
+                        {
+                            Vector2 mousePos = Raylib.GetMousePosition();
+
+                            bool newGameSelected = Raylib.CheckCollisionPointRec(mousePos, newGame);
+                            bool loadGameSelected = Raylib.CheckCollisionPointRec(mousePos, loadGame);
+                            bool backButtonPressed = Raylib.CheckCollisionPointRec(mousePos, backButton);
+
+                            if (newGameSelected) { mode = (int)UIModes.NewGameMenu; }
+                            if (loadGameSelected) { mode = (int)UIModes.GamesList; }
+                            if (backButtonPressed) { mode = (int)UIModes.MainMenu; }
                         }
                         break;
                     case (int)UIModes.GameUI2D:
@@ -322,10 +367,22 @@ namespace ThreeDimensionalChess
                         break;
                     case (int)UIModes.PlayersList:
                         playersList = updatePlayersTable(playerListIndex, database, sortMode, sortOrder);
-                        updatePlayersListButtons(deletePlayerButton, newPlayerButton, backButton);
+                        updatePlayersListButtons(deletePlayerButton, newPlayerButton, backButton, "Delete");
                         break;
                     case (int)UIModes.CreatePlayer:
                         updateCreatePlayer(entryStr, entryBox, finaliseNewPlayerButton, backButton);
+                        break;
+                    case (int)UIModes.NewLoadChoice:
+                        updateNewLoadButtons(newGame, loadGame, backButton);
+                        break;
+                    case (int)UIModes.NewGameMenu:
+                        //if both players have chosen non identical profiles the game start button becomes available
+                        if (whitePlayerID != blackPlayerID && whitePlayerID != 0 && blackPlayerID != 0)
+                        {
+                            gameCanStart = true;
+                        }
+                        updateNewGameButtons(undoMovesTickbox, gameNameEntryBox, startGameButton, backButton, entryStr, gameCanStart, undoMovesChoice);
+                        updatePlayerNamesNewGame(whitePlayerDropDown, blackPlayerDropDown, whitePlayerID, blackPlayerID, addWhitePlayer, addBlackPlayer, whitePlayerListIndex, blackPlayerListIndex, database);
                         break;
                     case (int)UIModes.GameUI2D:
                         int state = game.getGamestate();
@@ -428,10 +485,10 @@ namespace ThreeDimensionalChess
             return players;
         }
 
-        static void updatePlayersListButtons(Rectangle delete, Rectangle create, Rectangle back)
+        static void updatePlayersListButtons(Rectangle func, Rectangle create, Rectangle back, string funcText)
         {
-            Raylib.DrawRectangleLinesEx(delete, 1, Color.BLACK);
-            Raylib.DrawText("Delete", (int)delete.X + 25, (int)delete.Y + 25, 30, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(func, 1, Color.BLACK);
+            Raylib.DrawText(funcText, (int)func.X + 25, (int)func.Y + 25, 30, Color.BLACK);
             Raylib.DrawRectangleLinesEx(create, 1, Color.BLACK);
             Raylib.DrawText("Add Player", (int)create.X + 10, (int)create.Y + 25, 30, Color.BLACK);
             Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
@@ -441,12 +498,76 @@ namespace ThreeDimensionalChess
         
         static void updateCreatePlayer(string inp, Rectangle entry, Rectangle doneButton, Rectangle back)
         {
+            Raylib.DrawText("Enter player name:", (int)entry.X, (int)entry.Y - 31, 30, Color.BLACK);
             Raylib.DrawRectangleLinesEx(entry, 1, Color.BLACK);
-            Raylib.DrawText(inp, (int)entry.X + 5, (int)entry.Y + 50, 30, Color.BLACK);
+            //show input text as user types it
+            Raylib.DrawText(inp, (int)entry.X + 5, (int)entry.Y + 40, 40, Color.BLACK);
             Raylib.DrawRectangleLinesEx(doneButton, 1, Color.BLACK);
-            Raylib.DrawText("Add Player", (int)doneButton.X + 40, (int)doneButton.Y + 27, 40, Color.BLACK);
+            Raylib.DrawText("Confirm", (int)doneButton.X + 70, (int)doneButton.Y + 27, 40, Color.BLACK);
             Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
             Raylib.DrawTriangle(new Vector2(back.X + 70, back.Y + 5), new Vector2(back.X + 5, back.Y + (75 / 2)), new Vector2(back.X + 70, back.Y + 70), Color.BLACK);
+        }
+
+        static void updateNewLoadButtons(Rectangle create, Rectangle load, Rectangle back)
+        {
+            Raylib.DrawRectangleLinesEx(create, 1, Color.BLACK);
+            Raylib.DrawText("New Game", (int)create.X + 25, (int)create.Y + 23, 30, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(load, 1, Color.BLACK);
+            Raylib.DrawText("Load Game", (int)load.X + 25, (int)load.Y + 23, 30, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
+            Raylib.DrawTriangle(new Vector2(back.X + 70, back.Y + 5), new Vector2(back.X + 5, back.Y + (75 / 2)), new Vector2(back.X + 70, back.Y + 70), Color.BLACK);
+        }
+
+        static void updateNewGameButtons(Rectangle undoMoves, Rectangle entry, Rectangle start, Rectangle back, string inp, bool canStart, bool undoMovesChoice)
+        {
+            Raylib.DrawRectangleLinesEx(undoMoves, 1, Color.BLACK);
+            if(undoMovesChoice)
+            {
+                //show that the box has been selected
+                Raylib.DrawLine((int)undoMoves.X, (int)undoMoves.Y, (int)undoMoves.X + 75, (int)undoMoves.Y + 75, Color.BLACK);
+                Raylib.DrawLine((int)undoMoves.X, (int)undoMoves.Y + 75, (int)undoMoves.X + 75, (int)undoMoves.Y, Color.BLACK);
+            }
+            Raylib.DrawRectangleLinesEx(entry, 1, Color.BLACK);
+            //show input text as user types it
+            Raylib.DrawText(inp, (int)entry.X + 5, (int)entry.Y + 40, 40, Color.BLACK);
+            Color startGameCol = Color.BLACK;
+            if (!canStart)
+            {
+                startGameCol = Color.GRAY;
+            }
+            Raylib.DrawRectangleLinesEx(start, 1, startGameCol);
+            Raylib.DrawText("Start Game", (int)start.X + 40, (int)start.Y + 27, 40, startGameCol);
+            Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
+            Raylib.DrawTriangle(new Vector2(back.X + 70, back.Y + 5), new Vector2(back.X + 5, back.Y + (75 / 2)), new Vector2(back.X + 70, back.Y + 70), Color.BLACK);
+        }
+
+        static void updatePlayerNamesNewGame(Rectangle whiteBase, Rectangle blackBase, int whitePlayer, int blackPlayer, Rectangle addWhite, Rectangle addBlack, int whiteListIndex, int blackListIndex, DatabaseHandler db) 
+        {
+            List<Player> players = db.getPlayers();
+            Raylib.DrawRectangleLinesEx(whiteBase, 1, Color.BLACK);
+            //if a player has been selected write their name in
+            if(whitePlayer > 0)
+            {
+                Player p = db.getPlayer(whitePlayer);
+                Raylib.DrawText(p.getName(), 15, 23 + (int)whiteBase.Y, 30, Color.BLACK);
+            }
+            int limit = 5;
+            if(players.Count() < limit) { limit = players.Count(); }
+            //drop down menu here
+            if(whiteListIndex != -1)
+            {
+                for(int y = 1; y < limit; y++)
+                {
+                    if(y + whiteListIndex < players.Count()) 
+                    {
+                        string playerName = players[y - 1 + whiteListIndex].getName();
+                        if(playerName.Length > 11) { playerName = playerName.Substring(0, 11); }
+                        Raylib.DrawRectangleLinesEx(new Rectangle(whiteBase.X, whiteBase.Y + (y*50), whiteBase.Width, whiteBase.Height), 1, Color.BLACK);
+                        Raylib.DrawText(playerName, 15, (int)whiteBase.Y + 10 + (y * 50), 30, Color.BLACK);
+                    }
+                }
+            }
+            
         }
 
         static void updateBoard(Chess game, List<Texture2D> textures)
