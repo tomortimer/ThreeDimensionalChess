@@ -162,7 +162,7 @@ namespace ThreeDimensionalChess
                 if (left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getTotalWins() <= right[0].getTotalWins())
+                    if (left[0].getWinrate() <= right[0].getWinrate())
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);

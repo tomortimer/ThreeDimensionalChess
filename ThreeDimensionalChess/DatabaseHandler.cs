@@ -31,7 +31,8 @@ CREATE TABLE player (
     name TEXT NOT NULL,
     whiteLosses INTEGER NOT NULL,
     blackLosses INTEGER NOT NULL,
-    draws INTEGER NOT NULL,
+    whiteDraws INTEGER NOT NULL,
+    blackDraws INTEGER NOT NULL,
     whiteWins INTEGER NOT NULL,
     blackWins INTEGER NOT NULL,
     date DATE NOT NULL
@@ -47,11 +48,11 @@ CREATE TABLE game (
     blackPlayerID INTEGER NOT NULL
 );
 
-INSERT INTO player (name, whiteLosses, blackLosses, draws, whiteWins, blackWins, date) 
-VALUES ('testPlayer1', 0, 0, 0, 0, 0, $date);
+INSERT INTO player (name, whiteLosses, blackLosses, whiteDraws, blackDraws, whiteWins, blackWins, date) 
+VALUES ('testPlayer1', 0, 0, 0, 0, 0, 0, $date);
 
-INSERT INTO player (name, whiteLosses, blackLosses, draws, whiteWins, blackWins, date) 
-VALUES ('testPlayer2', 0, 0, 0, 0, 0, $date);";
+INSERT INTO player (name, whiteLosses, blackLosses, whiteDraws, blackDraws, whiteWins, blackWins, date) 
+VALUES ('testPlayer2', 0, 0, 0, 0, 0, 0, $date);";
             comm.Parameters.AddWithValue("$date", DateTime.Today);
             comm.ExecuteNonQuery();
             dbConnection.Close();
@@ -66,8 +67,8 @@ VALUES ('testPlayer2', 0, 0, 0, 0, 0, $date);";
             //enter command text
             comm.CommandText = 
                 @"
-INSERT INTO player (name, whiteLosses, blackLosses, draws, whiteWins, blackWins, date) 
-VALUES ($name, 0, 0, 0, 0, 0, $date);";
+INSERT INTO player (name, whiteLosses, blackLosses, whiteDraws, blackDraws, whiteWins, blackWins, date) 
+VALUES ($name, 0, 0, 0, 0, 0, 0, $date);";
             comm.Parameters.AddWithValue("$name", name);
             comm.Parameters.AddWithValue("$date", DateTime.Today);
 
@@ -93,11 +94,12 @@ VALUES ($name, 0, 0, 0, 0, 0, $date);";
                 string name = reader.GetString(1);
                 int whiteLosses = reader.GetInt32(2);
                 int blackLosses = reader.GetInt32(3);
-                int draws = reader.GetInt32(4);
-                int whiteWins = reader.GetInt32(5);
-                int blackWins = reader.GetInt32(6);
-                DateTime joinDate = reader.GetDateTime(7);
-                Player tmp = new Player(ID, name, whiteLosses, blackLosses, draws, whiteWins, blackWins, joinDate);
+                int whiteDraws = reader.GetInt32(4);
+                int blackDraws = reader.GetInt32(5);
+                int whiteWins = reader.GetInt32(6);
+                int blackWins = reader.GetInt32(7);
+                DateTime joinDate = reader.GetDateTime(8);
+                Player tmp = new Player(ID, name, whiteLosses, blackLosses, whiteDraws, blackDraws, whiteWins, blackWins, joinDate);
                 ret.Add(tmp);
             }
             dbConnection.Close();
@@ -120,11 +122,12 @@ VALUES ($name, 0, 0, 0, 0, 0, $date);";
             string name = reader.GetString(1);
             int whiteLosses = reader.GetInt32(2);
             int blackLosses = reader.GetInt32(3);
-            int draws = reader.GetInt32(4);
-            int whiteWins = reader.GetInt32(5);
-            int blackWins = reader.GetInt32(6);
-            DateTime joinDate = reader.GetDateTime(7);
-            Player ret = new Player(ID, name, whiteLosses, blackLosses, draws, whiteWins, blackWins, joinDate);
+            int whiteDraws = reader.GetInt32(4);
+            int blackDraws = reader.GetInt32(5);
+            int whiteWins = reader.GetInt32(6);
+            int blackWins = reader.GetInt32(7);
+            DateTime joinDate = reader.GetDateTime(8);
+            Player ret = new Player(ID, name, whiteLosses, blackLosses, whiteDraws, blackDraws, whiteWins, blackWins, joinDate);
             dbConnection.Close();
 
             return ret;
@@ -138,13 +141,14 @@ VALUES ($name, 0, 0, 0, 0, 0, $date);";
 
             comm.CommandText = @"
 UPDATE player
-SET whiteLosses=$WHL, blackLosses=$BLL, draws=$D, whiteWins=$WHW, blackWins=$BLW
+SET whiteLosses=$WHL, blackLosses=$BLL, whiteDraws=$WHD, blackDraws=$BLD, whiteWins=$WHW, blackWins=$BLW
 WHERE playerID=$ID;";
 
             //load parameters from player obj
             comm.Parameters.AddWithValue("$WHL", p.getWhiteLosses());
             comm.Parameters.AddWithValue("$BLL", p.getBlackLosses());
-            comm.Parameters.AddWithValue("$D", p.getDraws());
+            comm.Parameters.AddWithValue("$WHD", p.getWhiteDraws());
+            comm.Parameters.AddWithValue("$BLD", p.getBlackDraws());
             comm.Parameters.AddWithValue("$WHW", p.getWhiteWins());
             comm.Parameters.AddWithValue("$BLW", p.getBlackWins());
             comm.Parameters.AddWithValue("$ID", p.getID());
@@ -176,6 +180,7 @@ DELETE FROM game WHERE whitePlayerID=$input OR blackPlayerID=$input;
             catch(Exception e)
             {
                 //probably expecting an SQLLogic or SQLArgument exception here
+                Console.WriteLine("Experienced Error: "+e.Message);
                 ret = false;
             }
             dbConnection.Close();

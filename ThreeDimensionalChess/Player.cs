@@ -12,19 +12,21 @@ namespace ThreeDimensionalChess
         private string name;
         private int whiteLosses;
         private int blackLosses;
-        private int draws;
+        private int whiteDraws;
+        private int blackDraws;
         private int whiteWins;
         private int blackWins;
         private DateTime joinDate;
         private int colour;
 
-        public Player(int IDInp, string nameInp, int whiteLossesInp, int blackLossesInp, int drawsInp, int whiteWinsInp, int blackWinsInp, DateTime joinDateInp)
+        public Player(int IDInp, string nameInp, int whiteLossesInp, int blackLossesInp, int whiteDrawsInp, int blackDrawsInp, int whiteWinsInp, int blackWinsInp, DateTime joinDateInp)
         {
             ID = IDInp;
             name = nameInp;
             whiteLosses = whiteLossesInp;
             blackLosses = blackLossesInp;
-            draws = drawsInp;
+            whiteDraws = whiteDrawsInp;
+            blackDraws = blackDrawsInp;
             whiteWins = whiteWinsInp;
             blackWins = blackWinsInp;
             joinDate = joinDateInp;
@@ -36,7 +38,9 @@ namespace ThreeDimensionalChess
         public string getName() { return name; }
         public int getWhiteLosses() { return whiteLosses; }
         public int getBlackLosses() { return blackLosses; }
-        public int getDraws() { return draws; }
+        public int getDraws() { return whiteDraws+blackDraws; }
+        public int getWhiteDraws() { return whiteDraws; }
+        public int getBlackDraws() { return blackDraw; }
         public int getWhiteWins() { return whiteWins; }
         public int getBlackWins() { return blackWins; }
         public int getTotalWins() {  return blackWins + whiteWins; }
@@ -48,8 +52,8 @@ namespace ThreeDimensionalChess
             int WR;
             try 
             { 
-                WR = (whiteWins + blackWins) / (whiteLosses + blackLosses + whiteWins + blackWins + draws); 
-            } catch(DivideByZeroException e)
+                WR = (whiteWins + blackWins) / (whiteLosses + blackLosses + whiteWins + blackWins + whiteDraws + blackDraws); 
+            } catch(DivideByZeroException)
             {
                 WR = 0;
             }
@@ -66,8 +70,8 @@ namespace ThreeDimensionalChess
             int WR;
             try
             {
-                WR = whiteWins / whiteLosses;
-            }catch(DivideByZeroException e)
+                WR = whiteWins / (whiteLosses + whiteDraws);
+            }catch(DivideByZeroException)
             {
                 if (whiteWins > 0) { WR = 100; }
                 else { WR = 0; }
@@ -80,8 +84,8 @@ namespace ThreeDimensionalChess
             int WR;
             try
             {
-                WR = blackWins / blackLosses;
-            }catch(DivideByZeroException e)
+                WR = blackWins / (blackLosses + blackDraws);
+            }catch(DivideByZeroException)
             {
                 if (blackWins > 0) { WR = 100; }
                 else { WR = 0; }
@@ -89,6 +93,6 @@ namespace ThreeDimensionalChess
             return WR;
         }
 
-        public int getTotalGames() { return whiteLosses + whiteWins + blackWins + blackLosses + draws; }
+        public int getTotalGames() { return whiteLosses + whiteWins + blackWins + blackLosses + whiteDraws + blackDraws; }
     }
 }
