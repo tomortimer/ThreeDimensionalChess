@@ -310,6 +310,7 @@ WHERE gameID=$ID";
             catch (Exception e)
             {
                 //probably expecting an SQLLogic or SQLArgument exception here
+                Console.WriteLine("Experienced Error: " + e.Message);
                 ret = false;
             }
             dbConnection.Close();

@@ -134,7 +134,7 @@ namespace ThreeDimensionalChess
             bool gameCanStart = false;
             bool undoMovesChoice = true;
             // when -1, drop down is closed
-            int whitePlayerListIndex = 0;
+            int whitePlayerListIndex = -1;
             int blackPlayerListIndex = -1;
             // -- Game UI 2D Rectangles --
             Rectangle frontButton = new Rectangle(10, 10, 200, 75);
@@ -294,6 +294,17 @@ namespace ThreeDimensionalChess
                             if (newGameSelected) { mode = (int)UIModes.NewGameMenu; }
                             if (loadGameSelected) { mode = (int)UIModes.GamesList; }
                             if (backButtonPressed) { mode = (int)UIModes.MainMenu; }
+                        }
+                        break;
+                    case (int)UIModes.NewGameMenu:
+                        if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
+                        {
+                            Vector2 mousePos = Raylib.GetMousePosition();
+
+                            bool whiteDropDownSelected = Raylib.CheckCollisionPointRec(mousePos, whitePlayerDropDown);
+                            //toggle drop down menu
+                            if(whitePlayerListIndex >= 0) { whitePlayerListIndex = -1; }
+                            else { whitePlayerListIndex = 0; }
                         }
                         break;
                     case (int)UIModes.GameUI2D:
