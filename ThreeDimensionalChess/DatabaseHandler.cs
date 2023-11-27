@@ -59,7 +59,7 @@ VALUES ('testPlayer2', 0, 0, 0, 0, 0, 0, $date);";
             dbConnection.Close();
         }
 
-        public void addPlayer(string name)
+        public int addPlayer(string name)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
@@ -75,6 +75,13 @@ VALUES ($name, 0, 0, 0, 0, 0, 0, $date);";
 
             comm.ExecuteNonQuery();
             dbConnection.Close();
+
+            //once player is created need to return its ID to higher level
+            comm.CommandText = "SELECT * FROM player ORDER BY playerID DESC LIMIT 1;";
+            SQLiteDataReader reader = comm.ExecuteReader();
+            int ret = reader.GetInt32(0);
+
+            return ret;
         }
 
         public List<Player> getPlayers()
