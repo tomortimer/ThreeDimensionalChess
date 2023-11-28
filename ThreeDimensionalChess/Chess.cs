@@ -69,7 +69,7 @@ namespace ThreeDimensionalChess
             blackPlayer.setColour((int)Colours.Black);*/
             state = (int)Gamestates.Ongoing;
             //create game in database
-            ID = db.createGame(name, undoMoves);
+            ID = db.createGame(name, undoMoves, whiteID, blackID);
             //init gamerules
             changeBoardDir = true;
             //init viewport (as front view white)

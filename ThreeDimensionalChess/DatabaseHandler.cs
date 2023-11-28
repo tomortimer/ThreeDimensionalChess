@@ -200,21 +200,23 @@ DELETE FROM game WHERE whitePlayerID=$input OR blackPlayerID=$input;
             return ret;
         }
 
-        public int createGame(string name, bool undo)
+        public int createGame(string name, bool undo, int whiteID, int blackID)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
             SQLiteCommand comm = dbConnection.CreateCommand();
 
             comm.CommandText = @"
-INSERT INTO GAME (name, moveList, gamestate, lastAccessed, undoMoves) 
-VALUES ($name, $empty, $state, $date, $undo);";
+INSERT INTO GAME (name, moveList, gamestate, lastAccessed, whitePlayerID, blackPlayerID, undoMoves) 
+VALUES ($name, $empty, $state, $date, $white, $black, $undo);";
 
             //insert params
             comm.Parameters.AddWithValue("$name", name);
             comm.Parameters.AddWithValue("$empty", "");
             comm.Parameters.AddWithValue("$state", (int)Gamestates.Ongoing);
             comm.Parameters.AddWithValue("$date", DateTime.Today);
+            comm.Parameters.AddWithValue("$white", whiteID);
+            comm.Parameters.AddWithValue("$black", blackID);
             comm.Parameters.AddWithValue("$undo", undo);
 
             comm.ExecuteNonQuery();
@@ -222,6 +224,7 @@ VALUES ($name, $empty, $state, $date, $undo);";
             //once game is created need to return its ID to higher level
             comm.CommandText = "SELECT * FROM game ORDER BY gameID DESC LIMIT 1;";
             SQLiteDataReader reader = comm.ExecuteReader();
+            reader.Read();
             int ret = reader.GetInt32(0);
             reader.Close();
             dbConnection.Close();
