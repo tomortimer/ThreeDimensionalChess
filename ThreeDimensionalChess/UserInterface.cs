@@ -365,6 +365,14 @@ namespace ThreeDimensionalChess
                                 mode = (int)UIModes.CreatePlayer;
                             }
                             if (undoMovesTickboxPressed) { undoMovesChoice = !undoMovesChoice; }
+                            if (startButtonPressed)
+                            {
+                                if(whitePlayerID != blackPlayerID && whitePlayerID != 0 && blackPlayerID != 0)
+                                {
+                                    game = new Chess(whitePlayerID, blackPlayerID);
+                                    mode = (int)UIModes.GameUI2D;
+                                }
+                            }
                         }
                         //use arrow keys to move up or down selection - limit at ends of lists
                         if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN))
