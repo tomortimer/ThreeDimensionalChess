@@ -623,7 +623,7 @@ namespace ThreeDimensionalChess
             {
 
             }
-            if(sortOrder == 1) { sorter.ReverseGames(games); }
+            if(sortOrder == 1) { sorter.Reverse(games); }
             return games;
         }
         
