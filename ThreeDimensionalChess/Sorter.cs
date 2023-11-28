@@ -320,5 +320,21 @@ namespace ThreeDimensionalChess
             }
             return ret;
         }
+
+        public List<GameInfo> Reverse(List<GameInfo> list)
+        {
+            //reverse a list simply, using a stack
+            Stack<GameInfo> stck = new Stack<GameInfo>();
+            for (int x = 0; x < list.Count(); x++)
+            {
+                stck.Push(list[x]);
+            }
+            List<GameInfo> ret = new List<GameInfo>();
+            for (int x = 0; x < list.Count(); x++)
+            {
+                ret.Add(stck.Pop());
+            }
+            return ret;
+        }
     }
 }

@@ -618,7 +618,12 @@ namespace ThreeDimensionalChess
         static List<GameInfo> updateGamesTable(int startIndex, int gameID, string sortMode, int sortOrder, DatabaseHandler db)
         {
             List<GameInfo> games = db.getGames();
+            Sorter sorter = new Sorter();
+            switch (sortMode)
+            {
 
+            }
+            if(sortOrder == 1) { sorter.ReverseGames(games); }
             return games;
         }
         
