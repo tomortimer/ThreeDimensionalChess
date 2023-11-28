@@ -46,9 +46,10 @@ namespace ThreeDimensionalChess
         private int viewLayer;
         //extra stuff
         DatabaseHandler db;
+        private int ID;
         private int state;
 
-        public Chess(int whiteID, int blackID)
+        public Chess(int whiteID, int blackID, string name, bool undoMoves)
         {
             //init variables to defaults - starting turn, starting check and gamestate & create board
             playerTurn = (int)Colours.White;
@@ -67,6 +68,8 @@ namespace ThreeDimensionalChess
             blackPlayer = new Player(0, "name", 0, 0, 0, 0, 0, DateTime.Today);
             blackPlayer.setColour((int)Colours.Black);*/
             state = (int)Gamestates.Ongoing;
+            //create game in database
+            ID = db.createGame(name, undoMoves);
             //init gamerules
             changeBoardDir = true;
             //init viewport (as front view white)

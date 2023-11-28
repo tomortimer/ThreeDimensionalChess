@@ -369,7 +369,9 @@ namespace ThreeDimensionalChess
                             {
                                 if(whitePlayerID != blackPlayerID && whitePlayerID != 0 && blackPlayerID != 0)
                                 {
-                                    game = new Chess(whitePlayerID, blackPlayerID);
+                                    string gameName = entryStr;
+                                    if (entryStr == "") { entryStr = database.getPlayer(whitePlayerID).getName() + database.getPlayer(blackPlayerID).getName(); }
+                                    game = new Chess(whitePlayerID, blackPlayerID, gameName, undoMovesChoice);
                                     mode = (int)UIModes.GameUI2D;
                                 }
                             }
