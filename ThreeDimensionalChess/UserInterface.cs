@@ -118,6 +118,7 @@ namespace ThreeDimensionalChess
             string entryStr = "";
             Rectangle finaliseNewPlayerButton = new Rectangle(350, 300, 300, 100);
             Rectangle entryBox = new Rectangle(250, 190, 500, 100);
+            int newPlayerID = 0;
             // -- New / Load Game Choice Menu --
             Rectangle newGame = new Rectangle(400, 225, 200, 75);
             Rectangle loadGame = new Rectangle(400, 310, 200, 75);
@@ -135,6 +136,8 @@ namespace ThreeDimensionalChess
             bool undoMovesChoice = true;
             int whitePlayerListIndex = -1; // when -1, drop down is closed
             int blackPlayerListIndex = -1;
+            bool newBlackFlag = false;
+            bool newWhiteFlag = false;
             // -- Game UI 2D Rectangles --
             Rectangle frontButton = new Rectangle(10, 10, 200, 75);
             Rectangle topButton = new Rectangle(10, 95, 200, 75);
@@ -241,13 +244,15 @@ namespace ThreeDimensionalChess
                                 //shouldn't reach this without having moved from another mode so move back to that
                                 if (entryStr != "") 
                                 { 
-                                    database.addPlayer(entryStr); 
+                                    int ID = database.addPlayer(entryStr); 
                                     mode = lastMode; 
                                     lastMode = 0;
                                     entryStr = "";
+                                    if (newWhiteFlag) { whitePlayerID = ID; newWhiteFlag = false; }
+                                    else if (newBlackFlag) { blackPlayerID = ID; newBlackFlag = false; }
                                 }
                             }
-                            if (backButtonPressed) { mode = lastMode; lastMode = 0; }
+                            if (backButtonPressed) { mode = lastMode; lastMode = 0; newBlackFlag = false; newWhiteFlag = false; }
                         }
 
                         //raylib uses an input queue for keys(if they are occuring on the same frame), parse this here
@@ -274,10 +279,12 @@ namespace ThreeDimensionalChess
                         {
                             if (entryStr != "")
                             {
-                                database.addPlayer(entryStr);
+                                int ID = database.addPlayer(entryStr);
                                 mode = lastMode;
                                 lastMode = 0;
                                 entryStr = "";
+                                if (newWhiteFlag) { whitePlayerID = ID; newWhiteFlag = false; }
+                                else if (newBlackFlag) { blackPlayerID = ID; newBlackFlag = false; }
                             }
                         }
                         break;
@@ -306,7 +313,7 @@ namespace ThreeDimensionalChess
                             {
                                 int row = ((int)mousePos.Y - 200) / 50;
                                 row += whitePlayerListIndex;
-                                if (row < playersList.Count())
+                                if (row < playersList.Count() && row != -1)
                                 {
                                     whitePlayerID = playersList[row].getID();
                                 }
@@ -315,8 +322,27 @@ namespace ThreeDimensionalChess
                             if (whitePlayerListIndex >= 0) { whitePlayerListIndex = -1; }
                             else if (whiteDropDownSelected) { whitePlayerListIndex = 0; }
 
+                            //repeat for black
+                            bool blackDropDownSelected = Raylib.CheckCollisionPointRec(mousePos, blackPlayerDropDown);
+                            if(mousePos.X >= 690 && mousePos.X <= 990 && mousePos.Y >= 200 && mousePos.Y <= 400 && blackPlayerListIndex != -1)
+                            {
+                                int row = ((int)mousePos.Y - 200) / 50;
+                                row += blackPlayerListIndex;
+                                if (row < playersList.Count() && row != -1)
+                                {
+                                    blackPlayerID = playersList[row].getID();
+                                }
+                            }
+                            //toggle drop down
+                            if(blackPlayerListIndex >= 0) { blackPlayerListIndex = -1; }
+                            else if (blackDropDownSelected) { blackPlayerListIndex = 0; }
+
                             //process other buttons
                             bool backButtonPressed = Raylib.CheckCollisionPointRec(mousePos, backButton);
+                            bool addBlackPlayerPressed = Raylib.CheckCollisionPointRec(mousePos, addBlackPlayer);
+                            bool addWhitePlayerPressed = Raylib.CheckCollisionPointRec(mousePos, addWhitePlayer);
+                            bool undoMovesTickboxPressed = Raylib.CheckCollisionPointRec(mousePos, undoMovesTickbox);
+                            bool startButtonPressed = Raylib.CheckCollisionPointRec(mousePos, startGameButton);
                             if (backButtonPressed)
                             {
                                 whitePlayerID = 0;
@@ -324,6 +350,51 @@ namespace ThreeDimensionalChess
                                 whitePlayerListIndex = -1;
                                 blackPlayerListIndex = -1;
                                 mode = (int)UIModes.NewLoadChoice;
+                            }
+                            if (addBlackPlayerPressed)
+                            {
+                                //if adding a new player, raise flag to automatically assign id
+                                lastMode = (int)UIModes.NewGameMenu;
+                                newBlackFlag = true;
+                                mode = (int)UIModes.CreatePlayer;
+                            }
+                            if (addWhitePlayerPressed)
+                            {
+                                lastMode = (int)UIModes.NewGameMenu;
+                                newWhiteFlag = true;
+                                mode = (int)UIModes.CreatePlayer;
+                            }
+                            if (undoMovesTickboxPressed) { undoMovesChoice = !undoMovesChoice; }
+                        }
+                        //use arrow keys to move up or down selection - limit at ends of lists
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN))
+                        {
+                            if (whitePlayerListIndex < playersList.Count() - 1 && whitePlayerListIndex > -1) { whitePlayerListIndex++; }
+                            else if(blackPlayerListIndex < playersList.Count() - 1 && blackPlayerListIndex > -1) { blackPlayerListIndex++; } 
+                        }
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP))
+                        {
+                            if (whitePlayerListIndex > 0) { whitePlayerListIndex--; }
+                            else if(blackPlayerListIndex > 0) { blackPlayerListIndex--; }
+                        }
+
+                        //raylib uses an input queue for keys(if they are occuring on the same frame), parse this here
+                        keyPressed = Raylib.GetCharPressed();
+                        while (keyPressed > 0)
+                        {
+                            //only accept character keys, limit names to 20 char (only 10 is displayed in table anyway)
+                            if (keyPressed > 31 && keyPressed < 126 && entryStr.Length < 20)
+                            {
+                                entryStr += (char)keyPressed;
+                            }
+                            keyPressed = Raylib.GetCharPressed();
+                        }
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_BACKSPACE))
+                        {
+                            if (entryStr.Length <= 1) { entryStr = ""; }
+                            else
+                            {
+                                entryStr = entryStr.Substring(0, entryStr.Length - 1);
                             }
                         }
                         break;
@@ -552,6 +623,7 @@ namespace ThreeDimensionalChess
         static void updateNewGameButtons(Rectangle undoMoves, Rectangle entry, Rectangle start, Rectangle back, string inp, bool canStart, bool undoMovesChoice)
         {
             Raylib.DrawRectangleLinesEx(undoMoves, 1, Color.BLACK);
+            Raylib.DrawText("Undo Moves?", (int)undoMoves.X, (int)undoMoves.Y + (int)undoMoves.Height + 2, 30, Color.BLACK);
             if(undoMovesChoice)
             {
                 //show that the box has been selected
@@ -559,6 +631,7 @@ namespace ThreeDimensionalChess
                 Raylib.DrawLine((int)undoMoves.X, (int)undoMoves.Y + 75, (int)undoMoves.X + 75, (int)undoMoves.Y, Color.BLACK);
             }
             Raylib.DrawRectangleLinesEx(entry, 1, Color.BLACK);
+            Raylib.DrawText("Enter game name:", (int)entry.X, (int)entry.Y - 31, 30, Color.BLACK);
             //show input text as user types it
             Raylib.DrawText(inp, (int)entry.X + 5, (int)entry.Y + 40, 40, Color.BLACK);
             Color startGameCol = Color.BLACK;
@@ -576,47 +649,49 @@ namespace ThreeDimensionalChess
         {
             List<Player> players = db.getPlayers();
             Raylib.DrawRectangleLinesEx(whiteBase, 1, Color.BLACK);
+            Raylib.DrawText("Select white player:", (int)whiteBase.X + 2, (int)whiteBase.Y - 31, 30, Color.BLACK);
             //if a player has been selected write their name in
             if(whitePlayer > 0)
             {
                 Player p = db.getPlayer(whitePlayer);
                 Raylib.DrawText(p.getName(), 15, 10 + (int)whiteBase.Y, 30, Color.BLACK);
             }
-            int limit = 5;
+            int limit = 4;
             if(players.Count() < limit) { limit = players.Count(); }
             //drop down menu here
             if(whiteListIndex != -1)
             {
-                for(int y = 1; y < limit; y++)
+                for(int y = 0; y < limit; y++)
                 {
                     if(y + whiteListIndex < players.Count()) 
                     {
-                        string playerName = players[y - 1 + whiteListIndex].getName();
+                        string playerName = players[y + whiteListIndex].getName();
                         if(playerName.Length > 15) { playerName = playerName.Substring(0, 15); }
-                        Raylib.DrawRectangleLinesEx(new Rectangle(whiteBase.X, whiteBase.Y + (y*50), whiteBase.Width, whiteBase.Height), 1, Color.BLACK);
-                        Raylib.DrawText(playerName, 15, (int)whiteBase.Y + 10 + (y * 50), 30, Color.BLACK);
+                        Raylib.DrawRectangleLinesEx(new Rectangle(whiteBase.X, whiteBase.Y + 50 + (y*50), whiteBase.Width, whiteBase.Height), 1, Color.BLACK);
+                        Raylib.DrawText(playerName, 15, (int)whiteBase.Y + 55 + (y * 50), 30, Color.BLACK);
                     }
                 }
             }
 
             //now repeat for black
             Raylib.DrawRectangleLinesEx(blackBase, 1, Color.BLACK);
+            Raylib.DrawText("Select black player:", (int)blackBase.X - 6, (int)blackBase.Y - 31, 30, Color.BLACK);
             if(blackPlayer > 0)
             {
-                Player p = db.getPlayer(blackPlayer);
-                Raylib.DrawText(p.getName(), (int)blackBase.X + 5, (int)blackBase.Y + 10, 30, Color.BLACK);
+                Player b = db.getPlayer(blackPlayer);
+                Raylib.DrawText(b.getName(), (int)blackBase.X + 5, (int)blackBase.Y + 10, 30, Color.BLACK);
             }
             if(players.Count() < limit) { limit = players.Count(); }
             if(blackListIndex != -1)
             {
-                for(int y = 1; y < limit; y++)
+                for(int y = 0; y < limit; y++)
                 {
                     if(y + blackListIndex < players.Count())
                     {
-                        string playerName = players[y - 1 + blackListIndex].getName();
+                        string playerName = players[y + blackListIndex].getName();
                         if(playerName.Length > 15) { playerName = playerName.Substring(0, 15); }
-                        Raylib.DrawRectangleLinesEx(new Rectangle(blackBase.X, blackBase.Y + (y * 50), blackBase.Width, blackBase.Height), 1, Color.BLACK);
-                        Raylib.DrawText(playerName, (int)blackBase.X + 5, (int)blackBase.Y + 10 + (y * 50), 30, Color.BLACK);
+                        Raylib.DrawRectangleLinesEx(new Rectangle(blackBase.X, blackBase.Y + 50 + (y * 50), blackBase.Width, blackBase.Height), 1, Color.BLACK);
+                        Raylib.DrawText(playerName, (int)blackBase.X + 5, (int)blackBase.Y + 55 + (y * 50), 30, Color.BLACK);
                     }
                 }
             }

@@ -74,12 +74,14 @@ VALUES ($name, 0, 0, 0, 0, 0, 0, $date);";
             comm.Parameters.AddWithValue("$date", DateTime.Today);
 
             comm.ExecuteNonQuery();
-            dbConnection.Close();
-
+            
             //once player is created need to return its ID to higher level
             comm.CommandText = "SELECT * FROM player ORDER BY playerID DESC LIMIT 1;";
             SQLiteDataReader reader = comm.ExecuteReader();
+            reader.Read();
             int ret = reader.GetInt32(0);
+            reader.Close();
+            dbConnection.Close();
 
             return ret;
         }
@@ -110,6 +112,7 @@ VALUES ($name, 0, 0, 0, 0, 0, 0, $date);";
                 Player tmp = new Player(ID, name, whiteLosses, blackLosses, whiteDraws, blackDraws, whiteWins, blackWins, joinDate);
                 ret.Add(tmp);
             }
+            reader.Close();
             dbConnection.Close();
 
             return ret;
@@ -136,6 +139,7 @@ VALUES ($name, 0, 0, 0, 0, 0, 0, $date);";
             int blackWins = reader.GetInt32(7);
             DateTime joinDate = reader.GetDateTime(8);
             Player ret = new Player(ID, name, whiteLosses, blackLosses, whiteDraws, blackDraws, whiteWins, blackWins, joinDate);
+            reader.Close();
             dbConnection.Close();
 
             return ret;
@@ -219,7 +223,7 @@ VALUES ($name, $empty, $state, $date, $undo);";
             comm.CommandText = "SELECT * FROM game ORDER BY gameID DESC LIMIT 1;";
             SQLiteDataReader reader = comm.ExecuteReader();
             int ret = reader.GetInt32(0);
-
+            reader.Close();
             dbConnection.Close();
             return ret;
         }
@@ -269,8 +273,9 @@ WHERE gameID=$ID";
                 GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID, undoMoves);
                 ret.Add(tmp);
             }
+            reader.Close();
             dbConnection.Close();
-
+            
             return ret;
         }
 
@@ -295,6 +300,7 @@ WHERE gameID=$ID";
             int blackID = reader.GetInt32(6);
             bool undoMoves = reader.GetBoolean(7);
             GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID, undoMoves);
+            reader.Close();
             dbConnection.Close();
 
             return tmp;
