@@ -138,6 +138,10 @@ namespace ThreeDimensionalChess
             int blackPlayerListIndex = -1;
             bool newBlackFlag = false;
             bool newWhiteFlag = false;
+            // -- Load Game Values --
+            List<GameInfo> games = new List<GameInfo>();
+            int gameListIndex = 0;
+            int selectedGameID = -1;
             // -- Game UI 2D Rectangles --
             Rectangle frontButton = new Rectangle(10, 10, 200, 75);
             Rectangle topButton = new Rectangle(10, 95, 200, 75);
@@ -367,7 +371,7 @@ namespace ThreeDimensionalChess
                             if (undoMovesTickboxPressed) { undoMovesChoice = !undoMovesChoice; }
                             if (startButtonPressed)
                             {
-                                if(whitePlayerID != blackPlayerID && whitePlayerID != 0 && blackPlayerID != 0)
+                                if(gameCanStart)
                                 {
                                     string gameName = entryStr;
                                     if (entryStr == "") { entryStr = database.getPlayer(whitePlayerID).getName() + database.getPlayer(blackPlayerID).getName(); }
@@ -493,8 +497,12 @@ namespace ThreeDimensionalChess
                         {
                             gameCanStart = true;
                         }
+                        else { gameCanStart = false; }
                         updateNewGameButtons(undoMovesTickbox, gameNameEntryBox, startGameButton, backButton, entryStr, gameCanStart, undoMovesChoice);
                         playersList = updatePlayerNamesNewGame(whitePlayerDropDown, blackPlayerDropDown, whitePlayerID, blackPlayerID, addWhitePlayer, addBlackPlayer, whitePlayerListIndex, blackPlayerListIndex, database);
+                        break;
+                    case (int)UIModes.GamesList:
+                        games = updateGamesTable(gameListIndex, selectedGameID, sortMode, sortOrder, database);
                         break;
                     case (int)UIModes.GameUI2D:
                         int state = game.getGamestate();
@@ -539,7 +547,6 @@ namespace ThreeDimensionalChess
                 case "name":
                     players = sorter.mergeSortString(players);
                     break;
-                //REALLY WEIRD DATE SORTING WORKED WITHOUT WRITING IT IN HERE
                 case "date":
                     players = sorter.mergeSortDate(players);
                     break;
@@ -606,6 +613,13 @@ namespace ThreeDimensionalChess
             Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
             //draw a little back icon triangle
             Raylib.DrawTriangle(new Vector2(back.X + 70, back.Y + 5), new Vector2(back.X + 5, back.Y + (75 / 2)), new Vector2(back.X + 70, back.Y + 70), Color.BLACK);
+        }
+        
+        static List<GameInfo> updateGamesTable(int startIndex, int gameID, string sortMode, int sortOrder, DatabaseHandler db)
+        {
+            List<GameInfo> games = db.getGames();
+
+            return games;
         }
         
         static void updateCreatePlayer(string inp, Rectangle entry, Rectangle doneButton, Rectangle back)
