@@ -32,6 +32,18 @@ namespace ThreeDimensionalChess
 
         public int getGameID() { return gameID; }
         public string getName() { return name; }
+        public string getWhitePlayerName()
+        {
+            DatabaseHandler db = new DatabaseHandler();
+            name = db.getPlayer(whitePlayerID).getName();
+            return name;
+        }
+        public string getBlackPlayerName()
+        {
+            DatabaseHandler db = new DatabaseHandler();
+            name = db.getPlayer(blackPlayerID).getName();
+            return name;
+        }
         public bool getUndoMoves() { return undoMoves; }
         public List<string> getMoves() {  return moves; }
         public string getGamestate() 
@@ -51,6 +63,12 @@ namespace ThreeDimensionalChess
                     break;
             }
             return ret;
+        }
+        public int getGamestateForComparison() 
+        { 
+            // return a -1 if game is ongoing in anyway
+            if(gamestate == (int)Gamestates.Ongoing || gamestate == (int)Gamestates.PendingPromo) return -1;
+            return gamestate; 
         }
         public int getGamestateAsInt() { return gamestate; }
         public DateTime getLastAccessed() { return lastAccessed; }

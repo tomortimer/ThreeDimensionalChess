@@ -622,7 +622,21 @@ namespace ThreeDimensionalChess
             Sorter sorter = new Sorter();
             switch (sortMode)
             {
-
+                case "name":
+                    games = sorter.mergeSortName(games);
+                    break;
+                case "date":
+                    games = sorter.mergeSortDate(games);
+                    break;
+                case "gamestate":
+                    games = sorter.mergeSortState(games);
+                    break;
+                case "white":
+                    games = sorter.mergeSortWhitePlayerName(games);
+                    break;
+                case "black":
+                    games = sorter.mergeSortBlackPlayerName(games);
+                    break;
             }
             if(sortOrder == 1) { sorter.Reverse(games); }
             //setup rectangles to be transformed
