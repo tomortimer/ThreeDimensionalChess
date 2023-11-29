@@ -632,11 +632,11 @@ namespace ThreeDimensionalChess
             Raylib.DrawText("Name", 15, 23, 30, Color.BLACK);
             Raylib.DrawLine(300, 10, 300, 660, Color.BLACK);
             Raylib.DrawText("Date", 205, 23, 30, Color.BLACK);
-            Raylib.DrawLine(500, 10, 500, 660, Color.BLACK);
+            Raylib.DrawLine(450, 10, 450, 660, Color.BLACK);
             Raylib.DrawText("State", 305, 23, 30, Color.BLACK);
-            Raylib.DrawLine(650, 10, 650, 660, Color.BLACK);
-            Raylib.DrawText("White", 505, 23, 30, Color.BLACK);
-            Raylib.DrawText("Black", 655, 23, 30, Color.BLACK);
+            Raylib.DrawLine(620, 10, 620, 660, Color.BLACK);
+            Raylib.DrawText("White", 455, 23, 30, Color.BLACK);
+            Raylib.DrawText("Black", 625, 23, 30, Color.BLACK);
             // draw outline
             Raylib.DrawRectangleLines(10, 10, 790, 50 + (12 * 50), Color.BLACK);
 
@@ -658,9 +658,11 @@ namespace ThreeDimensionalChess
                     string state = tmp.getGamestate();
                     Raylib.DrawText(state, 305, 23 + (y * 50), 30, Color.BLACK);
                     string white = db.getPlayer(tmp.getWhitePlayerID()).getName();
+                    if (white.Length > 10) { white = white.Substring(0, 10); }
                     string black = db.getPlayer(tmp.getBlackPlayerID()).getName();
-                    Raylib.DrawText(white, 505, 23 + (y * 50), 30, Color.BLACK);
-                    Raylib.DrawText(black, 655, 23 + (y * 50), 30, Color.BLACK);
+                    if (black.Length > 10) { black = black.Substring(0, 10); }
+                    Raylib.DrawText(white, 455, 23 + (y * 50), 30, Color.BLACK);
+                    Raylib.DrawText(black, 625, 23 + (y * 50), 30, Color.BLACK);
                 }
             }
             return games;
