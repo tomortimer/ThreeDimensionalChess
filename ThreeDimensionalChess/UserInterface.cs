@@ -1,5 +1,6 @@
 ﻿using Raylib_cs;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Metrics;
 using System.Net.Http.Headers;
 using System.Numerics;
 
@@ -624,6 +625,44 @@ namespace ThreeDimensionalChess
 
             }
             if(sortOrder == 1) { sorter.Reverse(games); }
+            //setup rectangles to be transformed
+            Rectangle baseRec = new Rectangle(10, 10, 790, 50);
+            //draw columns in here
+            Raylib.DrawLine(200, 10, 200, 660, Color.BLACK);
+            Raylib.DrawText("Name", 15, 23, 30, Color.BLACK);
+            Raylib.DrawLine(300, 10, 300, 660, Color.BLACK);
+            Raylib.DrawText("Date", 205, 23, 30, Color.BLACK);
+            Raylib.DrawLine(500, 10, 500, 660, Color.BLACK);
+            Raylib.DrawText("State", 305, 23, 30, Color.BLACK);
+            Raylib.DrawLine(650, 10, 650, 660, Color.BLACK);
+            Raylib.DrawText("White", 505, 23, 30, Color.BLACK);
+            Raylib.DrawText("Black", 655, 23, 30, Color.BLACK);
+            // draw outline
+            Raylib.DrawRectangleLines(10, 10, 790, 50 + (12 * 50), Color.BLACK);
+
+            for (int y = 0; y < (660 / 50); y++)
+            {
+                Raylib.DrawRectangleLinesEx(new Rectangle(baseRec.X, baseRec.Y + (y * 50), baseRec.Width, baseRec.Height), 1, Color.BLACK);
+                //fill in with values from table
+                if (y > 0 && startIndex + y - 1 < games.Count())
+                {
+
+                    GameInfo tmp = games[startIndex + y - 1];
+                    //using position values from columns drawn above
+                    string gameName = tmp.getName();
+                    //shorten name if it would write over column
+                    if (gameName.Length > 10) { gameName = gameName.Substring(0, 10); }
+                    Raylib.DrawText(gameName, 15, 23 + (y * 50), 30, Color.BLACK);
+                    DateOnly lastAccessed = DateOnly.FromDateTime(tmp.getLastAccessed());
+                    Raylib.DrawText(lastAccessed.ToString().Substring(0, lastAccessed.ToString().Length - 5), 205, 23 + (y * 50), 30, Color.BLACK);
+                    string state = tmp.getGamestate();
+                    Raylib.DrawText(state, 305, 23 + (y * 50), 30, Color.BLACK);
+                    string white = db.getPlayer(tmp.getWhitePlayerID()).getName();
+                    string black = db.getPlayer(tmp.getBlackPlayerID()).getName();
+                    Raylib.DrawText(white, 505, 23 + (y * 50), 30, Color.BLACK);
+                    Raylib.DrawText(black, 655, 23 + (y * 50), 30, Color.BLACK);
+                }
+            }
             return games;
         }
         
