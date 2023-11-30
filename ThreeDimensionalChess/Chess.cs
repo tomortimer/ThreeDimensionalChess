@@ -35,6 +35,7 @@ namespace ThreeDimensionalChess
         public int playerTurn;
         private bool inCheck;
         private bool changeBoardDir;
+        private bool undoMovesAllowed;
         private Board board;
         private Stack<string> moveList;
         private int pendingMove;
@@ -70,13 +71,48 @@ namespace ThreeDimensionalChess
             state = (int)Gamestates.Ongoing;
             //create game in database
             ID = db.createGame(name, undoMoves, whiteID, blackID);
-            //init gamerules
+            //init games rules
+            undoMovesAllowed = undoMoves;
             changeBoardDir = true;
             //init viewport (as front view white)
             viewLayer = 0;
             viewDir = 0;
             viewport = new int[64];
             updateViewport();
+        }
+
+        //constructor for loading games from GameInfo
+        public Chess(GameInfo info)
+        {
+            playerTurn = (int)Colours.White;
+            board = new Board();
+            inCheck = false;
+            moveList = new Stack<string>();
+            pendingMove = 0;
+            db = new DatabaseHandler();
+            //load values from info obj
+            ID = info.getGameID();
+            undoMovesAllowed = info.getUndoMoves();
+            state = info.getGamestateAsInt();
+            //init players
+            whitePlayer = db.getPlayer(info.getWhitePlayerID());
+            whitePlayer.setColour((int)Colours.White);
+            blackPlayer = db.getPlayer(info.getBlackPlayerID());
+            blackPlayer.setColour((int)Colours.Black);
+            //init viewport (as front view white)
+            changeBoardDir = true;
+            viewLayer = 0;
+            viewDir = 0;
+            viewport = new int[64];
+            updateViewport();
+            //enact saved moves
+            List<string> moves = info.getMoves();
+            while(moves.Count() >0)
+            {
+                //using list like a queue
+                string tmp = moves.RemoveAt(0);
+                parseMove(tmp);
+            }
         }
 
         public void click(int squareIndex)
@@ -313,7 +349,7 @@ namespace ThreeDimensionalChess
         }
 
         //ONLY USE FOR LOADING GAME DATA - formatted by this program or otherwise assuming notation is perfect
-        public void parseMove(string m)
+        private void parseMove(string m)
         {
             //assumes move is valid
             moveList.Push(m);

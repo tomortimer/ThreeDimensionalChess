@@ -21,8 +21,6 @@ namespace ThreeDimensionalChess
             gameID = gameIDInp;
             name = nameInp;
             moves = new List<string>(movesInp.Split(','));
-            //remove tailing comma
-            moves.RemoveAt(moves.Count() - 1);
             gamestate = gamestateInp;
             lastAccessed = lastAccessedInp;
             whitePlayerID = whitePlayerInp;

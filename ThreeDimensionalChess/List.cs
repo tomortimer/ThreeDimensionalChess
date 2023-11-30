@@ -187,7 +187,9 @@ namespace ThreeDimensionalChess
             string tmpstr = "";
             for (int x = 0; x < Count(); x++)
             {
-                tmpstr = tmpstr + Convert.ToString(RetrieveAt(x, head)) + ",";
+                tmpstr = tmpstr + Convert.ToString(RetrieveAt(x, head));
+                //if not the last record add a comma, can be used to split list later !!!
+                if(x !=  Count() - 1) { tmpstr = tmpstr + ","; }
             }
             return tmpstr;
         }
