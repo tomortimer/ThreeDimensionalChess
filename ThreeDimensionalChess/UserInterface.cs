@@ -123,6 +123,7 @@ namespace ThreeDimensionalChess
             // -- New / Load Game Choice Menu --
             Rectangle newGame = new Rectangle(400, 225, 200, 75);
             Rectangle loadGame = new Rectangle(400, 310, 200, 75);
+            // -- Confirm Game Choice
             // -- New Game Menu --
             Rectangle whitePlayerDropDown = new Rectangle(10, 150, 300, 50);
             Rectangle addWhitePlayer = new Rectangle(320, 150, 50, 50);
