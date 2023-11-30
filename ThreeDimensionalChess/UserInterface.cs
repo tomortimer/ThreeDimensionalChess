@@ -552,7 +552,7 @@ namespace ThreeDimensionalChess
                         break;
                     case (int)UIModes.NewGameMenu:
                         //if both players have chosen non identical profiles the game start button becomes available
-                        if (whitePlayerID != blackPlayerID && whitePlayerID != 0 && blackPlayerID != 0)
+                        if (whitePlayerID != blackPlayerID && whitePlayerID != 0 && blackPlayerID != 0 && entryStr.Length > 0)
                         {
                             gameCanStart = true;
                         }
@@ -566,7 +566,7 @@ namespace ThreeDimensionalChess
                         updateLoadGameButtons(firstListButton, secondListButton, backButton);
                         break;
                     case (int)UIModes.ConfirmGame:
-                        updateConfirmGameMenu();
+                        //updateConfirmGameMenu();
                         break;
                     case (int)UIModes.GameUI2D:
                         int state = game.getGamestate();
@@ -802,7 +802,7 @@ namespace ThreeDimensionalChess
                 Raylib.DrawLine((int)undoMoves.X, (int)undoMoves.Y + 75, (int)undoMoves.X + 75, (int)undoMoves.Y, Color.BLACK);
             }
             Raylib.DrawRectangleLinesEx(entry, 1, Color.BLACK);
-            Raylib.DrawText("Enter game name:", (int)entry.X, (int)entry.Y - 31, 30, Color.BLACK);
+            Raylib.DrawText("Enter game name:", (int)entry.X+ 120, (int)entry.Y - 31, 30, Color.BLACK);
             //show input text as user types it
             Raylib.DrawText(inp, (int)entry.X + 5, (int)entry.Y + 40, 40, Color.BLACK);
             Color startGameCol = Color.BLACK;

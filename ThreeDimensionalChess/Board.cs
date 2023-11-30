@@ -389,7 +389,14 @@ namespace ThreeDimensionalChess
 
         public void parseMove(string move)
         {
-            throw new NotImplementedException();
+            string startCoord = move.Substring(1, 3);
+            int piecePtr = pieces[0].convertStrPosToPtr(startCoord);
+            string endCoord = "";
+            if (move.Contains('X'))
+            {
+                endCoord = move.Substring(6, 3);
+            }
+            else { endCoord = move.Substring(5, 3); }
         }
 
         public void undoMove(string move)
