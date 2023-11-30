@@ -35,14 +35,14 @@ namespace ThreeDimensionalChess
         public string getWhitePlayerName()
         {
             DatabaseHandler db = new DatabaseHandler();
-            name = db.getPlayer(whitePlayerID).getName();
-            return name;
+            string ret = db.getPlayer(whitePlayerID).getName();
+            return ret;
         }
         public string getBlackPlayerName()
         {
             DatabaseHandler db = new DatabaseHandler();
-            name = db.getPlayer(blackPlayerID).getName();
-            return name;
+            string ret = db.getPlayer(blackPlayerID).getName();
+            return ret;
         }
         public bool getUndoMoves() { return undoMoves; }
         public List<string> getMoves() {  return moves; }

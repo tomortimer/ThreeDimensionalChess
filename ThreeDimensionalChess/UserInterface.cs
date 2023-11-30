@@ -1,4 +1,5 @@
 ﻿using Raylib_cs;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Metrics;
 using System.Net.Http.Headers;
@@ -112,14 +113,13 @@ namespace ThreeDimensionalChess
             string sortMode = "ID"; // 0 is ascending by default, 1 is reverse
             int sortOrder = 0;
             List<Player> playersList = new List<Player>();
-            Rectangle deletePlayerButton = new Rectangle(805, 10, UIConstants.windowWidth - 805 - 5, 75);
-            Rectangle newPlayerButton = new Rectangle(805, 95, UIConstants.windowWidth - 805 - 5, 75);
+            Rectangle firstListButton = new Rectangle(805, 10, UIConstants.windowWidth - 805 - 5, 75);
+            Rectangle secondListButton = new Rectangle(805, 95, UIConstants.windowWidth - 805 - 5, 75);
             Rectangle backButton = new Rectangle(UIConstants.windowWidth - 85, UIConstants.windowHeight - 85, 75, 75);
             // -- Create Player Values --
             string entryStr = "";
             Rectangle finaliseNewPlayerButton = new Rectangle(350, 300, 300, 100);
             Rectangle entryBox = new Rectangle(250, 190, 500, 100);
-            int newPlayerID = 0;
             // -- New / Load Game Choice Menu --
             Rectangle newGame = new Rectangle(400, 225, 200, 75);
             Rectangle loadGame = new Rectangle(400, 310, 200, 75);
@@ -142,7 +142,7 @@ namespace ThreeDimensionalChess
             // -- Load Game Values --
             List<GameInfo> games = new List<GameInfo>();
             int gameListIndex = 0;
-            int selectedGameID = -1;
+            GameInfo selectedGame = null;
             // -- Game UI 2D Rectangles --
             Rectangle frontButton = new Rectangle(10, 10, 200, 75);
             Rectangle topButton = new Rectangle(10, 95, 200, 75);
@@ -219,8 +219,8 @@ namespace ThreeDimensionalChess
                                 }
                             }
 
-                            bool createPlayerPressed = Raylib.CheckCollisionPointRec(mousePos, newPlayerButton);
-                            bool deletePlayerPressed = Raylib.CheckCollisionPointRec(mousePos, deletePlayerButton);
+                            bool createPlayerPressed = Raylib.CheckCollisionPointRec(mousePos, secondListButton);
+                            bool deletePlayerPressed = Raylib.CheckCollisionPointRec(mousePos, firstListButton);
                             bool backButtonPressed = Raylib.CheckCollisionPointRec(mousePos, backButton);
 
                             if (createPlayerPressed) { mode = (int)UIModes.CreatePlayer; lastMode = (int)UIModes.PlayersList; }
@@ -413,6 +413,64 @@ namespace ThreeDimensionalChess
                             }
                         }
                         break;
+                    case (int)UIModes.GamesList:
+                        if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
+                        {
+                            Vector2 mousePos = Raylib.GetMousePosition();
+
+                            //take clicks on the table
+                            if (10 <= mousePos.X && mousePos.X <= 800 && 10 <= mousePos.Y && mousePos.Y <= (10 + (13 * 50)))
+                            {
+                                int row = ((int)mousePos.Y - 10) / 50;
+                                int column = -1;
+                                if (10 <= mousePos.X && mousePos.X < 200) { column = 0; }
+                                else if (200 <= mousePos.X && mousePos.X < 300) { column = 1; }
+                                else if (300 <= mousePos.X && mousePos.X < 450) { column = 2; }
+                                else if (450 <= mousePos.X && mousePos.X < 620) { column = 3; }
+                                else { column = 4; }
+
+                                //affect table now
+
+                                if (row == 0)
+                                {
+                                    string prevMode = sortMode;
+                                    switch (column)
+                                    {
+                                        case 0:
+                                            sortMode = "name";
+                                            break;
+                                        case 1:
+                                            sortMode = "date";
+                                            break;
+                                        case 2:
+                                            sortMode = "gamestate";
+                                            break;
+                                        case 3:
+                                            sortMode = "white";
+                                            break;
+                                        case 4:
+                                            sortMode = "black";
+                                            break;
+                                    }
+                                    if (prevMode == sortMode) { sortOrder = (sortOrder + 1) % 2; }
+                                    else { sortOrder = 0; }
+                                }
+                                else
+                                {
+                                    row--;
+                                    if (row < games.Count()) { selectedGame = games[row]; }
+                                }
+                            }
+
+                            //using same locations as from 
+                            bool loadGameButtonPressed = Raylib.CheckCollisionPointRec(mousePos, firstListButton);
+                            bool deleteGamePressed = Raylib.CheckCollisionPointRec(mousePos, secondListButton);
+                            bool backButtonPressed = Raylib.CheckCollisionPointRec(mousePos, backButton);
+                            if (loadGameButtonPressed) { mode = (int)UIModes.ConfirmGame; }
+                            else if (deleteGamePressed && selectedGame != null) { database.deleteGame(selectedGame.getGameID()); selectedGame = null; }
+                            else if (backButtonPressed) { mode = (int)UIModes.NewLoadChoice; selectedGame = null; }
+                        }
+                        break;
                     case (int)UIModes.GameUI2D:
                         //track mouse clicks
                         if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
@@ -483,8 +541,8 @@ namespace ThreeDimensionalChess
                         updateMainMenu(titlePos, exitButton, playButton, playerButton);
                         break;
                     case (int)UIModes.PlayersList:
-                        playersList = updatePlayersTable(playerListIndex, database, sortMode, sortOrder);
-                        updatePlayersListButtons(deletePlayerButton, newPlayerButton, backButton, "Delete");
+                        playersList = updatePlayersTable(playerListIndex, database, sortMode, sortOrder, selectedPlayerID);
+                        updatePlayersListButtons(firstListButton, secondListButton, backButton, "Delete");
                         break;
                     case (int)UIModes.CreatePlayer:
                         updateCreatePlayer(entryStr, entryBox, finaliseNewPlayerButton, backButton);
@@ -503,7 +561,12 @@ namespace ThreeDimensionalChess
                         playersList = updatePlayerNamesNewGame(whitePlayerDropDown, blackPlayerDropDown, whitePlayerID, blackPlayerID, addWhitePlayer, addBlackPlayer, whitePlayerListIndex, blackPlayerListIndex, database);
                         break;
                     case (int)UIModes.GamesList:
-                        games = updateGamesTable(gameListIndex, selectedGameID, sortMode, sortOrder, database);
+                        games = updateGamesTable(gameListIndex, sortMode, sortOrder, database, selectedGame);
+                        //uses same positions as in player list so can use same rectangles
+                        updateLoadGameButtons(firstListButton, secondListButton, backButton);
+                        break;
+                    case (int)UIModes.ConfirmGame:
+                        updateConfirmGameMenu();
                         break;
                     case (int)UIModes.GameUI2D:
                         int state = game.getGamestate();
@@ -538,7 +601,7 @@ namespace ThreeDimensionalChess
             Raylib.DrawText("Players", (int)player.X + 5, (int)player.Y + 30, 40, Color.BLACK);
         }
 
-        static List<Player> updatePlayersTable(int startIndex, DatabaseHandler db, string sortMode, int sortOrder) 
+        static List<Player> updatePlayersTable(int startIndex, DatabaseHandler db, string sortMode, int sortOrder, int selectedPlayerID) 
         {
             //get a list of all players
             List<Player> players = db.getPlayers();
@@ -567,18 +630,6 @@ namespace ThreeDimensionalChess
             }
             //setup rectangles to be transformed
             Rectangle baseRec = new Rectangle(10, 10, 790, 50);
-            //draw columns in here
-            Raylib.DrawLine(200, 10, 200, 660, Color.BLACK);
-            Raylib.DrawText("Name", 15, 23, 30, Color.BLACK);
-            Raylib.DrawLine(300, 10, 300, 660, Color.BLACK);
-            Raylib.DrawText("Date", 205, 23, 30, Color.BLACK);
-            Raylib.DrawLine(500, 10, 500, 660, Color.BLACK);
-            Raylib.DrawText("W/L/D", 305, 23, 30, Color.BLACK);
-            Raylib.DrawLine(650, 10, 650, 660, Color.BLACK);
-            Raylib.DrawText("White WR", 505, 23, 30, Color.BLACK);
-            Raylib.DrawText("Black WR", 655, 23, 30, Color.BLACK);
-            // draw outline
-            Raylib.DrawRectangleLines(10, 10, 790, 50 + (12*50), Color.BLACK);
 
             for (int y = 0; y < (660 / 50); y++)
             {
@@ -587,6 +638,10 @@ namespace ThreeDimensionalChess
                 if (y > 0 && startIndex + y - 1 < players.Count()) {
                     
                     Player tmp = players[startIndex + y - 1];
+                    if(tmp.getID() == selectedPlayerID)
+                    {
+                        Raylib.DrawRectangle((int)baseRec.X, (int)baseRec.Y + (y*50), (int)baseRec.Width, (int)baseRec.Height, Color.YELLOW);
+                    }
                     //using position values from columns drawn above
                     string playerName = tmp.getName();
                     //shorten name if it would write over column
@@ -602,6 +657,20 @@ namespace ThreeDimensionalChess
                     Raylib.DrawText(blackWR, 655, 23 + (y*50), 30, Color.BLACK);
                 }
             }
+
+            //draw columns in here
+            Raylib.DrawLine(200, 10, 200, 660, Color.BLACK);
+            Raylib.DrawText("Name", 15, 23, 30, Color.BLACK);
+            Raylib.DrawLine(300, 10, 300, 660, Color.BLACK);
+            Raylib.DrawText("Date", 205, 23, 30, Color.BLACK);
+            Raylib.DrawLine(500, 10, 500, 660, Color.BLACK);
+            Raylib.DrawText("W/L/D", 305, 23, 30, Color.BLACK);
+            Raylib.DrawLine(650, 10, 650, 660, Color.BLACK);
+            Raylib.DrawText("White WR", 505, 23, 30, Color.BLACK);
+            Raylib.DrawText("Black WR", 655, 23, 30, Color.BLACK);
+            // draw outline
+            Raylib.DrawRectangleLines(10, 10, 790, 50 + (12 * 50), Color.BLACK);
+
             return players;
         }
 
@@ -616,7 +685,7 @@ namespace ThreeDimensionalChess
             Raylib.DrawTriangle(new Vector2(back.X + 70, back.Y + 5), new Vector2(back.X + 5, back.Y + (75 / 2)), new Vector2(back.X + 70, back.Y + 70), Color.BLACK);
         }
         
-        static List<GameInfo> updateGamesTable(int startIndex, int gameID, string sortMode, int sortOrder, DatabaseHandler db)
+        static List<GameInfo> updateGamesTable(int startIndex, string sortMode, int sortOrder, DatabaseHandler db, GameInfo selectedGame)
         {
             List<GameInfo> games = db.getGames();
             Sorter sorter = new Sorter();
@@ -638,21 +707,10 @@ namespace ThreeDimensionalChess
                     games = sorter.mergeSortBlackPlayerName(games);
                     break;
             }
-            if(sortOrder == 1) { sorter.Reverse(games); }
+            if(sortOrder == 1) { games = sorter.Reverse(games); }
             //setup rectangles to be transformed
             Rectangle baseRec = new Rectangle(10, 10, 790, 50);
-            //draw columns in here
-            Raylib.DrawLine(200, 10, 200, 660, Color.BLACK);
-            Raylib.DrawText("Name", 15, 23, 30, Color.BLACK);
-            Raylib.DrawLine(300, 10, 300, 660, Color.BLACK);
-            Raylib.DrawText("Date", 205, 23, 30, Color.BLACK);
-            Raylib.DrawLine(450, 10, 450, 660, Color.BLACK);
-            Raylib.DrawText("State", 305, 23, 30, Color.BLACK);
-            Raylib.DrawLine(620, 10, 620, 660, Color.BLACK);
-            Raylib.DrawText("White", 455, 23, 30, Color.BLACK);
-            Raylib.DrawText("Black", 625, 23, 30, Color.BLACK);
-            // draw outline
-            Raylib.DrawRectangleLines(10, 10, 790, 50 + (12 * 50), Color.BLACK);
+           
 
             for (int y = 0; y < (660 / 50); y++)
             {
@@ -660,8 +718,12 @@ namespace ThreeDimensionalChess
                 //fill in with values from table
                 if (y > 0 && startIndex + y - 1 < games.Count())
                 {
-
                     GameInfo tmp = games[startIndex + y - 1];
+                    //if game is equal to one selected tint it
+                    if (selectedGame != null && tmp.getGameID() == selectedGame.getGameID())
+                    {
+                        Raylib.DrawRectangle((int)baseRec.X, (int)baseRec.Y + (y * 50), (int)baseRec.Width, (int)baseRec.Height, Color.YELLOW);
+                    }
                     //using position values from columns drawn above
                     string gameName = tmp.getName();
                     //shorten name if it would write over column
@@ -679,7 +741,32 @@ namespace ThreeDimensionalChess
                     Raylib.DrawText(black, 625, 23 + (y * 50), 30, Color.BLACK);
                 }
             }
+            //put here so yellow rectangle is behind
+            //draw columns in here
+            Raylib.DrawLine(200, 10, 200, 660, Color.BLACK);
+            Raylib.DrawText("Name", 15, 23, 30, Color.BLACK);
+            Raylib.DrawLine(300, 10, 300, 660, Color.BLACK);
+            Raylib.DrawText("Date", 205, 23, 30, Color.BLACK);
+            Raylib.DrawLine(450, 10, 450, 660, Color.BLACK);
+            Raylib.DrawText("State", 305, 23, 30, Color.BLACK);
+            Raylib.DrawLine(620, 10, 620, 660, Color.BLACK);
+            Raylib.DrawText("White", 455, 23, 30, Color.BLACK);
+            Raylib.DrawText("Black", 625, 23, 30, Color.BLACK);
+            // draw outline
+            Raylib.DrawRectangleLines(10, 10, 790, 50 + (12 * 50), Color.BLACK);
+
             return games;
+        }
+
+        static void updateLoadGameButtons(Rectangle load, Rectangle delete, Rectangle back)
+        {
+            Raylib.DrawRectangleLinesEx(load, 1, Color.BLACK);
+            Raylib.DrawText("Load Game", (int)load.X + 5, (int)load.Y + 25, 30, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(delete, 1, Color.BLACK);
+            Raylib.DrawText("Delete Game", (int)delete.X + 5, (int)delete.Y + 25, 30, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
+            //draw a little back icon triangle
+            Raylib.DrawTriangle(new Vector2(back.X + 70, back.Y + 5), new Vector2(back.X + 5, back.Y + (75 / 2)), new Vector2(back.X + 70, back.Y + 70), Color.BLACK);
         }
         
         static void updateCreatePlayer(string inp, Rectangle entry, Rectangle doneButton, Rectangle back)
