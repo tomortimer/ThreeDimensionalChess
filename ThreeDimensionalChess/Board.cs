@@ -389,6 +389,7 @@ namespace ThreeDimensionalChess
 
         public void parseMove(string move)
         {
+            //separate pieces from notation and then enact
             string startCoord = move.Substring(1, 3);
             int piecePtr = pieces[0].convertStrPosToPtr(startCoord);
             string endCoord = "";
@@ -397,6 +398,14 @@ namespace ThreeDimensionalChess
                 endCoord = move.Substring(6, 3);
             }
             else { endCoord = move.Substring(5, 3); }
+            int targetSquare = pieces[0].convertStrPosToPtr(endCoord);
+            pieces[piecePtr].movePiece(targetSquare, board, pieces);
+            //check if promotion, if so enact
+            if (move.Contains('=')) 
+            {
+                string promotedPiece = move.Substring(move.Length - 1, 1);
+                promotePawn(promotedPiece, targetSquare);
+            }
         }
 
         public void undoMove(string move)
