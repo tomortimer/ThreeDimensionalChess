@@ -472,6 +472,26 @@ namespace ThreeDimensionalChess
                             else if (backButtonPressed) { mode = (int)UIModes.NewLoadChoice; selectedGame = null; }
                         }
                         break;
+                    case (int)UIModes.ConfirmGame:
+                        if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
+                        {
+                            Vector2 mousePos = Raylib.GetMousePosition();
+
+                            bool confirmGamePressed = Raylib.CheckCollisionPointRec(mousePos, startGameButton);
+                            bool backButtonPressed = Raylib.CheckCollisionPointRec(mousePos, backButton);
+
+                            if (confirmGamePressed)
+                            {
+                                game = new Chess(selectedGame);
+                                selectedGame = null;
+                                mode = (int)UIModes.GameUI2D;
+                            }else if (backButtonPressed)
+                            {
+                                selectedGame = null;
+                                mode = (int)UIModes.GamesList;
+                            }
+                        }
+                        break;
                     case (int)UIModes.GameUI2D:
                         //track mouse clicks
                         if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
@@ -567,7 +587,7 @@ namespace ThreeDimensionalChess
                         updateLoadGameButtons(firstListButton, secondListButton, backButton);
                         break;
                     case (int)UIModes.ConfirmGame:
-                        //updateConfirmGameMenu();
+                        updateConfirmGameMenu(startGameButton, backButton, selectedGame);
                         break;
                     case (int)UIModes.GameUI2D:
                         int state = game.getGamestate();
@@ -765,6 +785,17 @@ namespace ThreeDimensionalChess
             Raylib.DrawText("Load Game", (int)load.X + 5, (int)load.Y + 25, 30, Color.BLACK);
             Raylib.DrawRectangleLinesEx(delete, 1, Color.BLACK);
             Raylib.DrawText("Delete Game", (int)delete.X + 5, (int)delete.Y + 25, 30, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
+            //draw a little back icon triangle
+            Raylib.DrawTriangle(new Vector2(back.X + 70, back.Y + 5), new Vector2(back.X + 5, back.Y + (75 / 2)), new Vector2(back.X + 70, back.Y + 70), Color.BLACK);
+        }
+
+        static void updateConfirmGameMenu(Rectangle confirm, Rectangle back, GameInfo info)
+        {
+            Raylib.DrawRectangleLinesEx(confirm, 1, Color.BLACK);
+            Raylib.DrawText("Confirm", (int)confirm.X + 70, (int)confirm.Y + 27, 40, Color.BLACK);
+            string lastMove = info.getMoves()[info.getMoves().Count() - 1];
+            Raylib.DrawText("Last Move: " + lastMove, (int)confirm.X - 25, (int)confirm.Y - 100, 40, Color.BLACK);
             Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
             //draw a little back icon triangle
             Raylib.DrawTriangle(new Vector2(back.X + 70, back.Y + 5), new Vector2(back.X + 5, back.Y + (75 / 2)), new Vector2(back.X + 70, back.Y + 70), Color.BLACK);

@@ -107,7 +107,7 @@ namespace ThreeDimensionalChess
             updateViewport();
             //enact saved moves
             List<string> moves = info.getMoves();
-            while(moves.Count() >0)
+            while(moves.Count() >0 && moves[0] != "")
             {
                 //using list like a queue
                 string tmp = moves.RemoveAt(0);
