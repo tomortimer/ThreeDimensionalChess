@@ -22,6 +22,8 @@ namespace ThreeDimensionalChess
             name = nameInp;
             moves = new List<string>(movesInp.Split(','));
             gamestate = gamestateInp;
+            //if last move is an unfinished promotion, remove it, set state accordingly
+            if (moves[moves.Count() - 1].Contains("=") && moves[moves.Count() - 1].Split('=')[1].Length == 0) { moves.RemoveAt(moves.Count() - 1); gamestate = (int)Gamestates.Ongoing; }
             lastAccessed = lastAccessedInp;
             whitePlayerID = whitePlayerInp;
             blackPlayerID = blackPlayerInp;
@@ -67,6 +69,12 @@ namespace ThreeDimensionalChess
             // return a -1 if game is ongoing in anyway
             if(gamestate == (int)Gamestates.Ongoing || gamestate == (int)Gamestates.PendingPromo) return -1;
             return gamestate; 
+        }
+        public string getLastMove()
+        {
+            string tmp = moves[moves.Count()-1];
+            if (tmp == "") { tmp = "No moves have been made"; }
+            return tmp;
         }
         public int getGamestateAsInt() { return gamestate; }
         public DateTime getLastAccessed() { return lastAccessed; }

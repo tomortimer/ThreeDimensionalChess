@@ -391,7 +391,7 @@ namespace ThreeDimensionalChess
         {
             //separate pieces from notation and then enact
             string startCoord = move.Substring(1, 3);
-            int piecePtr = pieces[0].convertStrPosToPtr(startCoord);
+            int piecePtr = board[pieces[0].convertStrPosToPtr(startCoord)].getPiecePointer();
             string endCoord = "";
             if (move.Contains('X'))
             {

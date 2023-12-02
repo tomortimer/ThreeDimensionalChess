@@ -71,16 +71,9 @@ namespace ThreeDimensionalChess
             return empty;
         }
 
-        public string representation()
+        public string ConvertToString()
         {
-            string ret = "";
-
-            for (int x = 0; x < stack.Count(); x++)
-            {
-                ret = ret + stack[x] + ",";
-            }
-
-            return ret;
+            return stack.ConvertToString();
         }
     }
 }

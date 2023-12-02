@@ -231,7 +231,7 @@ VALUES ($name, $empty, $state, $date, $white, $black, $undo);";
             return ret;
         }
 
-        public void writeGame(List<string> moves, int state, int ID)
+        public void updateGame(string moves, int state, int ID)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
@@ -243,7 +243,7 @@ SET moveList=$moves, gamestate=$state, lastAccessed=$date
 WHERE gameID=$ID";
 
             //load params into query
-            comm.Parameters.AddWithValue("$moves", moves.ConvertToString());
+            comm.Parameters.AddWithValue("$moves", moves);
             comm.Parameters.AddWithValue("$state", state);
             comm.Parameters.AddWithValue("$date", DateTime.Today);
             comm.Parameters.AddWithValue("$ID", ID);

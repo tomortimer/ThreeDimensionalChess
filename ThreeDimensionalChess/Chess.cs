@@ -211,8 +211,9 @@ namespace ThreeDimensionalChess
                     //select piece so that player is more aware of it
                     selectPiece(squareIndex);
                     //push move if promo, just don't forget to pop it later
-                }
+                }                
                 moveList.Push(move);
+                db.updateGame(moveList.ConvertToString(), state, ID);
             }
 
         }
@@ -235,6 +236,7 @@ namespace ThreeDimensionalChess
                 moveList.Push(move);
                 playerTurn = (playerTurn + 1) % 2;
                 state = (int)Gamestates.Ongoing;
+                db.updateGame(moveList.ConvertToString(), state, ID);
             }
             updateViewport();
         }
@@ -400,7 +402,7 @@ namespace ThreeDimensionalChess
 
         public void printMoveList()
         {
-            Console.WriteLine(moveList.representation());
+            Console.WriteLine(moveList.ConvertToString());
         }
 
         public bool getInCheck() { return inCheck; }
