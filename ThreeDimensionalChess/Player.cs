@@ -33,21 +33,21 @@ namespace ThreeDimensionalChess
 
         }
 
-        public int getColour() { return colour; }
-        public void setColour(int col) { colour = col; }
-        public string getName() { return name; }
-        public int getWhiteLosses() { return whiteLosses; }
-        public int getBlackLosses() { return blackLosses; }
-        public int getDraws() { return whiteDraws+blackDraws; }
-        public int getWhiteDraws() { return whiteDraws; }
-        public int getBlackDraws() { return blackDraws; }
-        public int getWhiteWins() { return whiteWins; }
-        public int getBlackWins() { return blackWins; }
-        public int getTotalWins() {  return blackWins + whiteWins; }
-        public int getTotalLosses() { return blackLosses + whiteLosses; }
-        public int getID() { return ID; }
+        public int GetColour() { return colour; }
+        public void SetColour(int col) { colour = col; }
+        public string GetName() { return name; }
+        public int GetWhiteLosses() { return whiteLosses; }
+        public int GetBlackLosses() { return blackLosses; }
+        public int GetDraws() { return whiteDraws+blackDraws; }
+        public int GetWhiteDraws() { return whiteDraws; }
+        public int GetBlackDraws() { return blackDraws; }
+        public int GetWhiteWins() { return whiteWins; }
+        public int GetBlackWins() { return blackWins; }
+        public int GetTotalWins() {  return blackWins + whiteWins; }
+        public int GetTotalLosses() { return blackLosses + whiteLosses; }
+        public int GetID() { return ID; }
 
-        public int getWinrate()
+        public int GetWinrate()
         {
             int WR;
             try 
@@ -60,12 +60,12 @@ namespace ThreeDimensionalChess
             return WR;
         }
 
-        public DateOnly getJoinDate()
+        public DateOnly GetJoinDate()
         {
             return DateOnly.FromDateTime(joinDate);
         }
 
-        public int getWhiteWinrate()
+        public int GetWhiteWinrate()
         {
             int WR;
             try
@@ -79,7 +79,7 @@ namespace ThreeDimensionalChess
             return WR;
         }
 
-        public int getBlackWinrate()
+        public int GetBlackWinrate()
         {
             int WR;
             try
@@ -93,6 +93,6 @@ namespace ThreeDimensionalChess
             return WR;
         }
 
-        public int getTotalGames() { return whiteLosses + whiteWins + blackWins + blackLosses + whiteDraws + blackDraws; }
+        public int GetTotalGames() { return whiteLosses + whiteWins + blackWins + blackLosses + whiteDraws + blackDraws; }
     }
 }

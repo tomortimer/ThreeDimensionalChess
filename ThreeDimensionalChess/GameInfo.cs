@@ -30,23 +30,23 @@ namespace ThreeDimensionalChess
             undoMoves = undoMovesInp;
         }
 
-        public int getGameID() { return gameID; }
-        public string getName() { return name; }
-        public string getWhitePlayerName()
+        public int GetGameID() { return gameID; }
+        public string GetName() { return name; }
+        public string GetWhitePlayerName()
         {
             DatabaseHandler db = new DatabaseHandler();
-            string ret = db.getPlayer(whitePlayerID).getName();
+            string ret = db.GetPlayer(whitePlayerID).GetName();
             return ret;
         }
-        public string getBlackPlayerName()
+        public string GetBlackPlayerName()
         {
             DatabaseHandler db = new DatabaseHandler();
-            string ret = db.getPlayer(blackPlayerID).getName();
+            string ret = db.GetPlayer(blackPlayerID).GetName();
             return ret;
         }
-        public bool getUndoMoves() { return undoMoves; }
-        public List<string> getMoves() {  return moves; }
-        public string getGamestate() 
+        public bool GetUndoMoves() { return undoMoves; }
+        public List<string> GetMoves() {  return moves; }
+        public string GetGamestate() 
         {
             //return a string, better for UI rep
             string ret = "Ongoing";
@@ -64,21 +64,21 @@ namespace ThreeDimensionalChess
             }
             return ret;
         }
-        public int getGamestateForComparison() 
+        public int GetGamestateForComparison() 
         { 
             // return a -1 if game is ongoing in anyway
             if(gamestate == (int)Gamestates.Ongoing || gamestate == (int)Gamestates.PendingPromo) return -1;
             return gamestate; 
         }
-        public string getLastMove()
+        public string GetLastMove()
         {
             string tmp = moves[moves.Count()-1];
             if (tmp == "") { tmp = "No moves have been made"; }
             return tmp;
         }
-        public int getGamestateAsInt() { return gamestate; }
-        public DateTime getLastAccessed() { return lastAccessed; }
-        public int getWhitePlayerID() { return whitePlayerID; }
-        public int getBlackPlayerID() { return blackPlayerID; }
+        public int GetGamestateAsInt() { return gamestate; }
+        public DateTime GetLastAccessed() { return lastAccessed; }
+        public int GetWhitePlayerID() { return whitePlayerID; }
+        public int GetBlackPlayerID() { return blackPlayerID; }
     }
 }

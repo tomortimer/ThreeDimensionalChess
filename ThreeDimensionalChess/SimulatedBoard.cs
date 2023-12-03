@@ -20,16 +20,16 @@ namespace ThreeDimensionalChess
                 //adds a new square to the board, performs mod on x to get colour, Colours enum is stored in Square.cs even squares are black(with 0 also being black), odd are white
                 board.Add(new Square(x % 2));
                 //copy over positions
-                board[x].setPiecePointer(b[x].getPiecePointer());
+                board[x].SetPiecePointer(b[x].GetPiecePointer());
             }
             //copy over pieces
             for (int x = 0; x < p.Count(); x++)
             {
-                addPiece(p[x].getPieceType(), p[x].getCurrentPosition(), p[x].getColour());
+                AddPiece(p[x].GetPieceType(), p[x].GetCurrentPosition(), p[x].GetColour());
             }
 
         }
-        public void addPiece(string type, int pos, int colour)
+        public void AddPiece(string type, int pos, int colour)
         {
             Piece p = null;
             switch (type)
@@ -59,38 +59,38 @@ namespace ThreeDimensionalChess
 
             pieces.Add(p);
 
-            board[pos].setPiecePointer(pieces.Count() - 1);
+            board[pos].SetPiecePointer(pieces.Count() - 1);
         }
 
-        public bool legalMove(int endPos, int piecePtr, int currentPlayer)
+        public bool LegalMove(int endPos, int piecePtr, int currentPlayer)
         {
-            int targetPiecePtr = board[endPos].getPiecePointer();
+            int targetPiecePtr = board[endPos].GetPiecePointer();
 
-            board[pieces[piecePtr].getCurrentPosition()].setPiecePointer(-1);
-            string moveData = pieces[piecePtr].movePiece(endPos, board, pieces);
+            board[pieces[piecePtr].GetCurrentPosition()].SetPiecePointer(-1);
+            string moveData = pieces[piecePtr].MovePiece(endPos, board, pieces);
             //added logic here to prevent ptr misalignment - if a piece is taken and its pointer is less than the current piece, we need to offset current piece ptr by one
             if (moveData.Contains("X"))
             {
                 if (targetPiecePtr < piecePtr) { piecePtr--; }
                 for (int x = targetPiecePtr; x < pieces.Count(); x++)
                 {
-                    board[pieces[x].getCurrentPosition()].decrementPiecePointer();
+                    board[pieces[x].GetCurrentPosition()].DecrementPiecePointer();
                 }
             }
-            board[endPos].setPiecePointer(piecePtr);
+            board[endPos].SetPiecePointer(piecePtr);
 
             //use check threat method with piece index as currentplayer (points at their king)
             //takes negation of return value, since checkthreat returns true for threat but we want to know if move is safe
-            bool ret = !checkThreat(pieces[currentPlayer].getCurrentPosition(), currentPlayer);
+            bool ret = !CheckThreat(pieces[currentPlayer].GetCurrentPosition(), currentPlayer);
             return ret;
         }
 
-        private bool checkThreat(int squarePtr, int currentPlayer)
+        private bool CheckThreat(int squarePtr, int currentPlayer)
         {
             bool threat = false;
             ThreatSuperPiece tmp = new ThreatSuperPiece(squarePtr, currentPlayer);
             //see if there are ANY pieces threatening current square
-            List<int> threatMoves = tmp.generatePossibleMoves(board, pieces);
+            List<int> threatMoves = tmp.GeneratePossibleMoves(board, pieces);
             if (threatMoves.Count() > 0) { threat = true; }
 
             return threat;

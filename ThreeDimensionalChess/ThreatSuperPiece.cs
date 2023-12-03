@@ -10,9 +10,9 @@ namespace ThreeDimensionalChess
     class ThreatSuperPiece : Piece
     {
         public ThreatSuperPiece(int startPos, int col) : base(startPos, col) { }
-        public override string getPieceType() { return "TSP"; }
+        public override string GetPieceType() { return "TSP"; }
 
-        public override List<int> generatePossibleMoves(List<Square> board, List<Piece> pieces)
+        public override List<int> GeneratePossibleMoves(List<Square> board, List<Piece> pieces)
         {
             List<int> moves = new List<int>();
 
@@ -21,8 +21,8 @@ namespace ThreeDimensionalChess
             {
                 List<int> tmpR = new List<int>();
                 //calls recursive directional move generator
-                tmpR = generateNextMoveRook(direction, board, currentPosition, pieces);
-                //appends all moves generated into moves list
+                tmpR = GenerateNextMoveRook(direction, board, currentPosition, pieces);
+                //appends all moves Generated into moves list
                 for (int x = 0; x < tmpR.Count(); x++)
                 {
                     //filter out when invalid moves have been reached
@@ -34,9 +34,9 @@ namespace ThreeDimensionalChess
             for (int direction = 0; direction < 12; direction++)
             {
                 List<int> tmpB = new List<int>();
-                tmpB = generateNextMoveBishop(direction, board, currentPosition, pieces);
+                tmpB = GenerateNextMoveBishop(direction, board, currentPosition, pieces);
 
-                //append generate moves to main list
+                //append Generate moves to main list
                 for (int x = 0; x < tmpB.Count(); x++)
                 {
                     //filter out invalid moves
@@ -46,7 +46,7 @@ namespace ThreeDimensionalChess
 
             //process knight moves here
             List<int> tmpN = new List<int>();
-            tmpN = generateKnightMoves(board, pieces);
+            tmpN = GenerateKnightMoves(board, pieces);
             //append generated moves to main list
             for (int x = 0; x < tmpN.Count(); x++)
             {
@@ -55,7 +55,7 @@ namespace ThreeDimensionalChess
 
             //process pawn moves here - only need to check captures, from reverse
             List<int> tmpP = new List<int>();
-            tmpP = generatePawnCaptures(board, pieces);
+            tmpP = GeneratePawnCaptures(board, pieces);
             for (int x = 0; x < tmpP.Count(); x++)
             {
                 moves.Add(tmpP[x]);
@@ -63,7 +63,7 @@ namespace ThreeDimensionalChess
 
             //process King moves here
             List<int> tmpK = new List<int>();
-            tmpK = generateKingMoves(board, pieces);
+            tmpK = GenerateKingMoves(board, pieces);
             for (int x = 0; x < tmpK.Count(); x++)
             {
                 moves.Add(tmpK[x]);
@@ -72,7 +72,7 @@ namespace ThreeDimensionalChess
             return moves;
         }
 
-        public List<int> generateKingMoves(List<Square> board, List<Piece> pieces)
+        public List<int> GenerateKingMoves(List<Square> board, List<Piece> pieces)
         {
             List<int> moves = new List<int>();
 
@@ -80,7 +80,7 @@ namespace ThreeDimensionalChess
             for (int dir = (int)Directions.Right; dir <= (int)Directions.Backwards; dir++)
             {
                 int pos = currentPosition;
-                int[] vect = convertPtrToVect(pos);
+                int[] vect = ConvertPtrToVect(pos);
                 //switch transforms position
                 switch (dir)
                 {
@@ -117,14 +117,14 @@ namespace ThreeDimensionalChess
                 }
 
                 //check if piece has gone off edge here
-                if (edgeCheck(vect)) { moves.Add(pos); }
+                if (EdgeCheck(vect)) { moves.Add(pos); }
             }
 
             //process diagonal moves here
             for (int dir = 0; dir < 12; dir++)
             {
                 int pos = currentPosition;
-                int[] vect = convertPtrToVect(pos);
+                int[] vect = ConvertPtrToVect(pos);
                 //switch transforms position, collapse for readability, switch is in terms of 8 sided board, change later?
                 switch (dir)
                 {
@@ -193,18 +193,18 @@ namespace ThreeDimensionalChess
                 }
 
                 //check if piece has gone off edge before adding to move of lists
-                if (edgeCheck(vect)) { moves.Add(pos); }
+                if (EdgeCheck(vect)) { moves.Add(pos); }
             }
 
             List<int> finalMoves = new List<int>();
             //loop to check if pieces on squares
             for (int x = 0; x < moves.Count(); x++)
             {
-                int targetPos = board[moves[x]].getPiecePointer();
+                int targetPos = board[moves[x]].GetPiecePointer();
                 if (targetPos != -1)
                 {
                     //only add move if its capturing
-                    if (pieces[targetPos].getColour() != colour && pieces[targetPos].getPieceType() == "K")
+                    if (pieces[targetPos].GetColour() != colour && pieces[targetPos].GetPieceType() == "K")
                     {
                         finalMoves.Add(moves[x]);
                     }
@@ -214,10 +214,10 @@ namespace ThreeDimensionalChess
             return finalMoves;
         }
 
-        private List<int> generateNextMoveRook(int dir, List<Square> board, int pos, List<Piece> pieces)
+        private List<int> GenerateNextMoveRook(int dir, List<Square> board, int pos, List<Piece> pieces)
         {
 
-            int[] vect = convertPtrToVect(pos);
+            int[] vect = ConvertPtrToVect(pos);
             //converts direction into an index that addresses the relevant part of a 3-Length Vector Array: (0&1)-> 0, (2&3)-> 1, (4&5) -> 2
             int arrayIndex = (dir / 2) % 3;
 
@@ -263,13 +263,13 @@ namespace ThreeDimensionalChess
             if (vect[arrayIndex] < Constants.boardDimensions && vect[arrayIndex] > -1)
             {
                 //checks if there is a piece on the square
-                int targetPtr = board[pos].getPiecePointer();
+                int targetPtr = board[pos].GetPiecePointer();
                 if (targetPtr != -1)
                 {
                     //now check if piece is friendly or enemy
                     Piece target = pieces[targetPtr];
                     //also check if piece could make capturing moves
-                    if (target.getColour() != colour && (target.getPieceType() == "R" || target.getPieceType() == "Q"))
+                    if (target.GetColour() != colour && (target.GetPieceType() == "R" || target.GetPieceType() == "Q"))
                     {
                         //unwind recursion from here
                         moves.Add(pos);
@@ -286,7 +286,7 @@ namespace ThreeDimensionalChess
                     //moves.Add(pos);
                     //don't add moves unless its a capture
                     List<int> newMoves = new List<int>();
-                    newMoves = generateNextMoveRook(dir, board, pos, pieces);
+                    newMoves = GenerateNextMoveRook(dir, board, pos, pieces);
                     //go deeper in recursion here
                     for (int x = 0; x < newMoves.Count(); x++)
                     {
@@ -300,9 +300,9 @@ namespace ThreeDimensionalChess
             return moves;
         }
 
-        private List<int> generateNextMoveBishop(int dir, List<Square> board, int pos, List<Piece> pieces)
+        private List<int> GenerateNextMoveBishop(int dir, List<Square> board, int pos, List<Piece> pieces)
         {
-            int[] vect = convertPtrToVect(pos);
+            int[] vect = ConvertPtrToVect(pos);
 
             //large switch to transform piece, going clockwise around each board, front -> top -> side
             switch (dir)
@@ -377,12 +377,12 @@ namespace ThreeDimensionalChess
             if (vect[0] < Constants.boardDimensions && vect[0] > -1 && vect[1] < Constants.boardDimensions && vect[1] > -1 && vect[2] < Constants.boardDimensions && vect[2] > -1)
             {
                 //checks if there is a piece on the square
-                int targetPtr = board[pos].getPiecePointer();
+                int targetPtr = board[pos].GetPiecePointer();
                 if (targetPtr != -1)
                 {
                     Piece target = pieces[targetPtr];
                     //check piece could make move also
-                    if (target.getColour() != colour && (target.getPieceType() == "Q" || target.getPieceType() == "B"))
+                    if (target.GetColour() != colour && (target.GetPieceType() == "Q" || target.GetPieceType() == "B"))
                     {
                         //unwind recursion from here
                         moves.Add(pos);
@@ -399,7 +399,7 @@ namespace ThreeDimensionalChess
                     //commented out so that only capture moves are returned
                     //moves.Add(pos);
                     List<int> newMoves = new List<int>();
-                    newMoves = generateNextMoveBishop(dir, board, pos, pieces);
+                    newMoves = GenerateNextMoveBishop(dir, board, pos, pieces);
                     //go deeper in recursion here
                     for (int x = 0; x < newMoves.Count(); x++)
                     {
@@ -412,7 +412,7 @@ namespace ThreeDimensionalChess
             return moves;
         }
 
-        private List<int> generateKnightMoves(List<Square> board, List<Piece> pieces)
+        private List<int> GenerateKnightMoves(List<Square> board, List<Piece> pieces)
         {
             List<int> moves = new List<int>();
 
@@ -424,7 +424,7 @@ namespace ThreeDimensionalChess
             //iterate through and check moves
             for (int i = 0; i < xMoves.Length; i++)
             {
-                int[] pos = convertPtrToVect(currentPosition);
+                int[] pos = ConvertPtrToVect(currentPosition);
                 pos[0] += xMoves[i];
                 pos[1] += yMoves[i];
                 pos[2] += zMoves[i];
@@ -432,12 +432,12 @@ namespace ThreeDimensionalChess
                 //check move hasn't gone off board
                 if (pos[0] > -1 && pos[0] < Constants.boardDimensions && pos[1] > -1 && pos[1] < Constants.boardDimensions && pos[2] > -1 && pos[2] < Constants.boardDimensions)
                 {
-                    int targetPiecePtr = board[convertVectToPtr(pos)].getPiecePointer();
+                    int targetPiecePtr = board[ConvertVectToPtr(pos)].GetPiecePointer();
                     //add pointer version of move to list if its valid
                     //modified to only return capture moves
-                    if (targetPiecePtr != -1 && pieces[targetPiecePtr].getColour() != this.colour && pieces[targetPiecePtr].getPieceType() == "N")
+                    if (targetPiecePtr != -1 && pieces[targetPiecePtr].GetColour() != this.colour && pieces[targetPiecePtr].GetPieceType() == "N")
                     {
-                        moves.Add(convertVectToPtr(pos));
+                        moves.Add(ConvertVectToPtr(pos));
                     }
 
                 }
@@ -447,15 +447,15 @@ namespace ThreeDimensionalChess
 
         }
 
-        private List<int> generatePawnCaptures(List<Square> board, List<Piece> pieces)
+        private List<int> GeneratePawnCaptures(List<Square> board, List<Piece> pieces)
         {
             List<int> moves = new List<int>();
-            int[] vect = convertPtrToVect(currentPosition);
+            int[] vect = ConvertPtrToVect(currentPosition);
 
             //might need to add extra conditions e.g. for black check that vect[1] != 7
             if (colour == (int)Colours.White)
             {
-                //generate black captures here
+                //Generate black captures here
                 //front view captures:
                 if (vect[0] != 0 && vect[1] != 7)
                 {
@@ -487,7 +487,7 @@ namespace ThreeDimensionalChess
             }
             else
             {
-                //generate white captures here
+                //Generate white captures here
                 //front view captures
                 if (vect[0] != 0 && vect[1] != 0)
                 {
@@ -523,10 +523,10 @@ namespace ThreeDimensionalChess
             for(int x = 0; x < moves.Count(); x++)
             {
                 //filter moves so its only pawns of opposite colour
-                int targetPtr = board[moves[x]].getPiecePointer();
+                int targetPtr = board[moves[x]].GetPiecePointer();
                 if(targetPtr != -1)
                 {
-                    if (pieces[targetPtr].getColour() != colour && pieces[targetPtr].getPieceType() == "P")
+                    if (pieces[targetPtr].GetColour() != colour && pieces[targetPtr].GetPieceType() == "P")
                     {
                         finalMoves.Add(moves[x]);
                     }
@@ -536,7 +536,7 @@ namespace ThreeDimensionalChess
             return finalMoves;
         }
 
-        private bool edgeCheck(int[] vect)
+        private bool EdgeCheck(int[] vect)
         {
             //returns true if move is safe
             bool safe = false;

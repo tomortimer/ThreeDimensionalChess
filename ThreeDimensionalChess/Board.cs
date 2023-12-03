@@ -33,8 +33,8 @@ namespace ThreeDimensionalChess
             //only place pieces in default positions if not custom setup, otherwise force user to place kings first
             if (!custom)
             {
-                addPiece("K", 508, 0);
-                addPiece("K", 4, 1);
+                AddPiece("K", 508, 0);
+                AddPiece("K", 4, 1);
                 //place the rest of the pieces in order of complexity (facilitates efficient stalemate checking later)
                 //white pawns
                 for (int i = 0; i < 2; i++)
@@ -42,7 +42,7 @@ namespace ThreeDimensionalChess
                     for (int x = 0; x < Constants.boardDimensions; x++)
                     {
                         int pos = 8 + x + (64 * i);
-                        addPiece("P", pos, 1);
+                        AddPiece("P", pos, 1);
                     }
                 }
                 //black pawns
@@ -51,54 +51,54 @@ namespace ThreeDimensionalChess
                     for (int x = 0; x < Constants.boardDimensions; x++)
                     {
                         int pos = 496 + x - (64 * i);
-                        addPiece("P", pos, 0);
+                        AddPiece("P", pos, 0);
                     }
                 }
                 //rooks
-                addPiece("R", 0, 1);
-                addPiece("R", 7, 1);
-                addPiece("R", 511, 0);
-                addPiece("R", 504, 0);
+                AddPiece("R", 0, 1);
+                AddPiece("R", 7, 1);
+                AddPiece("R", 511, 0);
+                AddPiece("R", 504, 0);
                 //knights
-                addPiece("N", 1, 1);
-                addPiece("N", 6, 1);
-                addPiece("N", 510, 0);
-                addPiece("N", 505, 0);
+                AddPiece("N", 1, 1);
+                AddPiece("N", 6, 1);
+                AddPiece("N", 510, 0);
+                AddPiece("N", 505, 0);
                 //bishops
-                addPiece("B", 2, 1);
-                addPiece("B", 5, 1);
-                addPiece("B", 509, 0);
-                addPiece("B", 506, 0);
+                AddPiece("B", 2, 1);
+                AddPiece("B", 5, 1);
+                AddPiece("B", 509, 0);
+                AddPiece("B", 506, 0);
                 //queens
-                addPiece("Q", 507, 0);
-                addPiece("Q", 3, 1);
+                AddPiece("Q", 507, 0);
+                AddPiece("Q", 3, 1);
             }
             currentPieceIndex = -1;
         }
 
-        public bool isPieceSelected()
+        public bool IsPieceSelected()
         {
             bool ret = false;
             if (currentPieceIndex != -1) { ret = true; }
             return ret;
         }
 
-        public Piece getSelectedPiece()
+        public Piece GetSelectedPiece()
         {
             return pieces[currentPieceIndex];
         }
 
         //takes a square index as input
-        public Piece getPiece(int inp)
+        public Piece GetPiece(int inp)
         {
             Piece tmp = null;
-            int ptr = board[inp].getPiecePointer();
+            int ptr = board[inp].GetPiecePointer();
             //if there is a piece on square returns piece otherwise returns null
             if (ptr != -1) { tmp = pieces[ptr]; }
             return tmp;
         }
 
-        public Piece getPieceDirect(int ptr)
+        public Piece GetPieceDirect(int ptr)
         {
             Piece tmp = null;
             if(ptr != -1)
@@ -109,7 +109,7 @@ namespace ThreeDimensionalChess
             return tmp;
         }
 
-        public void addPiece(string type, int pos, int colour)
+        public void AddPiece(string type, int pos, int colour)
         {
             Piece p = null;
             switch (type)
@@ -139,15 +139,15 @@ namespace ThreeDimensionalChess
 
             pieces.Add(p);
 
-            board[pos].setPiecePointer(pieces.Count() - 1);
+            board[pos].SetPiecePointer(pieces.Count() - 1);
         }
 
         //this needs to be triggered when a square is clicked on, parameter is index of square
-        public void selectPiece(int squarePtr, int currentPlayer)
+        public void SelectPiece(int squarePtr, int currentPlayer)
         {
             //do nothing if square is empty
             //list is setup here in case needed
-            int piecePtr = board[squarePtr].getPiecePointer();
+            int piecePtr = board[squarePtr].GetPiecePointer();
             List<int> moveList = new List<int>();
             if (piecePtr != -1)
             {
@@ -157,12 +157,12 @@ namespace ThreeDimensionalChess
                     //clear colours on squares first
                     for (int x = 0; x < currentPossibleMoves.Count(); x++) 
                     { 
-                        board[currentPossibleMoves[x]].notUnderThreat();
-                        if (pointersMovedToFrom.Contains(currentPossibleMoves[x])) { board[currentPossibleMoves[x]].pieceMoved(); }
+                        board[currentPossibleMoves[x]].NotUnderThreat();
+                        if (pointersMovedToFrom.Contains(currentPossibleMoves[x])) { board[currentPossibleMoves[x]].PieceMoved(); }
                     }
 
                     currentPieceIndex = piecePtr;
-                    moveList = pieces[piecePtr].generatePossibleMoves(board, pieces); //this only returns physically possible moves
+                    moveList = pieces[piecePtr].GeneratePossibleMoves(board, pieces); //this only returns physically possible moves
                     //should show moves protecting a piece????? highlight different colour : yellow
 
                     //filter out null moves
@@ -172,14 +172,14 @@ namespace ThreeDimensionalChess
                         //FILTER OUT SELF CHECK MOVES HERE
                         //this may slow down everything a lot - creatre siumulatred board and try the move here
                         SimulatedBoard tmp = new SimulatedBoard(board, pieces);
-                        bool legal = tmp.legalMove(moveList[x], currentPieceIndex, pieces[currentPieceIndex].getColour());
+                        bool legal = tmp.LegalMove(moveList[x], currentPieceIndex, pieces[currentPieceIndex].GetColour());
                         if (legal && moveList[x] != -1) { filteredMoves.Add(moveList[x]); }
                     }
 
                     currentPossibleMoves = filteredMoves;
                     bool friendly = true;
-                    if (pieces[currentPieceIndex].getColour() != currentPlayer) { friendly = false; }
-                    displayMoves(currentPossibleMoves, friendly);
+                    if (pieces[currentPieceIndex].GetColour() != currentPlayer) { friendly = false; }
+                    DisplayMoves(currentPossibleMoves, friendly);
                 }
             }
             else
@@ -188,8 +188,8 @@ namespace ThreeDimensionalChess
                 currentPieceIndex = -1;
                 for (int x = 0; x < currentPossibleMoves.Count(); x++) 
                 { 
-                    board[currentPossibleMoves[x]].notUnderThreat();
-                    if (pointersMovedToFrom.Contains(currentPossibleMoves[x])) { board[currentPossibleMoves[x]].pieceMoved(); }
+                    board[currentPossibleMoves[x]].NotUnderThreat();
+                    if (pointersMovedToFrom.Contains(currentPossibleMoves[x])) { board[currentPossibleMoves[x]].PieceMoved(); }
                 }
                 currentPossibleMoves = new List<int>();
             }
@@ -197,33 +197,33 @@ namespace ThreeDimensionalChess
         }
 
         //subroutine for moving piece, no need to take piece in parameter - since currently selected piece is already stored
-        public string movePiece(int targetSquarePtr, int currentPlayer)
+        public string MovePiece(int targetSquarePtr, int currentPlayer)
         {
             //LA3DN move will be returned in this string
             string move = null;
 
-            int startSquarePtr = pieces[currentPieceIndex].getCurrentPosition();
+            int startSquarePtr = pieces[currentPieceIndex].GetCurrentPosition();
             //target move should be in possible move list and also check that piece belongs to current player
-            if (currentPossibleMoves.Contains(targetSquarePtr) && pieces[currentPieceIndex].getColour() == currentPlayer)
+            if (currentPossibleMoves.Contains(targetSquarePtr) && pieces[currentPieceIndex].GetColour() == currentPlayer)
             {
                 //reset colours of last moves - make sure that list isn't empty first
                 if (pointersMovedToFrom.Count() > 0)
                 {
-                    board[pointersMovedToFrom[0]].notUnderThreat();
-                    board[pointersMovedToFrom[1]].notUnderThreat();
+                    board[pointersMovedToFrom[0]].NotUnderThreat();
+                    board[pointersMovedToFrom[1]].NotUnderThreat();
                     pointersMovedToFrom.RemoveAt(0);
                     pointersMovedToFrom.RemoveAt(0);
                 }
 
-                int targetPiecePtr = board[targetSquarePtr].getPiecePointer();
+                int targetPiecePtr = board[targetSquarePtr].GetPiecePointer();
 
                 //store first half of move data here (origin point and piece type)
-                string moveDataFirstHalf = pieces[currentPieceIndex].getPieceType() + pieces[currentPieceIndex].getCurrentPosAsStr();
+                string moveDataFirstHalf = pieces[currentPieceIndex].GetPieceType() + pieces[currentPieceIndex].GetCurrentPosAsStr();
 
                 //effects the move, shades squares yellow, store squares to reset them later
-                string moveDataSecondHalf = pieces[currentPieceIndex].movePiece(targetSquarePtr, board, pieces);
-                board[startSquarePtr].setPiecePointer(-1);
-                board[startSquarePtr].pieceMoved();
+                string moveDataSecondHalf = pieces[currentPieceIndex].MovePiece(targetSquarePtr, board, pieces);
+                board[startSquarePtr].SetPiecePointer(-1);
+                board[startSquarePtr].PieceMoved();
                 pointersMovedToFrom.Add(startSquarePtr);
                 //added logic here to prevent ptr misalignment - if a piece is taken and its pointer is less than the current piece, we need to offset current piece ptr by one
                 if (moveDataSecondHalf.Contains("X"))
@@ -231,22 +231,22 @@ namespace ThreeDimensionalChess
                     if (targetPiecePtr < currentPieceIndex) { currentPieceIndex--; }
                     for (int x = targetPiecePtr; x < pieces.Count(); x++)
                     {
-                        board[pieces[x].getCurrentPosition()].decrementPiecePointer();
+                        board[pieces[x].GetCurrentPosition()].DecrementPiecePointer();
                     }
                 }
-                board[targetSquarePtr].setPiecePointer(currentPieceIndex);
-                board[targetSquarePtr].pieceMoved();
+                board[targetSquarePtr].SetPiecePointer(currentPieceIndex);
+                board[targetSquarePtr].PieceMoved();
                 pointersMovedToFrom.Add(targetSquarePtr);
                 //resets selection data
                 currentPieceIndex = -1;
                 for (int x = 0; x < currentPossibleMoves.Count(); x++) 
                 { 
-                    board[currentPossibleMoves[x]].notUnderThreat();
-                    if (pointersMovedToFrom.Contains(currentPossibleMoves[x])) { board[currentPossibleMoves[x]].pieceMoved(); }
+                    board[currentPossibleMoves[x]].NotUnderThreat();
+                    if (pointersMovedToFrom.Contains(currentPossibleMoves[x])) { board[currentPossibleMoves[x]].PieceMoved(); }
                 }
                 currentPossibleMoves = new List<int>();
                 //check if a pawn has reached end rank  
-                string promotion = checkLastRank();
+                string promotion = CheckLastRank();
 
                 //aggregate string parts - don't forget to add promotion back here
                 move = moveDataFirstHalf + moveDataSecondHalf + promotion;
@@ -257,21 +257,21 @@ namespace ThreeDimensionalChess
                 //FIXME: this needs to be changed I think - just deselect piece?
                 //issue has been confirmed
                 //fix has been attempted
-                selectPiece(targetSquarePtr, currentPlayer);
+                SelectPiece(targetSquarePtr, currentPlayer);
             }
 
             return move;
         }
 
-        public int getGamestate(int currentPlayer)
+        public int GetGamestate(int currentPlayer)
         {
             int ret = 0;
 
             for (int x = 0; x < pieces.Count(); x++)
             {
-                if (pieces[x].getColour() == currentPlayer)
+                if (pieces[x].GetColour() == currentPlayer)
                 {
-                    List<int> moveList = pieces[x].generatePossibleMoves(board, pieces);
+                    List<int> moveList = pieces[x].GeneratePossibleMoves(board, pieces);
                     //filter out null moves
                     List<int> filteredMoves = new List<int>();
                     for (int y = 0; y < moveList.Count(); y++)
@@ -281,7 +281,7 @@ namespace ThreeDimensionalChess
                             //FILTER OUT SELF CHECK MOVES HERE
                             //this may slow down everything a lot - creatre siumulatred board and try the move here
                             SimulatedBoard tmp = new SimulatedBoard(board, pieces);
-                            bool legal = tmp.legalMove(moveList[y], x, pieces[x].getColour());
+                            bool legal = tmp.LegalMove(moveList[y], x, pieces[x].GetColour());
                             if (legal) { filteredMoves.Add(moveList[y]); }
                         }
                     }
@@ -296,7 +296,7 @@ namespace ThreeDimensionalChess
             // if game has not been set to ongoing here, then it is either stale or checkmate
             if (ret != (int)Gamestates.Ongoing)
             {
-                bool checkMate = checkThreat(pieces[currentPlayer].getCurrentPosition(), currentPlayer);
+                bool checkMate = CheckThreat(pieces[currentPlayer].GetCurrentPosition(), currentPlayer);
                 if (checkMate && currentPlayer == (int)Colours.Black) { ret = (int)Gamestates.WhiteW; }
                 else if (checkMate && currentPlayer == (int)Colours.White) { ret = (int)Gamestates.BlackW; }
             }
@@ -304,30 +304,30 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        private void displayMoves(List<int> possibleMoves, bool friendly)
+        private void DisplayMoves(List<int> possibleMoves, bool friendly)
         {
             for (int x = 0; x < possibleMoves.Count(); x++)
             {
-                board[possibleMoves[x]].underThreat(friendly);
+                board[possibleMoves[x]].UnderThreat(friendly);
             }
         }
 
-        private string checkLastRank()
+        private string CheckLastRank()
         {
             string ret = "";
             //check promotion linearly
             for(int x = 0; x < 8; x++)
             {
                 //white pieces
-                int piecePtr = board[x + (7 * 64) + (7 * 8)].getPiecePointer();
-                if(piecePtr != -1 && pieces[piecePtr].getPieceType() == "P" && pieces[piecePtr].getColour() == (int)Colours.White)
+                int piecePtr = board[x + (7 * 64) + (7 * 8)].GetPiecePointer();
+                if(piecePtr != -1 && pieces[piecePtr].GetPieceType() == "P" && pieces[piecePtr].GetColour() == (int)Colours.White)
                 {
                     ret = "=";
                 }
 
                 //black pieces
-                piecePtr = board[x].getPiecePointer();
-                if(piecePtr != -1 && pieces[piecePtr].getPieceType() == "P" && pieces[piecePtr].getColour() == (int)Colours.Black)
+                piecePtr = board[x].GetPiecePointer();
+                if(piecePtr != -1 && pieces[piecePtr].GetPieceType() == "P" && pieces[piecePtr].GetColour() == (int)Colours.Black)
                 {
                     ret = "=";
                 }
@@ -335,80 +335,72 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public bool promotePawn(string pieceType, int squarePtr)
+        public bool PromotePawn(string pieceType, int squarePtr)
         {
-            int piecePtr = board[squarePtr].getPiecePointer();
+            int piecePtr = board[squarePtr].GetPiecePointer();
             bool success = false;
             ///rereference piece in list to a new piece of promoted variant
             switch (pieceType)
             {
                 case "Q":
-                    pieces[piecePtr] = new Queen(squarePtr, pieces[piecePtr].getColour());
+                    pieces[piecePtr] = new Queen(squarePtr, pieces[piecePtr].GetColour());
                     success = true;
                     break;
                 case "B":
-                    pieces[piecePtr] = new Bishop(squarePtr, pieces[piecePtr].getColour());
+                    pieces[piecePtr] = new Bishop(squarePtr, pieces[piecePtr].GetColour());
                     success = true;
                     break;
                 case "R":
-                    pieces[piecePtr] = new Rook(squarePtr, pieces[piecePtr].getColour());
+                    pieces[piecePtr] = new Rook(squarePtr, pieces[piecePtr].GetColour());
                     success = true;
                     break;
                 case "N":
-                    pieces[piecePtr] = new Knight(squarePtr, pieces[piecePtr].getColour());
+                    pieces[piecePtr] = new Knight(squarePtr, pieces[piecePtr].GetColour());
                     success = true;
                     break;
             }
             return success;
         }
 
-        private bool checkThreat(int squarePtr, int currentPlayer)
+        private bool CheckThreat(int squarePtr, int currentPlayer)
         {
             bool threat = false;
             ThreatSuperPiece tmp = new ThreatSuperPiece(squarePtr, currentPlayer);
             //see if there are ANY pieces threatening current square
-            List<int> threatMoves = tmp.generatePossibleMoves(board, pieces);
+            List<int> threatMoves = tmp.GeneratePossibleMoves(board, pieces);
             if (threatMoves.Count() > 0) { threat = true; }
 
             return threat;
         }
 
-        public bool checkCheck(int player)
+        public bool CheckCheck(int player)
         {
-            bool check = checkThreat(pieces[player].getCurrentPosition(), player);
+            bool check = CheckThreat(pieces[player].GetCurrentPosition(), player);
             return check;
         }
 
-        public void printPieces()
-        {
-            for (int x = 0; x < pieces.Count(); x++)
-            {
-                Console.WriteLine(pieces[x].getPieceType() + " :" + pieces[x].getCurrentPosition());
-            }
-        }
-
-        public void parseMove(string move)
+        public void ParseMove(string move)
         {
             //separate pieces from notation and then enact
             string startCoord = move.Substring(1, 3);
-            int piecePtr = board[pieces[0].convertStrPosToPtr(startCoord)].getPiecePointer();
+            int piecePtr = board[pieces[0].ConvertStrPosToPtr(startCoord)].GetPiecePointer();
             string endCoord = "";
             if (move.Contains('X'))
             {
                 endCoord = move.Substring(6, 3);
             }
             else { endCoord = move.Substring(5, 3); }
-            int targetSquare = pieces[0].convertStrPosToPtr(endCoord);
-            pieces[piecePtr].movePiece(targetSquare, board, pieces);
+            int targetSquare = pieces[0].ConvertStrPosToPtr(endCoord);
+            pieces[piecePtr].MovePiece(targetSquare, board, pieces);
             //check if promotion, if so enact
             if (move.Contains('=')) 
             {
                 string promotedPiece = move.Substring(move.Length - 1, 1);
-                promotePawn(promotedPiece, targetSquare);
+                PromotePawn(promotedPiece, targetSquare);
             }
         }
 
-        public void undoMove(string move)
+        public void UndoMove(string move)
         {
             bool captureFlag = false;
             bool promotionFlag = false;
@@ -419,51 +411,16 @@ namespace ThreeDimensionalChess
             //WIP
         }
 
-        public string getPossibleMoveListRep()
-        {
-            return currentPossibleMoves.ConvertToString();
-        }
-
-        public void printMoves(int piecePtr)
-        {
-            List<int> tmp = new List<int>();
-            tmp = pieces[piecePtr].generatePossibleMoves(board, pieces);
-            for (int x = 0; x < tmp.Count(); x++)
-            {
-                if (tmp[x] != -1)
-                {
-                    Console.WriteLine(tmp[x]);
-                }
-
-            }
-        }
-
-        public void printSelectedPiece()
-        {
-            if (currentPieceIndex != -1)
-            {
-                Piece p = pieces[currentPieceIndex];
-                string col = "";
-                if (p.getColour() == (int)Colours.White)
-                {
-                    col = "White";
-                }
-                else { col = "Black"; }
-                Console.WriteLine(col + " " + p.getPieceType() + " at " + p.getCurrentPosition());
-            }
-            else { Console.WriteLine("No selected piece"); }
-        }
-
-        public Square getSquare(int ptr)
+        public Square GetSquare(int ptr)
         {
             return board[ptr];
         }
 
-        public void setSquareBlue(int ptr) { board[ptr].setSquareBlue(); }
+        public void SetSquareBlue(int ptr) { board[ptr].SetSquareBlue(); }
 
-        public int getSquareColour(int ptr)
+        public int GetSquareColour(int ptr)
         {
-            return board[ptr].getColour();
+            return board[ptr].GetColour();
         }
     }
 

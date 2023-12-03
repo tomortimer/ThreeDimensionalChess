@@ -14,10 +14,10 @@ namespace ThreeDimensionalChess
         public DatabaseHandler()
         {
             //create tables, first init only
-            //createTables();
+            //CreateTables();
         }
 
-        private void createTables()
+        private void CreateTables()
         {
             //create db connection
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
@@ -59,7 +59,7 @@ VALUES ('testPlayer2', 0, 0, 0, 0, 0, 0, $date);";
             dbConnection.Close();
         }
 
-        public int addPlayer(string name)
+        public int AddPlayer(string name)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
@@ -86,7 +86,7 @@ VALUES ($name, 0, 0, 0, 0, 0, 0, $date);";
             return ret;
         }
 
-        public List<Player> getPlayers()
+        public List<Player> GetPlayers()
         {
             //set up query
             List<Player> ret = new List<Player>();
@@ -118,7 +118,7 @@ VALUES ($name, 0, 0, 0, 0, 0, 0, $date);";
             return ret;
         }
 
-        public Player getPlayer(int inp)
+        public Player GetPlayer(int inp)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
@@ -145,7 +145,7 @@ VALUES ($name, 0, 0, 0, 0, 0, 0, $date);";
             return ret;
         }
 
-        public void updatePlayer(Player p)
+        public void UpdatePlayer(Player p)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
@@ -157,20 +157,20 @@ SET whiteLosses=$WHL, blackLosses=$BLL, whiteDraws=$WHD, blackDraws=$BLD, whiteW
 WHERE playerID=$ID;";
 
             //load parameters from player obj
-            comm.Parameters.AddWithValue("$WHL", p.getWhiteLosses());
-            comm.Parameters.AddWithValue("$BLL", p.getBlackLosses());
-            comm.Parameters.AddWithValue("$WHD", p.getWhiteDraws());
-            comm.Parameters.AddWithValue("$BLD", p.getBlackDraws());
-            comm.Parameters.AddWithValue("$WHW", p.getWhiteWins());
-            comm.Parameters.AddWithValue("$BLW", p.getBlackWins());
-            comm.Parameters.AddWithValue("$ID", p.getID());
+            comm.Parameters.AddWithValue("$WHL", p.GetWhiteLosses());
+            comm.Parameters.AddWithValue("$BLL", p.GetBlackLosses());
+            comm.Parameters.AddWithValue("$WHD", p.GetWhiteDraws());
+            comm.Parameters.AddWithValue("$BLD", p.GetBlackDraws());
+            comm.Parameters.AddWithValue("$WHW", p.GetWhiteWins());
+            comm.Parameters.AddWithValue("$BLW", p.GetBlackWins());
+            comm.Parameters.AddWithValue("$ID", p.GetID());
 
             comm.ExecuteNonQuery();
             dbConnection.Close();
         }
 
         //returns false if unsuccessful, true if successful
-        public bool deletePlayer(int inp)
+        public bool DeletePlayer(int inp)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
@@ -200,7 +200,7 @@ DELETE FROM game WHERE whitePlayerID=$input OR blackPlayerID=$input;
             return ret;
         }
 
-        public int createGame(string name, bool undo, int whiteID, int blackID)
+        public int CreateGame(string name, bool undo, int whiteID, int blackID)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
@@ -231,7 +231,7 @@ VALUES ($name, $empty, $state, $date, $white, $black, $undo);";
             return ret;
         }
 
-        public void updateGame(string moves, int state, int ID)
+        public void UpdateGame(string moves, int state, int ID)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
@@ -252,7 +252,7 @@ WHERE gameID=$ID";
             dbConnection.Close();
         }
 
-        public List<GameInfo> getGames()
+        public List<GameInfo> GetGames()
         {
             List<GameInfo> ret = new List<GameInfo>();
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
@@ -282,7 +282,7 @@ WHERE gameID=$ID";
             return ret;
         }
 
-        public GameInfo getGame(int inp)
+        public GameInfo GetGame(int inp)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();
@@ -309,7 +309,7 @@ WHERE gameID=$ID";
             return tmp;
         }
 
-        public bool deleteGame(int inp)
+        public bool DeleteGame(int inp)
         {
             SQLiteConnection dbConnection = new SQLiteConnection("Data Source=database.db");
             dbConnection.Open();

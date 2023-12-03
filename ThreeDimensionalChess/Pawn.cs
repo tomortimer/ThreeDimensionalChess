@@ -11,21 +11,21 @@ namespace ThreeDimensionalChess
 
         public Pawn(int position, int colour) : base(position, colour) { }
 
-        public override string getPieceType()
+        public override string GetPieceType()
         {
             return "P";
         }
 
-        public override List<int> generatePossibleMoves(List<Square> board, List<Piece> pieces)
+        public override List<int> GeneratePossibleMoves(List<Square> board, List<Piece> pieces)
         {
             List<int> moves = new List<int>();
             //move in opposite directions based on colour
             //uses private method, makes move simpler to program
-            moves = generateNextMove(currentPosition, board, pieces);
+            moves = GenerateNextMove(currentPosition, board, pieces);
 
             //add capture moves here
             //RULE: pawns can make both advancing captures from top and front view, only one option for advancing capture is available on side view
-            int[] posVect = convertPtrToVect(currentPosition);
+            int[] posVect = ConvertPtrToVect(currentPosition);
             int pos = currentPosition;
             if (colour == (int)Colours.White)
             {
@@ -33,19 +33,19 @@ namespace ThreeDimensionalChess
                 if (posVect[0] != 0 && posVect[2] != 7)
                 {
                     int target = pos + 64 - 1;
-                    int targetPiecePtr = board[target].getPiecePointer();
+                    int targetPiecePtr = board[target].GetPiecePointer();
                     if (targetPiecePtr != -1)
                     {
-                        if (pieces[targetPiecePtr].getColour() != colour) { moves.Add(target); }
+                        if (pieces[targetPiecePtr].GetColour() != colour) { moves.Add(target); }
                     }
                 }
                 if (posVect[0] != 7 && posVect[2] != 7)
                 {
                     int target = pos + 64 + 1;
-                    int targetPiecePtr = board[target].getPiecePointer();
+                    int targetPiecePtr = board[target].GetPiecePointer();
                     if (targetPiecePtr != -1)
                     {
-                        if (pieces[targetPiecePtr].getColour() != colour) { moves.Add(target); }
+                        if (pieces[targetPiecePtr].GetColour() != colour) { moves.Add(target); }
                     }
                 }
 
@@ -53,19 +53,19 @@ namespace ThreeDimensionalChess
                 if (posVect[0] != 0 && posVect[1] != 7)
                 {
                     int target = pos + 8 - 1;
-                    int targetPiecePtr = board[target].getPiecePointer();
+                    int targetPiecePtr = board[target].GetPiecePointer();
                     if (targetPiecePtr != -1)
                     {
-                        if (pieces[targetPiecePtr].getColour() != colour) { moves.Add(target); }
+                        if (pieces[targetPiecePtr].GetColour() != colour) { moves.Add(target); }
                     }
                 }
                 if (posVect[0] != 7 && posVect[1] != 7)
                 {
                     int target = pos + 8 + 1;
-                    int targetPiecePtr = board[target].getPiecePointer();
+                    int targetPiecePtr = board[target].GetPiecePointer();
                     if (targetPiecePtr != -1)
                     {
-                        if (pieces[targetPiecePtr].getColour() != colour) { moves.Add(target); }
+                        if (pieces[targetPiecePtr].GetColour() != colour) { moves.Add(target); }
                     }
                 }
 
@@ -73,10 +73,10 @@ namespace ThreeDimensionalChess
                 if (posVect[1] != 7 && posVect[2] != 7)
                 {
                     int target = pos + 8 + 64;
-                    int targetPiecePtr = board[target].getPiecePointer();
+                    int targetPiecePtr = board[target].GetPiecePointer();
                     if (targetPiecePtr != -1)
                     {
-                        if (pieces[targetPiecePtr].getColour() != colour) { moves.Add(target); }
+                        if (pieces[targetPiecePtr].GetColour() != colour) { moves.Add(target); }
                     }
                 }
             }
@@ -87,19 +87,19 @@ namespace ThreeDimensionalChess
                 if (posVect[0] != 7 && posVect[2] != 0)
                 {
                     int target = pos - 64 + 1;
-                    int targetPiecePtr = board[target].getPiecePointer();
+                    int targetPiecePtr = board[target].GetPiecePointer();
                     if (targetPiecePtr != -1)
                     {
-                        if (pieces[targetPiecePtr].getColour() != colour) { moves.Add(target); }
+                        if (pieces[targetPiecePtr].GetColour() != colour) { moves.Add(target); }
                     }
                 }
                 if (posVect[0] != 0 && posVect[2] != 0)
                 {
                     int target = pos - 64 - 1;
-                    int targetPiecePtr = board[target].getPiecePointer();
+                    int targetPiecePtr = board[target].GetPiecePointer();
                     if (targetPiecePtr != -1)
                     {
-                        if (pieces[targetPiecePtr].getColour() != colour) { moves.Add(target); }
+                        if (pieces[targetPiecePtr].GetColour() != colour) { moves.Add(target); }
                     }
                 }
 
@@ -107,19 +107,19 @@ namespace ThreeDimensionalChess
                 if (posVect[0] != 7 && posVect[1] != 0)
                 {
                     int target = pos - 8 + 1;
-                    int targetPiecePtr = board[target].getPiecePointer();
+                    int targetPiecePtr = board[target].GetPiecePointer();
                     if (targetPiecePtr != -1)
                     {
-                        if (pieces[targetPiecePtr].getColour() != colour) { moves.Add(target); }
+                        if (pieces[targetPiecePtr].GetColour() != colour) { moves.Add(target); }
                     }
                 }
                 if (posVect[0] != 0 && posVect[1] != 0)
                 {
                     int target = pos - 8 - 1;
-                    int targetPiecePtr = board[target].getPiecePointer();
+                    int targetPiecePtr = board[target].GetPiecePointer();
                     if (targetPiecePtr != -1)
                     {
-                        if (pieces[targetPiecePtr].getColour() != colour) { moves.Add(target); }
+                        if (pieces[targetPiecePtr].GetColour() != colour) { moves.Add(target); }
                     }
                 }
 
@@ -127,10 +127,10 @@ namespace ThreeDimensionalChess
                 if (posVect[1] != 0 && posVect[2] != 0)
                 {
                     int target = pos - 8 - 64;
-                    int targetPiecePtr = board[target].getPiecePointer();
+                    int targetPiecePtr = board[target].GetPiecePointer();
                     if (targetPiecePtr != -1)
                     {
-                        if (pieces[targetPiecePtr].getColour() != colour) { moves.Add(target); }
+                        if (pieces[targetPiecePtr].GetColour() != colour) { moves.Add(target); }
                     }
                 }
             }
@@ -138,7 +138,7 @@ namespace ThreeDimensionalChess
             return moves;
         }
 
-        private List<int> generateNextMove(int pos, List<Square> board, List<Piece> pieces)
+        private List<int> GenerateNextMove(int pos, List<Square> board, List<Piece> pieces)
         {
             List<int> ret = new List<int>();
             List<int[]> vects = new List<int[]>();
@@ -149,13 +149,13 @@ namespace ThreeDimensionalChess
             {
                 //across move
                 ret.Add(pos + 64);
-                int[] tmp1 = convertPtrToVect(pos);
+                int[] tmp1 = ConvertPtrToVect(pos);
                 tmp1[2]++;
                 vects.Add(tmp1);
 
                 //up move
                 ret.Add(pos + 8);
-                int[] tmp2 = convertPtrToVect(pos);
+                int[] tmp2 = ConvertPtrToVect(pos);
                 tmp2[1]++;
                 vects.Add(tmp2);
             }
@@ -163,13 +163,13 @@ namespace ThreeDimensionalChess
             {
                 //across move
                 ret.Add(pos - 64);
-                int[] tmp1 = convertPtrToVect(pos);
+                int[] tmp1 = ConvertPtrToVect(pos);
                 tmp1[2]--;
                 vects.Add(tmp1);
 
                 //up move
                 ret.Add(pos - 8);
-                int[] tmp2 = convertPtrToVect(pos);
+                int[] tmp2 = ConvertPtrToVect(pos);
                 tmp2[1]--;
                 vects.Add(tmp2);
             }
@@ -189,7 +189,7 @@ namespace ThreeDimensionalChess
             //written out twice because of same issue as above for loop
             if (retMoves.Count() == 2)
             {
-                int piecePtr = board[retMoves[1]].getPiecePointer();
+                int piecePtr = board[retMoves[1]].GetPiecePointer();
                 if (piecePtr != -1)
                 {
                     //remove move because can't move forward onto piece
@@ -198,7 +198,7 @@ namespace ThreeDimensionalChess
             }
             if (retMoves.Count() >= 1)
             {
-                int piecePtr = board[retMoves[0]].getPiecePointer();
+                int piecePtr = board[retMoves[0]].GetPiecePointer();
                 if (piecePtr != -1)
                 {
                     //remove move because can't move forward onto piece

@@ -10,9 +10,9 @@ namespace ThreeDimensionalChess
     {
         public King(int startPosition, int colour) : base(startPosition, colour) { }
 
-        public override string getPieceType() { return "K"; }
+        public override string GetPieceType() { return "K"; }
 
-        public override List<int> generatePossibleMoves(List<Square> board, List<Piece> pieces)
+        public override List<int> GeneratePossibleMoves(List<Square> board, List<Piece> pieces)
         {
             List<int> moves = new List<int>();
 
@@ -20,7 +20,7 @@ namespace ThreeDimensionalChess
             for (int dir = (int)Directions.Right; dir <= (int)Directions.Backwards; dir++)
             {
                 int pos = currentPosition;
-                int[] vect = convertPtrToVect(pos);
+                int[] vect = ConvertPtrToVect(pos);
                 //switch transforms position
                 switch (dir)
                 {
@@ -57,14 +57,14 @@ namespace ThreeDimensionalChess
                 }
 
                 //check if piece has gone off edge here
-                if (edgeCheck(vect)) { moves.Add(pos); }
+                if (EdgeCheck(vect)) { moves.Add(pos); }
             }
 
             //process diagonal moves here
             for (int dir = 0; dir < 12; dir++)
             {
                 int pos = currentPosition;
-                int[] vect = convertPtrToVect(pos);
+                int[] vect = ConvertPtrToVect(pos);
                 //switch transforms position, collapse for readability, switch is in terms of 8 sided board, change later?
                 switch (dir)
                 {
@@ -133,19 +133,19 @@ namespace ThreeDimensionalChess
                 }
 
                 //check if piece has gone off edge before adding to move of lists
-                if (edgeCheck(vect)) { moves.Add(pos); }
+                if (EdgeCheck(vect)) { moves.Add(pos); }
             }
 
 
             //loop to check if pieces on squares
             for (int x = 0; x < moves.Count(); x++)
             {
-                int targetPos = board[moves[x]].getPiecePointer();
+                int targetPos = board[moves[x]].GetPiecePointer();
                 if (targetPos != -1)
                 {
                     Piece targetPiece = pieces[targetPos];
                     //if piece of same colour on square remove move
-                    if (targetPiece.getColour() == colour)
+                    if (targetPiece.GetColour() == colour)
                     {
                         moves.RemoveAt(x);
                         x--;
@@ -156,7 +156,7 @@ namespace ThreeDimensionalChess
             return moves;
         }
 
-        private bool edgeCheck(int[] vect)
+        private bool EdgeCheck(int[] vect)
         {
             //returns true if move is safe
             bool safe = false;

@@ -23,7 +23,7 @@ namespace ThreeDimensionalChess
         PendingPromo // 4 - Used to wait program for pawn promotion
     }
 
-    enum viewDirections
+    enum ViewDirections
     {
         Front, //0
         Side, //1
@@ -60,17 +60,17 @@ namespace ThreeDimensionalChess
             pendingMove = 0;
             db = new DatabaseHandler();
             //init player objects, grab name based on ID from db
-            whitePlayer = db.getPlayer(whiteID);
-            whitePlayer.setColour((int)Colours.White);
-            blackPlayer = db.getPlayer(blackID);
-            blackPlayer.setColour((int)Colours.Black);
+            whitePlayer = db.GetPlayer(whiteID);
+            whitePlayer.SetColour((int)Colours.White);
+            blackPlayer = db.GetPlayer(blackID);
+            blackPlayer.SetColour((int)Colours.Black);
             /*whitePlayer = new Player(0, "name", 0, 0, 0, 0, 0, DateTime.Today);
-            whitePlayer.setColour((int)Colours.White);
+            whitePlayer.SetColour((int)Colours.White);
             blackPlayer = new Player(0, "name", 0, 0, 0, 0, 0, DateTime.Today);
-            blackPlayer.setColour((int)Colours.Black);*/
+            blackPlayer.SetColour((int)Colours.Black);*/
             state = (int)Gamestates.Ongoing;
             //create game in database
-            ID = db.createGame(name, undoMoves, whiteID, blackID);
+            ID = db.CreateGame(name, undoMoves, whiteID, blackID);
             //init games rules
             undoMovesAllowed = undoMoves;
             changeBoardDir = true;
@@ -78,7 +78,7 @@ namespace ThreeDimensionalChess
             viewLayer = 0;
             viewDir = 0;
             viewport = new int[64];
-            updateViewport();
+            UpdateViewport();
         }
 
         //constructor for loading games from GameInfo
@@ -91,61 +91,61 @@ namespace ThreeDimensionalChess
             pendingMove = 0;
             db = new DatabaseHandler();
             //load values from info obj
-            ID = info.getGameID();
-            undoMovesAllowed = info.getUndoMoves();
-            state = info.getGamestateAsInt();
+            ID = info.GetGameID();
+            undoMovesAllowed = info.GetUndoMoves();
+            state = info.GetGamestateAsInt();
             //init players
-            whitePlayer = db.getPlayer(info.getWhitePlayerID());
-            whitePlayer.setColour((int)Colours.White);
-            blackPlayer = db.getPlayer(info.getBlackPlayerID());
-            blackPlayer.setColour((int)Colours.Black);
+            whitePlayer = db.GetPlayer(info.GetWhitePlayerID());
+            whitePlayer.SetColour((int)Colours.White);
+            blackPlayer = db.GetPlayer(info.GetBlackPlayerID());
+            blackPlayer.SetColour((int)Colours.Black);
             //init viewport (as front view white)
             changeBoardDir = true;
             viewLayer = 0;
             viewDir = 0;
             viewport = new int[64];
-            updateViewport();
+            UpdateViewport();
             //enact saved moves
-            List<string> moves = info.getMoves();
+            List<string> moves = info.GetMoves();
             while(moves.Count() >0 && moves[0] != "")
             {
                 //using list like a queue
                 string tmp = moves.RemoveAt(0);
-                parseMove(tmp);
+                ParseMove(tmp);
             }
         }
 
-        public void click(int squareIndex)
+        public void Click(int squareIndex)
         {
             //can't do anything once game is over - separate method for rewind and view buttons
             if (playerTurn != -1 && state != (int)Gamestates.PendingPromo)
             {
-                bool pieceSelected = board.isPieceSelected();
+                bool pieceSelected = board.IsPieceSelected();
                 if (pieceSelected == true)
                 {
-                    Piece selectedPiece = board.getSelectedPiece();
-                    Piece pieceOnSquare = board.getPiece(squareIndex);
+                    Piece selectedPiece = board.GetSelectedPiece();
+                    Piece pieceOnSquare = board.GetPiece(squareIndex);
                     if (pieceOnSquare == null)
                     {
                         //moves onto square with selected piece if its empty
-                        attemptMove(squareIndex);
+                        AttemptMove(squareIndex);
                     }
-                    else if (pieceOnSquare.getColour() == playerTurn)
+                    else if (pieceOnSquare.GetColour() == playerTurn)
                     {
-                        selectPiece(squareIndex);
+                        SelectPiece(squareIndex);
                     }
                     else
                     {
-                        //getting to this point already eliminates player selecting their own piece due to above condition, failsafes in attemptmove anyway
+                        //Getting to this point already eliminates player selecting their own piece due to above condition, failsafes in attemptmove anyway
                         //attempts move if player has pieces of opposite colour selected
-                        if (selectedPiece.getColour() != pieceOnSquare.getColour())
+                        if (selectedPiece.GetColour() != pieceOnSquare.GetColour())
                         {
-                            attemptMove(squareIndex);
+                            AttemptMove(squareIndex);
                         }
                         else
                         {
                             //this case should be only triggered when going from selecting one enemy piece to selecting another enemy piece
-                            selectPiece(squareIndex);
+                            SelectPiece(squareIndex);
                         }
 
                     }
@@ -153,31 +153,31 @@ namespace ThreeDimensionalChess
                 }
                 else
                 {
-                    selectPiece(squareIndex); //simple outcome if no piece selected
+                    SelectPiece(squareIndex); //simple outcome if no piece selected
                 }
             }
-            updateViewport();
+            UpdateViewport();
         }
 
-        public void viewportClick(int boardIndex)
+        public void ViewportClick(int boardIndex)
         {
-            click(viewport[boardIndex]);
-            //board.setSquareBlue(viewport[boardIndex]);
-            updateViewport();
+            Click(viewport[boardIndex]);
+            //board.SetSquareBlue(viewport[boardIndex]);
+            UpdateViewport();
         }
 
-        private void attemptMove(int squareIndex)
+        private void AttemptMove(int squareIndex)
         {
             //player turn is checked in board method
-            string move = board.movePiece(squareIndex, playerTurn);
+            string move = board.MovePiece(squareIndex, playerTurn);
 
             //if the returning notation is not null, then the move has been affected, next player's turn
             if (move != null)
             {
                 playerTurn = (playerTurn + 1) % 2;
                 //gamestate is evaluated at the start of a player's turn, will be unnoticeable to players but makes the maths easier
-                inCheck = board.checkCheck(playerTurn);
-                evalGamestate();
+                inCheck = board.CheckCheck(playerTurn);
+                EvalGamestate();
                 //add check/stalemate/checkmate symbols here
                 switch (state)
                 {
@@ -209,25 +209,25 @@ namespace ThreeDimensionalChess
                     //holding square int here to ref piece down the line
                     pendingMove = squareIndex;
                     //select piece so that player is more aware of it
-                    selectPiece(squareIndex);
-                    //push move if promo, just don't forget to pop it later
+                    SelectPiece(squareIndex);
+                    //push move if promo, just don't forGet to pop it later
                 }                
                 moveList.Push(move);
-                db.updateGame(moveList.ConvertToString(), state, ID);
+                db.UpdateGame(moveList.ConvertToString(), state, ID);
             }
 
         }
 
-        private void evalGamestate()
+        private void EvalGamestate()
         {
-            state = board.getGamestate(playerTurn);
+            state = board.GetGamestate(playerTurn);
             //end game if gamestate isn't ongoing
             if (state != (int)Gamestates.Ongoing) { playerTurn = -1; } //FIXME: BEHAVIOUR WITH -1 PLAYER IS UNDEFINED -> ADD DEFENSIVE PROGRAMMING
         }
 
-        public void promotePawn(string pieceType)
+        public void PromotePawn(string pieceType)
         {
-            bool success = board.promotePawn(pieceType, pendingMove);
+            bool success = board.PromotePawn(pieceType, pendingMove);
             if (success)
             {
                 pendingMove = -1;
@@ -236,27 +236,27 @@ namespace ThreeDimensionalChess
                 moveList.Push(move);
                 playerTurn = (playerTurn + 1) % 2;
                 state = (int)Gamestates.Ongoing;
-                db.updateGame(moveList.ConvertToString(), state, ID);
+                db.UpdateGame(moveList.ConvertToString(), state, ID);
             }
-            updateViewport();
+            UpdateViewport();
         }
 
-        public void setViewDirection(int mode)
+        public void SetViewDirection(int mode)
         {
             //if piece is selected, use that piece's relevant co-ord as layer value
             viewDir = mode;
-            if (board.isPieceSelected()) 
+            if (board.IsPieceSelected()) 
             {
-                int[] pieceVect = board.getSelectedPiece().getCurrentPosAsVect();
+                int[] pieceVect = board.GetSelectedPiece().GetCurrentPosAsVect();
                 switch (mode)
                 {
-                    case (int)viewDirections.Front:
+                    case (int)ViewDirections.Front:
                         viewLayer = pieceVect[2];
                         break;
-                    case (int)viewDirections.Side:
+                    case (int)ViewDirections.Side:
                         viewLayer = pieceVect[0];
                         break;
-                    case (int)viewDirections.Top:
+                    case (int)ViewDirections.Top:
                         viewLayer = pieceVect[1];
                         break;
                 }
@@ -264,7 +264,7 @@ namespace ThreeDimensionalChess
             else
             {
                 //default for side viewlayer is 7 because I just can't understand the game otherwise for some reason
-                if(viewDir == (int)viewDirections.Side) { viewLayer = 7; }
+                if(viewDir == (int)ViewDirections.Side) { viewLayer = 7; }
                 else if(changeBoardDir)
                 {
                     //otherwise sets viewlayer to 0/7 depending on player turn - can be toggled as a gamerule
@@ -272,19 +272,19 @@ namespace ThreeDimensionalChess
                     else { viewLayer = 0; }
                 }
             }
-            updateViewport();
+            UpdateViewport();
         }
 
-        public void incrementViewLayer() { if (viewLayer < 7) { viewLayer++; updateViewport(); } }
-        public void decrementViewLayer() { if(viewLayer > 0) { viewLayer--; updateViewport(); } }
+        public void IncrementViewLayer() { if (viewLayer < 7) { viewLayer++; UpdateViewport(); } }
+        public void DecrementViewLayer() { if(viewLayer > 0) { viewLayer--; UpdateViewport(); } }
 
-        private void updateViewport()
+        private void UpdateViewport()
         {
             int originPointer = 0;
             //grab pointers for relevant slice of board
             switch (viewDir)
             {
-                case (int)viewDirections.Front:
+                case (int)ViewDirections.Front:
                     // first transform origin by viewlayer
                     originPointer += (viewLayer * 64);
                     //then fill out viewport coords from origin pointer
@@ -296,7 +296,7 @@ namespace ThreeDimensionalChess
                         }
                     }
                     break;
-                case (int)viewDirections.Side:
+                case (int)ViewDirections.Side:
                     //transform origin by viewlayer
                     originPointer += viewLayer; // is actually viewLayer * 1
                     for (int y = 0; y < 8; y++)
@@ -308,7 +308,7 @@ namespace ThreeDimensionalChess
                         }
                     }
                     break;
-                case (int)viewDirections.Top:
+                case (int)ViewDirections.Top:
                     //transform origin by viewlayer
                     originPointer += (viewLayer * 8);
                     for(int y = 0; y < 8; y++)
@@ -323,56 +323,56 @@ namespace ThreeDimensionalChess
             }
         }
 
-        public Square getViewportCell(int ptr)
+        public Square GetViewportCell(int ptr)
         {
             //takes a one dimensional pointer for the viewport
             //defensive programming
             if(ptr > -1 && ptr < 64)
             {
-                return board.getSquare(viewport[ptr]);
+                return board.GetSquare(viewport[ptr]);
             }
             else { throw new ArgumentOutOfRangeException(); }
         }
 
-        public int getViewDirection()
+        public int GetViewDirection()
         {
             return viewDir;
         }
 
-        public int getViewLayer()
+        public int GetViewLayer()
         {
             //add one for user readability
             return viewLayer + 1;
         }
 
-        private void selectPiece(int squareIndex)
+        private void SelectPiece(int squareIndex)
         {
-            board.selectPiece(squareIndex, playerTurn);
+            board.SelectPiece(squareIndex, playerTurn);
         }
 
         //ONLY USE FOR LOADING GAME DATA - formatted by this program or otherwise assuming notation is perfect
-        private void parseMove(string m)
+        private void ParseMove(string m)
         {
             //assumes move is valid
             moveList.Push(m);
-            board.parseMove(m);
+            board.ParseMove(m);
             playerTurn = (playerTurn + 1) % 2;
-            evalGamestate();
+            EvalGamestate();
         }
 
-        public void undoMove()
+        public void UndoMove()
         {
             string m = moveList.Pop();
-            board.undoMove(m);
+            board.UndoMove(m);
             playerTurn = (playerTurn - 1) % 2;
         }
 
-        public void addPiece(string p, int pos, int col)
+        public void AddPiece(string p, int pos, int col)
         {
-            board.addPiece(p, pos, col);
+            board.AddPiece(p, pos, col);
         }
 
-        public Player getCurrentPlayer()
+        public Player GetCurrentPlayer()
         {
             Player ret;
             if(playerTurn == 0) { ret = blackPlayer; }
@@ -380,34 +380,12 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public Piece getPieceDirect(int ptr)
+        public Piece GetPieceDirect(int ptr)
         {
-            return board.getPieceDirect(ptr);
+            return board.GetPieceDirect(ptr);
         }
 
-        public void printPossibleMoves()
-        {
-            Console.WriteLine(board.getPossibleMoveListRep());
-        }
-
-        public void printPieces()
-        {
-            board.printPieces();
-        }
-
-        public void printSelectedPiece()
-        {
-            board.printSelectedPiece();
-        }
-
-        public void printMoveList()
-        {
-            Console.WriteLine(moveList.ConvertToString());
-        }
-
-        public bool getInCheck() { return inCheck; }
-        public bool checkCheck() { return board.checkCheck(playerTurn); }
-        public int getSquareColour(int ptr) { return board.getSquareColour(ptr); }
-        public int getGamestate() { return state; }
+        public bool GetInCheck() { return inCheck; }
+        public int GetGamestate() { return state; }
     }
 }

@@ -10,7 +10,7 @@ namespace ThreeDimensionalChess
     {
         public Sorter() { }
 
-        public List<Player> mergeSortString(List<Player> list)
+        public List<Player> MergeSortString(List<Player> list)
         {
             //exit recursion
             if (list.Count() <= 1) { return list; }
@@ -28,13 +28,13 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            left = mergeSortString(left);
-            right = mergeSortString(right);
-            List<Player> sorted = mergeString(left, right);
+            left = MergeSortString(left);
+            right = MergeSortString(right);
+            List<Player> sorted = MergeString(left, right);
             return sorted;
         }
 
-        private List<Player> mergeString(List<Player> left, List<Player> right)
+        private List<Player> MergeString(List<Player> left, List<Player> right)
         {
             List<Player> ret = new List<Player>();
             // combine and sort elements
@@ -44,7 +44,7 @@ namespace ThreeDimensionalChess
                 if(left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getName()[0] <= right[0].getName()[0])
+                    if (left[0].GetName()[0] <= right[0].GetName()[0])
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);
@@ -69,7 +69,7 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public List<Player> mergeSortDate(List<Player> list)
+        public List<Player> MergeSortDate(List<Player> list)
         {
             //exit recursion
             if (list.Count() <= 1) { return list; }
@@ -87,13 +87,13 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            left = mergeSortDate(left);
-            right = mergeSortDate(right);
-            List<Player> ret = mergeDate(left, right);
+            left = MergeSortDate(left);
+            right = MergeSortDate(right);
+            List<Player> ret = MergeDate(left, right);
             return ret;
         }
 
-        private List<Player> mergeDate(List<Player> left, List<Player> right)
+        private List<Player> MergeDate(List<Player> left, List<Player> right)
         {
             List<Player> ret = new List<Player>();
             // combine and sort elements
@@ -103,7 +103,7 @@ namespace ThreeDimensionalChess
                 if (left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getJoinDate() <= right[0].getJoinDate())
+                    if (left[0].GetJoinDate() <= right[0].GetJoinDate())
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);
@@ -128,7 +128,7 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public List<Player> mergeSortWins(List<Player> list)
+        public List<Player> MergeSortWins(List<Player> list)
         {
             //exit recursion
             if (list.Count() <= 1) { return list; }
@@ -146,13 +146,13 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            left = mergeSortWins(left);
-            right = mergeSortWins(right);
-            List<Player> ret = mergeWins(left, right);
+            left = MergeSortWins(left);
+            right = MergeSortWins(right);
+            List<Player> ret = MergeWins(left, right);
             return ret;
         }
 
-        private List<Player> mergeWins(List<Player> left, List<Player> right)
+        private List<Player> MergeWins(List<Player> left, List<Player> right)
         {
             List<Player> ret = new List<Player>();
             // combine and sort elements
@@ -162,7 +162,7 @@ namespace ThreeDimensionalChess
                 if (left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getWinrate() <= right[0].getWinrate())
+                    if (left[0].GetWinrate() <= right[0].GetWinrate())
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);
@@ -187,7 +187,7 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public List<Player> mergeSortBlackWR(List<Player> list)
+        public List<Player> MergeSortBlackWR(List<Player> list)
         {
             //exit recursion
             if (list.Count() <= 1) { return list; }
@@ -205,13 +205,13 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            left = mergeSortBlackWR(left);
-            right = mergeSortBlackWR(right);
-            List<Player> ret = mergeBlackWR(left, right);
+            left = MergeSortBlackWR(left);
+            right = MergeSortBlackWR(right);
+            List<Player> ret = MergeBlackWR(left, right);
             return ret;
         }
 
-        private List<Player> mergeBlackWR(List<Player> left, List<Player> right)
+        private List<Player> MergeBlackWR(List<Player> left, List<Player> right)
         {
             List<Player> ret = new List<Player>();
             // combine and sort elements
@@ -221,7 +221,7 @@ namespace ThreeDimensionalChess
                 if (left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getBlackWinrate() <= right[0].getBlackWinrate())
+                    if (left[0].GetBlackWinrate() <= right[0].GetBlackWinrate())
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);
@@ -246,7 +246,7 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public List<Player> mergeSortWhiteWR(List<Player> list)
+        public List<Player> MergeSortWhiteWR(List<Player> list)
         {
             //exit recursion
             if (list.Count() <= 1) { return list; }
@@ -264,13 +264,13 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            left = mergeSortWhiteWR(left);
-            right = mergeSortWhiteWR(right);
-            List<Player> ret = mergeWhiteWR(left, right);
+            left = MergeSortWhiteWR(left);
+            right = MergeSortWhiteWR(right);
+            List<Player> ret = MergeWhiteWR(left, right);
             return ret;
         }
 
-        private List<Player> mergeWhiteWR(List<Player> left, List<Player> right)
+        private List<Player> MergeWhiteWR(List<Player> left, List<Player> right)
         {
             List<Player> ret = new List<Player>();
             // combine and sort elements
@@ -280,7 +280,7 @@ namespace ThreeDimensionalChess
                 if (left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getWhiteWinrate() <= right[0].getWhiteWinrate())
+                    if (left[0].GetWhiteWinrate() <= right[0].GetWhiteWinrate())
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);
@@ -306,7 +306,7 @@ namespace ThreeDimensionalChess
         }
 
         //equivalent sorts copied for GameInfo lists here
-        public List<GameInfo> mergeSortName(List<GameInfo> list)
+        public List<GameInfo> MergeSortName(List<GameInfo> list)
         {
             //exit recursion
             if (list.Count() <= 1) { return list; }
@@ -324,13 +324,13 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            left = mergeSortName(left);
-            right = mergeSortName(right);
-            List<GameInfo> sorted = mergeName(left, right);
+            left = MergeSortName(left);
+            right = MergeSortName(right);
+            List<GameInfo> sorted = MergeName(left, right);
             return sorted;
         }
 
-        private List<GameInfo> mergeName(List<GameInfo> left, List<GameInfo> right)
+        private List<GameInfo> MergeName(List<GameInfo> left, List<GameInfo> right)
         {
             List<GameInfo> ret = new List<GameInfo>();
             // combine and sort elements
@@ -340,7 +340,7 @@ namespace ThreeDimensionalChess
                 if (left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getName()[0] <= right[0].getName()[0])
+                    if (left[0].GetName()[0] <= right[0].GetName()[0])
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);
@@ -365,7 +365,7 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public List<GameInfo> mergeSortDate(List<GameInfo> list)
+        public List<GameInfo> MergeSortDate(List<GameInfo> list)
         {
             //exit recursion
             if (list.Count() <= 1) { return list; }
@@ -383,13 +383,13 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            left = mergeSortDate(left);
-            right = mergeSortDate(right);
-            List<GameInfo> ret = mergeDate(left, right);
+            left = MergeSortDate(left);
+            right = MergeSortDate(right);
+            List<GameInfo> ret = MergeDate(left, right);
             return ret;
         }
 
-        private List<GameInfo> mergeDate(List<GameInfo> left, List<GameInfo> right)
+        private List<GameInfo> MergeDate(List<GameInfo> left, List<GameInfo> right)
         {
             List<GameInfo> ret = new List<GameInfo>();
             // combine and sort elements
@@ -399,7 +399,7 @@ namespace ThreeDimensionalChess
                 if (left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getLastAccessed() <= right[0].getLastAccessed())
+                    if (left[0].GetLastAccessed() <= right[0].GetLastAccessed())
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);
@@ -424,7 +424,7 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public List<GameInfo> mergeSortState(List<GameInfo> list)
+        public List<GameInfo> MergeSortState(List<GameInfo> list)
         {
             //exit recursion
             if (list.Count() <= 1) { return list; }
@@ -442,13 +442,13 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            left = mergeSortState(left);
-            right = mergeSortState(right);
-            List<GameInfo> sorted = mergeState(left, right);
+            left = MergeSortState(left);
+            right = MergeSortState(right);
+            List<GameInfo> sorted = MergeState(left, right);
             return sorted;
         }
 
-        private List<GameInfo> mergeState(List<GameInfo> left, List<GameInfo> right)
+        private List<GameInfo> MergeState(List<GameInfo> left, List<GameInfo> right)
         {
             List<GameInfo> ret = new List<GameInfo>();
             // combine and sort elements
@@ -458,7 +458,7 @@ namespace ThreeDimensionalChess
                 if (left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getGamestateForComparison() <= right[0].getGamestateForComparison())
+                    if (left[0].GetGamestateForComparison() <= right[0].GetGamestateForComparison())
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);
@@ -483,7 +483,7 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public List<GameInfo> mergeSortWhitePlayerName(List<GameInfo> list)
+        public List<GameInfo> MergeSortWhitePlayerName(List<GameInfo> list)
         {
             //exit recursion
             if (list.Count() <= 1) { return list; }
@@ -501,13 +501,13 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            left = mergeSortWhitePlayerName(left);
-            right = mergeSortWhitePlayerName(right);
-            List<GameInfo> sorted = mergeWhitePlayerName(left, right);
+            left = MergeSortWhitePlayerName(left);
+            right = MergeSortWhitePlayerName(right);
+            List<GameInfo> sorted = MergeWhitePlayerName(left, right);
             return sorted;
         }
 
-        private List<GameInfo> mergeWhitePlayerName(List<GameInfo> left, List<GameInfo> right)
+        private List<GameInfo> MergeWhitePlayerName(List<GameInfo> left, List<GameInfo> right)
         {
             List<GameInfo> ret = new List<GameInfo>();
             // combine and sort elements
@@ -517,7 +517,7 @@ namespace ThreeDimensionalChess
                 if (left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getWhitePlayerName()[0] <= right[0].getWhitePlayerName()[0])
+                    if (left[0].GetWhitePlayerName()[0] <= right[0].GetWhitePlayerName()[0])
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);
@@ -542,7 +542,7 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public List<GameInfo> mergeSortBlackPlayerName(List<GameInfo> list)
+        public List<GameInfo> MergeSortBlackPlayerName(List<GameInfo> list)
         {
             //exit recursion
             if (list.Count() <= 1) { return list; }
@@ -560,13 +560,13 @@ namespace ThreeDimensionalChess
                 right.Add(list[x]);
             }
             //recurse with each half
-            left = mergeSortBlackPlayerName(left);
-            right = mergeSortBlackPlayerName(right);
-            List<GameInfo> sorted = mergeBlackPlayerName(left, right);
+            left = MergeSortBlackPlayerName(left);
+            right = MergeSortBlackPlayerName(right);
+            List<GameInfo> sorted = MergeBlackPlayerName(left, right);
             return sorted;
         }
 
-        private List<GameInfo> mergeBlackPlayerName(List<GameInfo> left, List<GameInfo> right)
+        private List<GameInfo> MergeBlackPlayerName(List<GameInfo> left, List<GameInfo> right)
         {
             List<GameInfo> ret = new List<GameInfo>();
             // combine and sort elements
@@ -576,7 +576,7 @@ namespace ThreeDimensionalChess
                 if (left.Count() > 0 && right.Count() > 0)
                 {
                     //compare and reorder elemnts
-                    if (left[0].getBlackPlayerName()[0] <= right[0].getBlackPlayerName()[0])
+                    if (left[0].GetBlackPlayerName()[0] <= right[0].GetBlackPlayerName()[0])
                     {
                         ret.Add(left[0]);
                         left.RemoveAt(0);

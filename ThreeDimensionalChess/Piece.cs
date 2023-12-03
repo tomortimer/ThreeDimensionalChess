@@ -29,35 +29,35 @@ namespace ThreeDimensionalChess
             colour = col;
         }
 
-        public abstract string getPieceType();
+        public abstract string GetPieceType();
 
         //method to calculate all possible moves by a piece - returns a list, must be implemented on a per piece basis
-        public abstract List<int> generatePossibleMoves(List<Square> board, List<Piece> pieces);
+        public abstract List<int> GeneratePossibleMoves(List<Square> board, List<Piece> pieces);
 
-        public virtual string movePiece(int endPosition, List<Square> board, List<Piece> pieces)
+        public virtual string MovePiece(int endPosition, List<Square> board, List<Piece> pieces)
         {
             //setup string to return LA3DN data
             string data = "";
             //dereference captured piece here
-            int targetPiecePtr = board[endPosition].getPiecePointer();
+            int targetPiecePtr = board[endPosition].GetPiecePointer();
             if (targetPiecePtr != -1)
             {
-                data += "X" + pieces[targetPiecePtr].getPieceType();
+                data += "X" + pieces[targetPiecePtr].GetPieceType();
                 pieces.RemoveAt(targetPiecePtr);
             }
             else { data += "-"; }
-            data += convertPosToStr(endPosition);
+            data += ConvertPosToStr(endPosition);
             currentPosition = endPosition;
             return data;
         }
 
-        public int getCurrentPosition()
+        public int GetCurrentPosition()
         {
             return currentPosition;
         }
 
         //self explanatory names, useful for eachother
-        public int[] convertPtrToVect(int inp)
+        public int[] ConvertPtrToVect(int inp)
         {
             //uses modular arithmetic around base 8 to convert a position in the list of squares to a 3D coordinate/vector of the piece's position
             int[] vect = { 0, 0, 0 };
@@ -69,11 +69,11 @@ namespace ThreeDimensionalChess
             return vect;
         }
 
-        public int convertVectToPtr(int[] arr)
+        public int ConvertVectToPtr(int[] arr)
         {
             // if this method doesn't receive a three dimensional vector in array form, it will throw an argument exception - thankfully this should never happen
             if (arr.Length != 3) { throw new ArgumentException(); }
-            int[] currentPosVect = convertPtrToVect(currentPosition);
+            int[] currentPosVect = ConvertPtrToVect(currentPosition);
             int movePtr = 0;
 
             // uses base 8 system to convert three dimensional vectors into pointers for the list of board squares
@@ -84,15 +84,15 @@ namespace ThreeDimensionalChess
             return movePtr;
         }
 
-        public int getColour()
+        public int GetColour()
         {
             return colour;
         }
 
         //returns a LA3DN compatible coordinate representation
-        public string convertPosToStr(int pos)
+        public string ConvertPosToStr(int pos)
         {
-            int[] vect = convertPtrToVect(pos);
+            int[] vect = ConvertPtrToVect(pos);
             string ret = "";
             //parse x coord
             switch (vect[0])
@@ -156,7 +156,7 @@ namespace ThreeDimensionalChess
             return ret;
         }
 
-        public int convertStrPosToPtr(string pos)
+        public int ConvertStrPosToPtr(string pos)
         {
             int[] vect = new int[3];
             switch (pos[0])
@@ -215,17 +215,17 @@ namespace ThreeDimensionalChess
                     vect[0] = 7;
                     break;
             }
-            return convertVectToPtr(vect);
+            return ConvertVectToPtr(vect);
         }
 
-        public string getCurrentPosAsStr()
+        public string GetCurrentPosAsStr()
         {
-            return convertPosToStr(currentPosition);
+            return ConvertPosToStr(currentPosition);
         }
 
-        public int[] getCurrentPosAsVect()
+        public int[] GetCurrentPosAsVect()
         {
-            return convertPtrToVect(currentPosition);
+            return ConvertPtrToVect(currentPosition);
         }
     }
 }

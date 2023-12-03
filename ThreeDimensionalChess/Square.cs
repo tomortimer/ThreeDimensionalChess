@@ -31,18 +31,18 @@ namespace ThreeDimensionalChess
             piecePointer = -1;
         }
 
-        public void setSquareBlue() { squareColour = (int)Colours.BlackBlue; }
+        public void SetSquareBlue() { squareColour = (int)Colours.BlackBlue; }
 
-        public int getPiecePointer() { return piecePointer; }
-        public void setPiecePointer(int ptr) { piecePointer = ptr; }
+        public int GetPiecePointer() { return piecePointer; }
+        public void SetPiecePointer(int ptr) { piecePointer = ptr; }
 
-        public int getColour() { return squareColour; }
+        public int GetColour() { return squareColour; }
 
         //change colour values of square
-        public void underThreat(bool friendly)
+        public void UnderThreat(bool friendly)
         {
             //reset colour first
-            notUnderThreat();
+            NotUnderThreat();
             if (friendly)
             {
                 squareColour += 2;
@@ -52,7 +52,7 @@ namespace ThreeDimensionalChess
                 squareColour += 4;
             }
         }
-        public void notUnderThreat()
+        public void NotUnderThreat()
         {
             //returns square colour to normal
             //uses mod, since black squares are even, white squares are odd
@@ -66,7 +66,7 @@ namespace ThreeDimensionalChess
             }
         }
 
-        public void pieceMoved()
+        public void PieceMoved()
         {
             //black squares are even, white squares are odd, shade yellow accordingly
             if (squareColour % 2 == 0)
@@ -79,7 +79,7 @@ namespace ThreeDimensionalChess
             }
         }
 
-        public void decrementPiecePointer()
+        public void DecrementPiecePointer()
         {
             piecePointer--;
         }

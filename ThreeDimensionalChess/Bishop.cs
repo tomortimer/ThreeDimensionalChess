@@ -6,9 +6,9 @@ namespace ThreeDimensionalChess
     {
         public Bishop(int startPosition, int colour) : base(startPosition, colour) { }
 
-        public override string getPieceType() { return "B"; }
+        public override string GetPieceType() { return "B"; }
 
-        public override List<int> generatePossibleMoves(List<Square> board, List<Piece> pieces)
+        public override List<int> GeneratePossibleMoves(List<Square> board, List<Piece> pieces)
         {
             List<int> moves = new List<int>();
 
@@ -16,7 +16,7 @@ namespace ThreeDimensionalChess
             for (int direction = 0; direction < 12; direction++)
             {
                 List<int> tmp = new List<int>();
-                tmp = generateNextMove(direction, board, currentPosition, pieces);
+                tmp = GenerateNextMove(direction, board, currentPosition, pieces);
 
                 //append generate moves to main list
                 for (int x = 0; x < tmp.Count(); x++)
@@ -29,9 +29,9 @@ namespace ThreeDimensionalChess
             return moves;
         }
 
-        private List<int> generateNextMove(int dir, List<Square> board, int pos, List<Piece> pieces)
+        private List<int> GenerateNextMove(int dir, List<Square> board, int pos, List<Piece> pieces)
         {
-            int[] vect = convertPtrToVect(pos);
+            int[] vect = ConvertPtrToVect(pos);
 
             //large switch to transform piece, going clockwise around each board, front -> top -> side
             switch (dir)
@@ -106,11 +106,11 @@ namespace ThreeDimensionalChess
             if (vect[0] < Constants.boardDimensions && vect[0] > -1 && vect[1] < Constants.boardDimensions && vect[1] > -1 && vect[2] < Constants.boardDimensions && vect[2] > -1)
             {
                 //checks if there is a piece on the square
-                int targetPtr = board[pos].getPiecePointer();
+                int targetPtr = board[pos].GetPiecePointer();
                 if (targetPtr != -1)
                 {
                     Piece target = pieces[targetPtr];
-                    if (target.getColour() != colour)
+                    if (target.GetColour() != colour)
                     {
                         //unwind recursion from here
                         moves.Add(pos);
@@ -126,7 +126,7 @@ namespace ThreeDimensionalChess
                 {
                     moves.Add(pos);
                     List<int> newMoves = new List<int>();
-                    newMoves = generateNextMove(dir, board, pos, pieces);
+                    newMoves = GenerateNextMove(dir, board, pos, pieces);
                     //go deeper in recursion here
                     for (int x = 0; x < newMoves.Count(); x++)
                     {
@@ -140,7 +140,7 @@ namespace ThreeDimensionalChess
         }
 
         //used for queen when handling internal move
-        public void forceMove(int endPosition)
+        public void ForceMove(int endPosition)
         {
             currentPosition = endPosition;
         }

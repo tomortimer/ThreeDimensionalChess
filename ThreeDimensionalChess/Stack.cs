@@ -61,7 +61,7 @@ namespace ThreeDimensionalChess
             return stack.Count();
         }
 
-        public bool isEmpty()
+        public bool IsEmpty()
         {
             bool empty = false;
             if (stack.Count() == 0)
