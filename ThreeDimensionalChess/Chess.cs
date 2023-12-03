@@ -355,7 +355,7 @@ namespace ThreeDimensionalChess
         {
             //assumes move is valid
             moveList.Push(m);
-            board.ParseMove(m);
+            board.ParseMove(m, playerTurn);
             playerTurn = (playerTurn + 1) % 2;
             EvalGamestate();
         }

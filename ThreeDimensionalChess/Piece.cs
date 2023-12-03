@@ -186,33 +186,33 @@ namespace ThreeDimensionalChess
                     vect[0] = 7;
                     break;
             }
-            //because pos[1] is a char, need to offset by -48 to get the actual number it represents and then -1 to get a 0-7 digit
+            //because pos[1] is a char, need to offset by -49 to get the actual number it represents and then -1 to get a 0-7 digit
             vect[1] = Convert.ToInt32(pos[1]) - 49;
             switch (pos[2])
             {
                 case 's':
-                    vect[0] = 0;
+                    vect[2] = 0;
                     break;
                 case 't':
-                    vect[0] = 1;
+                    vect[2] = 1;
                     break;
                 case 'u':
-                    vect[0] = 2;
+                    vect[2] = 2;
                     break;
                 case 'v':
-                    vect[0] = 3;
+                    vect[2] = 3;
                     break;
                 case 'w':
-                    vect[0] = 4;
+                    vect[2] = 4;
                     break;
                 case 'x':
-                    vect[0] = 5;
+                    vect[2] = 5;
                     break;
                 case 'y':
-                    vect[0] = 6;
+                    vect[2] = 6;
                     break;
                 case 'z':
-                    vect[0] = 7;
+                    vect[2] = 7;
                     break;
             }
             return ConvertVectToPtr(vect);

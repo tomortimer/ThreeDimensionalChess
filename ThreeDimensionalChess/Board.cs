@@ -379,20 +379,28 @@ namespace ThreeDimensionalChess
             return check;
         }
 
-        public void ParseMove(string move)
+        public void ParseMove(string move, int currentPlayer)
         {
             //separate pieces from notation and then enact
             string startCoord = move.Substring(1, 3);
-            int piecePtr = board[pieces[0].ConvertStrPosToPtr(startCoord)].GetPiecePointer();
+            int startSquare = pieces[0].ConvertStrPosToPtr(startCoord);
+            SelectPiece(startSquare, currentPlayer);
             string endCoord = "";
             if (move.Contains('X'))
             {
                 endCoord = move.Substring(6, 3);
             }
             else { endCoord = move.Substring(5, 3); }
-            int targetSquare = pieces[0].ConvertStrPosToPtr(endCoord);
+            /*string startCoord = move.Substring(1, 3);
+            int startSquare = pieces[0].ConvertStrPosToPtr(startCoord);
+            int piecePtr = board[startSquare].GetPiecePointer();
             pieces[piecePtr].MovePiece(targetSquare, board, pieces);
+            //change refs here
+            board[startSquare].SetPiecePointer(-1);
+            board[targetSquare].SetPiecePointer(piecePtr);*/
             //check if promotion, if so enact
+            int targetSquare = pieces[0].ConvertStrPosToPtr(endCoord);
+            MovePiece(targetSquare, currentPlayer);
             if (move.Contains('=')) 
             {
                 string promotedPiece = move.Substring(move.Length - 1, 1);
