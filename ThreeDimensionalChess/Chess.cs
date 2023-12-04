@@ -387,5 +387,7 @@ namespace ThreeDimensionalChess
 
         public bool GetInCheck() { return inCheck; }
         public int GetGamestate() { return state; }
+
+        public Stack<string> GetMoveList() { return moveList.Clone(); }
     }
 }

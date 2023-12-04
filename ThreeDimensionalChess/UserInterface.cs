@@ -149,6 +149,12 @@ namespace ThreeDimensionalChess
             Rectangle rookPromoRec = new Rectangle(110, 265, 100, 100);
             Rectangle bishopPromoRec = new Rectangle(10, 365, 100, 100);
             Rectangle knightPromoRec = new Rectangle(110, 365, 100, 100);
+            Rectangle moveListRec = new Rectangle(780, 10, 210, 505);
+            Rectangle undoMoveButton = new Rectangle(780, 525, 210, 50);
+            // -- Pause Menu Elements --
+            Rectangle resumeButton = new Rectangle(350, 150, 300, 75);
+            Rectangle exitMenuButton = new Rectangle(350, 225, 300, 75);
+            Rectangle exitDesktopButton = new Rectangle(350, 300, 300, 75);
 
 
             while (!Raylib.WindowShouldClose() && !exitButtonClicked)
@@ -510,12 +516,14 @@ namespace ThreeDimensionalChess
                             bool downButtonPressed = Raylib.CheckCollisionPointTriangle(mousePos, new Vector2(610, 570), new Vector2(640, 600), new Vector2(670, 570));
                             //could list all buttons and give them numerical values then switch statement here?
                             if (upButtonPressed) { game.IncrementViewLayer(); }
-                            if (downButtonPressed) { game.DecrementViewLayer(); }
+                            else if (downButtonPressed) { game.DecrementViewLayer(); }
 
                             //check collision with viewDirection buttons
                             bool frontButtonPressed = Raylib.CheckCollisionPointRec(mousePos, frontButton);
                             bool topButtonPressed = Raylib.CheckCollisionPointRec(mousePos, topButton);
                             bool sideButtonPressed = Raylib.CheckCollisionPointRec(mousePos, sideButton);
+                            bool pauseButtonPressed = Raylib.CheckCollisionPointRec(mousePos, backButton);
+                            bool undoMovesPressed = Raylib.CheckCollisionPointRec(mousePos, undoMoveButton);
                             if (frontButtonPressed)
                             {
                                 game.SetViewDirection((int)ViewDirections.Front);
@@ -527,6 +535,12 @@ namespace ThreeDimensionalChess
                             else if (sideButtonPressed)
                             {
                                 game.SetViewDirection((int)ViewDirections.Side);
+                            }else if (pauseButtonPressed)
+                            {
+                                mode = (int)UIModes.PauseMenu;
+                            }else if (undoMovesPressed)
+                            {
+                                game.UndoMove();
                             }
 
                             if (game.GetGamestate() == (int)Gamestates.PendingPromo)
@@ -546,6 +560,27 @@ namespace ThreeDimensionalChess
                         //step through board using keys
                         if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP)) { game.IncrementViewLayer(); }
                         if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN)) { game.DecrementViewLayer(); }
+                        break;
+                    case (int)UIModes.PauseMenu:
+                        if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
+                        {
+                            Vector2 mousePos = Raylib.GetMousePosition();
+
+                            bool resumeButtonPressed = Raylib.CheckCollisionPointRec(mousePos, resumeButton);
+                            bool exitToMenuPressed = Raylib.CheckCollisionPointRec(mousePos, exitMenuButton);
+                            bool exitToDesktopPressed = Raylib.CheckCollisionPointRec(mousePos, exitDesktopButton);
+                            if (resumeButtonPressed) { mode = (int)UIModes.GameUI2D; }
+                            else if (exitToDesktopPressed) { exitButtonClicked = true; }
+                            else if (exitToMenuPressed)
+                            {
+                                //clean up variables then exit to menu
+                                game = null;
+                                selectedGame = null;
+                                whitePlayerID = 0;
+                                blackPlayerID = 0;
+                                mode = (int)UIModes.MainMenu;
+                            }
+                        }
                         break;
                 }
 
@@ -592,6 +627,10 @@ namespace ThreeDimensionalChess
                         UpdateBoard(game, textures);
                         UpdateViewportControls(game, frontButton, topButton, sideButton);
                         if (state == (int)Gamestates.PendingPromo) { UpdatePromoWindow(game, queenPromoRec, rookPromoRec, bishopPromoRec, knightPromoRec, textures); }
+                        UpdateGameUI(backButton, moveListRec, game, undoMoveButton, undoMovesChoice);
+                        break;
+                    case (int)UIModes.PauseMenu:
+                        UpdatePauseMenu(resumeButton, exitMenuButton, exitDesktopButton);
                         break;
                 }
 
@@ -792,7 +831,7 @@ namespace ThreeDimensionalChess
             Raylib.DrawRectangleLinesEx(confirm, 1, Color.BLACK);
             Raylib.DrawText("Confirm", (int)confirm.X + 70, (int)confirm.Y + 27, 40, Color.BLACK);
             string lastMove = info.GetMoves()[info.GetMoves().Count() - 1];
-            Raylib.DrawText("Last Move: " + lastMove, (int)confirm.X - 25, (int)confirm.Y - 100, 40, Color.BLACK);
+            Raylib.DrawText("Last Move: " + lastMove, (int)confirm.X - 40, (int)confirm.Y - 100, 40, Color.BLACK);
             Raylib.DrawRectangleLinesEx(back, 1, Color.BLACK);
             //draw a little back icon triangle
             Raylib.DrawTriangle(new Vector2(back.X + 70, back.Y + 5), new Vector2(back.X + 5, back.Y + (75 / 2)), new Vector2(back.X + 70, back.Y + 70), Color.BLACK);
@@ -1074,6 +1113,52 @@ namespace ThreeDimensionalChess
             }
 
             Raylib.DrawText("Promotion", 40, 467, 30, Color.BLACK);
+        }
+
+        static void UpdateGameUI(Rectangle pause, Rectangle moveList, Chess game, Rectangle undo, bool undoEnabled)
+        {
+            //draw pause button
+            Raylib.DrawRectangleLinesEx(pause, 1, Color.BLACK);
+            Raylib.DrawRectangle((int)pause.X + 18, (int)pause.Y + 10, 15, (int)pause.Height - 20, Color.BLACK);
+            Raylib.DrawRectangle((int)pause.X + (int)pause.Width - 32, (int)pause.Y + 10, 15, (int)pause.Height - 20, Color.BLACK);
+
+            //draw moveList
+            Raylib.DrawRectangleLinesEx(moveList, 1, Color.BLACK);
+            Stack<string> moves = game.GetMoveList();
+            int numMoves = moves.Count();
+            int ctr = 0;
+            while (!moves.IsEmpty() && ctr < 17)
+            {
+                string moveStr = (numMoves - ctr) + ". " + moves.Pop();
+                switch((numMoves - ctr)%2)
+                {
+                    case 1:
+                        Raylib.DrawRectangleLines(960, (int)moveList.Y + (ctr * 30)+2, 20, 20, Color.BLACK);
+                        break;
+                    case 0:
+                        Raylib.DrawRectangle(960, (int)moveList.Y + (ctr * 30)+3, 20, 20, Color.BLACK);
+                        break;
+                }
+                Raylib.DrawText(moveStr, (int)moveList.X + 4, (int)moveList.Y + (ctr * 30)+3, 20, Color.BLACK);
+                ctr++;
+            }
+
+            //draw undo moves button
+            if (undoEnabled)
+            {
+                Raylib.DrawRectangleLinesEx(undo, 1, Color.BLACK);
+                Raylib.DrawText("Undo Move", (int)undo.X + 20, (int)undo.Y + 12, 30, Color.BLACK);
+            }
+        }
+
+        static void UpdatePauseMenu(Rectangle resume, Rectangle exitMenu, Rectangle exitDesktop)
+        {
+            Raylib.DrawRectangleLinesEx(resume, 1, Color.BLACK);
+            Raylib.DrawText("Resume", (int)resume.X + 95, (int)resume.Y + 25, 30, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(exitMenu, 1, Color.BLACK);
+            Raylib.DrawText("Exit To Menu",(int)exitMenu.X + 50, (int)exitMenu.Y + 25, 30, Color.BLACK);
+            Raylib.DrawRectangleLinesEx(exitDesktop, 1, Color.BLACK);
+            Raylib.DrawText("Exit To Desktop", (int)exitDesktop.X + 30, (int)exitDesktop.Y + 25, 30, Color.BLACK);
         }
 
     }

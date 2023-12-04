@@ -64,7 +64,7 @@ namespace ThreeDimensionalChess
         public bool IsEmpty()
         {
             bool empty = false;
-            if (stack.Count() == 0)
+            if (Count() == 0)
             {
                 empty = true;
             }
@@ -74,6 +74,16 @@ namespace ThreeDimensionalChess
         public string ConvertToString()
         {
             return stack.ConvertToString();
+        }
+
+        public Stack<T> Clone()
+        {
+            Stack<T> ret = new Stack<T>();
+            for(int i = 0; i < stack.Count(); i++)
+            {
+                ret.Push(stack[i]);
+            }
+            return ret;
         }
     }
 }
