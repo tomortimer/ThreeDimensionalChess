@@ -362,9 +362,26 @@ namespace ThreeDimensionalChess
 
         public void UndoMove()
         {
-            string m = moveList.Pop();
-            board.UndoMove(m);
-            playerTurn = (playerTurn - 1) % 2;
+            if (!moveList.IsEmpty())
+            {
+                string m = moveList.Pop();
+                board.UndoMove(m);
+                playerTurn = (playerTurn + 1) % 2;
+                switch (state)
+                {
+                    case (int)Gamestates.WhiteW:
+                        playerTurn = (int)Colours.White;
+                        break;
+                    case (int)Gamestates.BlackW:
+                        playerTurn = (int)Colours.Black;
+                        break;
+                    case (int)Gamestates.Stalemate:
+                        playerTurn = (moveList.Count() + 1) % 2;
+                        break;
+                }
+                EvalGamestate();
+                db.UpdateGame(moveList.ConvertToString(), state, ID);
+            }
         }
 
         public void AddPiece(string p, int pos, int col)

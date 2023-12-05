@@ -391,13 +391,6 @@ namespace ThreeDimensionalChess
                 endCoord = move.Substring(6, 3);
             }
             else { endCoord = move.Substring(5, 3); }
-            /*string startCoord = move.Substring(1, 3);
-            int startSquare = pieces[0].ConvertStrPosToPtr(startCoord);
-            int piecePtr = board[startSquare].GetPiecePointer();
-            pieces[piecePtr].MovePiece(targetSquare, board, pieces);
-            //change refs here
-            board[startSquare].SetPiecePointer(-1);
-            board[targetSquare].SetPiecePointer(piecePtr);*/
             //check if promotion, if so enact
             int targetSquare = pieces[0].ConvertStrPosToPtr(endCoord);
             MovePiece(targetSquare, currentPlayer);
@@ -410,13 +403,41 @@ namespace ThreeDimensionalChess
 
         public void UndoMove(string move)
         {
-            bool captureFlag = false;
-            bool promotionFlag = false;
-            if (move.Contains("X")) { captureFlag = true; }
-            if (move.Contains("=")) { promotionFlag = true; }
-            string[] halves = move.Split('X', '-');
-
-            //WIP
+            //grab parts of move, like in ParseMove
+            string startCoord = move.Substring(1, 3);
+            int startSquare = pieces[0].ConvertStrPosToPtr(startCoord);
+            string endCoord = "";
+            if (move.Contains('X'))
+            {
+                endCoord = move.Substring(6, 3);
+            }
+            else { endCoord = move.Substring(5, 3); }
+            int endSquare = pieces[0].ConvertStrPosToPtr(endCoord);
+            int piecePtr = board[endSquare].GetPiecePointer();
+            //undo promotion if there is one
+            if (move.Contains('='))
+            {
+                pieces[piecePtr] = new Pawn(endSquare, pieces[piecePtr].GetColour());
+            }
+            //reverse move now
+            pieces[piecePtr].MovePiece(startSquare, board, pieces);
+            board[endSquare].SetPiecePointer(-1);
+            board[startSquare].SetPiecePointer(piecePtr);
+            //undo capture if there is one
+            if (move.Contains('X'))
+            {
+                string pieceType = Convert.ToString(move[5]);
+                int pieceCol = (pieces[piecePtr].GetColour() + 1) % 2;
+                AddPiece(pieceType, endSquare, pieceCol);
+            }
+            //clear shading
+            if (pointersMovedToFrom.Count() > 0)
+            {
+                board[pointersMovedToFrom[0]].NotUnderThreat();
+                board[pointersMovedToFrom[1]].NotUnderThreat();
+                pointersMovedToFrom.RemoveAt(0);
+                pointersMovedToFrom.RemoveAt(0);
+            }
         }
 
         public Square GetSquare(int ptr)
