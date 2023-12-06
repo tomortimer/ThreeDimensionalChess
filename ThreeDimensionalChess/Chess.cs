@@ -406,5 +406,8 @@ namespace ThreeDimensionalChess
         public int GetGamestate() { return state; }
 
         public Stack<string> GetMoveList() { return moveList.Clone(); }
+
+        public string GetWhitePlayerName() { return whitePlayer.GetName(); }
+        public string GetBlackPlayerName() { return blackPlayer.GetName(); }
     }
 }

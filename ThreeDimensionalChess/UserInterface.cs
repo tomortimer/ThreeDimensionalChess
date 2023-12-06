@@ -1149,6 +1149,26 @@ namespace ThreeDimensionalChess
                 Raylib.DrawRectangleLinesEx(undo, 1, Color.BLACK);
                 Raylib.DrawText("Undo Move", (int)undo.X + 20, (int)undo.Y + 12, 30, Color.BLACK);
             }
+
+            //draw text when there's a winner
+            switch (game.GetGamestate())
+            {
+                case (int)Gamestates.WhiteW:
+                    string playerName = game.GetWhitePlayerName();
+                    Raylib.DrawText(playerName + " Wins!", 350, 550, 30, Color.BLACK);
+                    break;
+                case (int)Gamestates.BlackW:
+                    playerName = game.GetBlackPlayerName();
+                    Raylib.DrawText(playerName + " Wins!", 350, 550, 30, Color.BLACK);
+                    break;
+                case (int)Gamestates.Stalemate:
+                    Raylib.DrawText("Stalemate", 425, 550, 30, Color.BLACK);
+                    break;
+                default:
+                    playerName = game.GetCurrentPlayer().GetName();
+                    Raylib.DrawText(playerName + "'s Turn", 350, 550, 30, Color.BLACK);
+                    break;
+            }
         }
 
         static void UpdatePauseMenu(Rectangle resume, Rectangle exitMenu, Rectangle exitDesktop)
