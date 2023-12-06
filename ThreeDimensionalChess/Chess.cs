@@ -384,11 +384,6 @@ namespace ThreeDimensionalChess
             }
         }
 
-        public void AddPiece(string p, int pos, int col)
-        {
-            board.AddPiece(p, pos, col);
-        }
-
         public Player GetCurrentPlayer()
         {
             Player ret;
