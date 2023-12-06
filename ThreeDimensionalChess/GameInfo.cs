@@ -53,13 +53,13 @@ namespace ThreeDimensionalChess
             switch (gamestate)
             {
                 case (int)Gamestates.WhiteW:
-                    ret = "White Won";
+                    ret = "White W";
                     break;
                 case (int)Gamestates.BlackW:
-                    ret = "Black Won";
+                    ret = "Black W";
                     break;
                 case (int)Gamestates.Stalemate:
-                    ret = "Stalemate";
+                    ret = "Draw";
                     break;
             }
             return ret;
