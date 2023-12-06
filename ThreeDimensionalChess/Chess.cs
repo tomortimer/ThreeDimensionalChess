@@ -222,7 +222,7 @@ namespace ThreeDimensionalChess
         {
             state = board.GetGamestate(playerTurn);
             //end game if gamestate isn't ongoing
-            if (state != (int)Gamestates.Ongoing) { playerTurn = -1; } //FIXME: BEHAVIOUR WITH -1 PLAYER IS UNDEFINED -> ADD DEFENSIVE PROGRAMMING
+            if (state != (int)Gamestates.Ongoing) { playerTurn = -1; }
         }
 
         public void PromotePawn(string pieceType)

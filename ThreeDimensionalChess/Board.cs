@@ -248,15 +248,12 @@ namespace ThreeDimensionalChess
                 //check if a pawn has reached end rank  
                 string promotion = CheckLastRank();
 
-                //aggregate string parts - don't forget to add promotion back here
+                //aggregate string parts
                 move = moveDataFirstHalf + moveDataSecondHalf + promotion;
 
             }
             else
             {
-                //FIXME: this needs to be changed I think - just deselect piece?
-                //issue has been confirmed
-                //fix has been attempted
                 SelectPiece(targetSquarePtr, currentPlayer);
             }
 
