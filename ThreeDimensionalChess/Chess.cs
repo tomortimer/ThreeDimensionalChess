@@ -107,11 +107,16 @@ namespace ThreeDimensionalChess
             UpdateViewport();
             //enact saved moves
             List<string> moves = info.GetMoves();
-            while(moves.Count() >0 && moves[0] != "")
+            while (moves.Count() > 0 && moves[0] != "")
             {
                 //using list like a queue
                 string tmp = moves.RemoveAt(0);
-                ParseMove(tmp);
+                if (!(tmp == "Mutual Agreement÷" || tmp == "White#" || tmp == "Black#")) { ParseMove(tmp); }
+                else 
+                { 
+                    undoMovesAllowed = true;
+                    ID = db.CreateGame(info.GetName() + "-Copy", true, info.GetWhitePlayerID(), info.GetBlackPlayerID());
+                }
             }
             //if game is finished enabled undo moves
             if (!moveList.IsEmpty() && (moveList.Peek().Contains('#') || moveList.Peek().Contains('÷')))

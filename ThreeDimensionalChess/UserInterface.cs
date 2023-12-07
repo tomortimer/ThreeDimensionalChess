@@ -612,6 +612,12 @@ namespace ThreeDimensionalChess
 
                             bool confirmPressed = Raylib.CheckCollisionPointRec(mousePos, startGameButton);
                             bool backPressed = Raylib.CheckCollisionPointRec(mousePos, backButton);
+                            if (confirmPressed)
+                            {
+                                game.ManualEndGame(proposedOutcome);
+                                mode = (int)UIModes.GameUI2D;
+                                proposedOutcome = -1;
+                            }else if (backPressed) { mode = (int)UIModes.PauseMenu; proposedOutcome = -1; }
                         }
                         break;
                 }
