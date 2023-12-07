@@ -113,6 +113,13 @@ namespace ThreeDimensionalChess
                 string tmp = moves.RemoveAt(0);
                 ParseMove(tmp);
             }
+            //if game is finished enabled undo moves
+            if (!moveList.IsEmpty() && (moveList.Peek().Contains('#') || moveList.Peek().Contains('÷')))
+            {
+                ID = db.CreateGame(info.GetName() + "-Copy", true, info.GetWhitePlayerID(), info.GetBlackPlayerID());
+                undoMovesAllowed = true;
+                UndoMove();
+            }
         }
 
         public void Click(int squareIndex)
@@ -181,17 +188,27 @@ namespace ThreeDimensionalChess
                 //add check/stalemate/checkmate symbols here
                 switch (state)
                 {
-                    case 0:
+                    //lock undo once game is complete, if game is reopened from menu it opens a undoable copy
+                    case (int)Gamestates.Stalemate:
                         //add ÷ symbol for stalemate
                         move = move + "÷";
+                        undoMovesAllowed = false;
+                        whitePlayer.AddWhiteDraw();
+                        blackPlayer.AddBlackDraw();
                         break;
-                    case 1:
+                    case (int)Gamestates.WhiteW:
                         // add # symbol for checkmate
                         move = move + "#";
+                        undoMovesAllowed = false;
+                        whitePlayer.AddWhiteWin();
+                        blackPlayer.AddBlackLoss();
                         break;
-                    case 2:
+                    case (int)Gamestates.BlackW:
                         // add # symbol for checkmate
                         move = move + "#";
+                        undoMovesAllowed = false;
+                        blackPlayer.AddBlackWin();
+                        whitePlayer.AddWhiteLoss();
                         break;
                     default:
                         //this is if game is ongoing but still need to append + if in check for movelist readability
@@ -201,8 +218,8 @@ namespace ThreeDimensionalChess
                         }
                         break;
                 }
-                if (move.Contains("=")) 
-                { 
+                if (move.Contains("="))
+                {
                     state = (int)Gamestates.PendingPromo;
                     //reverse playerTurn change
                     playerTurn = (playerTurn - 1) % 2;
@@ -211,9 +228,11 @@ namespace ThreeDimensionalChess
                     //select piece so that player is more aware of it
                     SelectPiece(squareIndex);
                     //push move if promo, just don't forGet to pop it later
-                }                
+                }
                 moveList.Push(move);
                 db.UpdateGame(moveList.ConvertToString(), state, ID);
+                db.UpdatePlayer(whitePlayer);
+                db.UpdatePlayer(blackPlayer);
             }
 
         }
@@ -362,7 +381,7 @@ namespace ThreeDimensionalChess
 
         public void UndoMove()
         {
-            if (!moveList.IsEmpty())
+            if (!moveList.IsEmpty() && undoMovesAllowed)
             {
                 string m = moveList.Pop();
                 board.UndoMove(m);
@@ -384,6 +403,42 @@ namespace ThreeDimensionalChess
             }
         }
 
+        //use this for handling accepted draws/forfeits
+        public void ManualEndGame(int outcome)
+        {
+            switch (outcome)
+            {
+                //lock undo once game is complete, if game is reopened from menu it opens a undoable copy
+                case (int)Gamestates.Stalemate:
+                    //mutual agreement is the correct term for a agreed upon draw
+                    moveList.Push("Mutual Agreement÷");
+                    state = (int)Gamestates.Stalemate;
+                    undoMovesAllowed = false;
+                    whitePlayer.AddWhiteDraw();
+                    blackPlayer.AddBlackDraw();
+                    break;
+                case (int)Gamestates.WhiteW:
+                    // black forfeit
+                    moveList.Push("Black#");
+                    state = (int)Gamestates.WhiteW;
+                    undoMovesAllowed = false;
+                    whitePlayer.AddWhiteWin();
+                    blackPlayer.AddBlackLoss();
+                    break;
+                case (int)Gamestates.BlackW:
+                    // white forfeit
+                    moveList.Push("White#");
+                    state = (int)Gamestates.BlackW;
+                    undoMovesAllowed = false;
+                    blackPlayer.AddBlackWin();
+                    whitePlayer.AddWhiteLoss();
+                    break;
+            }
+            db.UpdateGame(moveList.ConvertToString(), state, ID);
+            db.UpdatePlayer(whitePlayer);
+            db.UpdatePlayer(blackPlayer);
+        }
+
         public Player GetCurrentPlayer()
         {
             Player ret;
@@ -399,6 +454,7 @@ namespace ThreeDimensionalChess
 
         public bool GetInCheck() { return inCheck; }
         public int GetGamestate() { return state; }
+        public bool GetIsUndoAllowed() { return undoMovesAllowed; }
 
         public Stack<string> GetMoveList() { return moveList.Clone(); }
 

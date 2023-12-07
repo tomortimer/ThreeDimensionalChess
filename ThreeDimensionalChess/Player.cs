@@ -18,6 +18,7 @@ namespace ThreeDimensionalChess
         private int blackWins;
         private DateTime joinDate;
         private int colour;
+        DatabaseHandler db;
 
         public Player(int IDInp, string nameInp, int whiteLossesInp, int blackLossesInp, int whiteDrawsInp, int blackDrawsInp, int whiteWinsInp, int blackWinsInp, DateTime joinDateInp)
         {
@@ -30,9 +31,18 @@ namespace ThreeDimensionalChess
             whiteWins = whiteWinsInp;
             blackWins = blackWinsInp;
             joinDate = joinDateInp;
-
+            DatabaseHandler db = new DatabaseHandler();
         }
 
+        // write methods
+        public void AddWhiteWin() { whiteWins++;}
+        public void AddBlackWin() { blackWins++;}
+        public void AddWhiteLoss() { whiteLosses++;}
+        public void AddBlackLoss() { blackLosses++; }
+        public void AddWhiteDraw() { whiteDraws++; }
+        public void AddBlackDraw() {  blackDraws++; }
+
+        // get methods
         public int GetColour() { return colour; }
         public void SetColour(int col) { colour = col; }
         public string GetName() { return name; }
@@ -47,15 +57,15 @@ namespace ThreeDimensionalChess
         public int GetTotalLosses() { return blackLosses + whiteLosses; }
         public int GetID() { return ID; }
 
-        public int GetWinrate()
+        public double GetWinrate()
         {
-            int WR;
-            try 
-            { 
-                WR = (whiteWins + blackWins) / (whiteLosses + blackLosses + whiteWins + blackWins + whiteDraws + blackDraws); 
-            } catch(DivideByZeroException)
+            double WR;
+            WR = (double)(whiteWins + blackWins) / (double)(whiteLosses + blackLosses + whiteWins + blackWins + whiteDraws + blackDraws);
+            WR *= 100;
+            if (double.IsNaN(WR))
             {
                 WR = 0;
+                if(whiteWins + blackWins > 0) { WR = 100; }
             }
             return WR;
         }
@@ -65,30 +75,30 @@ namespace ThreeDimensionalChess
             return DateOnly.FromDateTime(joinDate);
         }
 
-        public int GetWhiteWinrate()
+        public double GetWhiteWinrate()
         {
-            int WR;
-            try
-            {
-                WR = whiteWins / (whiteLosses + whiteDraws);
-            }catch(DivideByZeroException)
-            {
-                if (whiteWins > 0) { WR = 100; }
-                else { WR = 0; }
+            double WR;
+            WR = (double)whiteWins / (double)(whiteLosses + whiteDraws + whiteWins);
+            WR *= 100;
+            //eliminate divide by 0 problems
+            if (double.IsNaN(WR)) 
+            { 
+                WR = 0; 
+                if(whiteWins > 0) { WR = 100; }
             }
             return WR;
         }
 
-        public int GetBlackWinrate()
+        public double GetBlackWinrate()
         {
-            int WR;
-            try
-            {
-                WR = blackWins / (blackLosses + blackDraws);
-            }catch(DivideByZeroException)
-            {
-                if (blackWins > 0) { WR = 100; }
-                else { WR = 0; }
+            double WR;
+            WR = (double)blackWins / (double)(blackLosses + blackDraws + blackWins);
+            WR *= 100;
+            //eliminate divide by 0 problems
+            if (double.IsNaN(WR)) 
+            { 
+                WR = 0; 
+                if(blackWins > 0) { WR = 100; }
             }
             return WR;
         }
