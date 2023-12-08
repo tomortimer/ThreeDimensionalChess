@@ -125,6 +125,7 @@ namespace ThreeDimensionalChess
                 undoMovesAllowed = true;
                 UndoMove();
             }
+            if (moveList.Peek().Contains('+')) { inCheck = true; }
         }
 
         public void Click(int squareIndex)

@@ -589,16 +589,16 @@ namespace ThreeDimensionalChess
                                 blackPlayerID = 0;
                                 mode = (int)UIModes.MainMenu;
                             }
-                            else if (whiteForfeitPressed)
+                            else if (whiteForfeitPressed && game.GetGamestate() == (int)Gamestates.Ongoing)
                             {
                                 mode = (int)UIModes.ConfirmForfeitStalemate;
                                 proposedOutcome = (int)Gamestates.BlackW;
                             }
-                            else if (blackForfeitPressed)
+                            else if (blackForfeitPressed && game.GetGamestate() == (int)Gamestates.Ongoing)
                             {
                                 mode = (int)UIModes.ConfirmForfeitStalemate;
                                 proposedOutcome = (int)Gamestates.WhiteW;
-                            }else if (agreeToDrawPressed)
+                            }else if (agreeToDrawPressed && game.GetGamestate() == (int)Gamestates.Ongoing)
                             {
                                 mode = (int)UIModes.ConfirmForfeitStalemate;
                                 proposedOutcome = (int)Gamestates.Stalemate;
@@ -668,7 +668,7 @@ namespace ThreeDimensionalChess
                         UpdateGameUI(backButton, moveListRec, game, undoMoveButton, game.GetIsUndoAllowed());
                         break;
                     case (int)UIModes.PauseMenu:
-                        UpdatePauseMenu(resumeButton, exitMenuButton, exitDesktopButton, whiteForfeitButton, blackForfeitButton, mutualAgreementStalemateButton);
+                        UpdatePauseMenu(resumeButton, exitMenuButton, exitDesktopButton, whiteForfeitButton, blackForfeitButton, mutualAgreementStalemateButton, game.GetGamestate());
                         break;
                     case (int)UIModes.ConfirmForfeitStalemate:
                         UpdateConfirmForfeitStalemate(startGameButton, backButton, proposedOutcome);
@@ -1207,12 +1207,16 @@ namespace ThreeDimensionalChess
                     break;
                 default:
                     playerName = game.GetCurrentPlayer().GetName();
-                    Raylib.DrawText(playerName + "'s Turn", 350, 630, 30, Color.BLACK);
+                    Raylib.DrawText(playerName + "'s Turn", 350, 615, 30, Color.BLACK);
+                    if (game.GetInCheck())
+                    {
+                        Raylib.DrawText(playerName+" in check", 350, 645, 30, Color.BLACK);
+                    }
                     break;
             }
         }
 
-        static void UpdatePauseMenu(Rectangle resume, Rectangle exitMenu, Rectangle exitDesktop, Rectangle whiteForf, Rectangle blackForf, Rectangle stalemate)
+        static void UpdatePauseMenu(Rectangle resume, Rectangle exitMenu, Rectangle exitDesktop, Rectangle whiteForf, Rectangle blackForf, Rectangle stalemate, int state)
         {
             Raylib.DrawRectangleLinesEx(resume, 1, Color.BLACK);
             Raylib.DrawText("Resume", (int)resume.X + 95, (int)resume.Y + 25, 30, Color.BLACK);
@@ -1220,12 +1224,15 @@ namespace ThreeDimensionalChess
             Raylib.DrawText("Exit To Menu",(int)exitMenu.X + 50, (int)exitMenu.Y + 25, 30, Color.BLACK);
             Raylib.DrawRectangleLinesEx(exitDesktop, 1, Color.BLACK);
             Raylib.DrawText("Exit To Desktop", (int)exitDesktop.X + 30, (int)exitDesktop.Y + 25, 30, Color.BLACK);
-            Raylib.DrawRectangleLinesEx(whiteForf, 1, Color.BLACK);
-            Raylib.DrawText("White Forfeit", (int)whiteForf.X + 50, (int)whiteForf.Y + 25, 30, Color.BLACK);
-            Raylib.DrawRectangleLinesEx(blackForf, 1, Color.BLACK);
-            Raylib.DrawText("Black Forfeit", (int)blackForf.X + 50, (int)blackForf.Y + 25, 30, Color.BLACK);
-            Raylib.DrawRectangleLinesEx(stalemate, 1, Color.BLACK);
-            Raylib.DrawText("Agree To Draw", (int)stalemate.X + 30, (int)stalemate.Y + 25, 30, Color.BLACK);
+            if(state == (int)Gamestates.Ongoing)
+            {
+                Raylib.DrawRectangleLinesEx(whiteForf, 1, Color.BLACK);
+                Raylib.DrawText("White Forfeit", (int)whiteForf.X + 50, (int)whiteForf.Y + 25, 30, Color.BLACK);
+                Raylib.DrawRectangleLinesEx(blackForf, 1, Color.BLACK);
+                Raylib.DrawText("Black Forfeit", (int)blackForf.X + 50, (int)blackForf.Y + 25, 30, Color.BLACK);
+                Raylib.DrawRectangleLinesEx(stalemate, 1, Color.BLACK);
+                Raylib.DrawText("Agree To Draw", (int)stalemate.X + 30, (int)stalemate.Y + 25, 30, Color.BLACK);
+            }
         }
 
         static void UpdateConfirmForfeitStalemate(Rectangle confirm, Rectangle back, int proposedOutcome)
