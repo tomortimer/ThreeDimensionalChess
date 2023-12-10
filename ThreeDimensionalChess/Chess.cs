@@ -125,7 +125,7 @@ namespace ThreeDimensionalChess
                 undoMovesAllowed = true;
                 UndoMove();
             }
-            if (moveList.Peek().Contains('+')) { inCheck = true; }
+            if (moveList.Peek() != null && moveList.Peek().Contains('+')) { inCheck = true; }
         }
 
         public void Click(int squareIndex)
@@ -422,6 +422,7 @@ namespace ThreeDimensionalChess
                     undoMovesAllowed = false;
                     whitePlayer.AddWhiteDraw();
                     blackPlayer.AddBlackDraw();
+                    playerTurn = -1;
                     break;
                 case (int)Gamestates.WhiteW:
                     // black forfeit
@@ -430,6 +431,7 @@ namespace ThreeDimensionalChess
                     undoMovesAllowed = false;
                     whitePlayer.AddWhiteWin();
                     blackPlayer.AddBlackLoss();
+                    playerTurn = -1;
                     break;
                 case (int)Gamestates.BlackW:
                     // white forfeit
@@ -438,6 +440,7 @@ namespace ThreeDimensionalChess
                     undoMovesAllowed = false;
                     blackPlayer.AddBlackWin();
                     whitePlayer.AddWhiteLoss();
+                    playerTurn = -1;
                     break;
             }
             db.UpdateGame(moveList.ConvertToString(), state, ID);
@@ -466,5 +469,6 @@ namespace ThreeDimensionalChess
 
         public string GetWhitePlayerName() { return whitePlayer.GetName(); }
         public string GetBlackPlayerName() { return blackPlayer.GetName(); }
+        public string GetLastMove() { return moveList.Peek(); }
     }
 }

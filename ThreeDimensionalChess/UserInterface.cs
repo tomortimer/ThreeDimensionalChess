@@ -68,6 +68,11 @@ namespace ThreeDimensionalChess
             //set this as necessary
             int lastMode = 0;
             DatabaseHandler database = new DatabaseHandler();
+            Raylib.InitAudioDevice();
+
+            //load sounds
+            Sound emptySquare = Raylib.LoadSound("resources/emptySquare.mp3");
+            Sound captureSquare = Raylib.LoadSound("resources/captureSquare.mp3");
 
             //load textures
             List<Texture2D> textures = new List<Texture2D>();
@@ -514,7 +519,17 @@ namespace ThreeDimensionalChess
                                 //calculate square index
                                 int x = (Convert.ToInt32(mousePos.X) - 225) / UIConstants.squareSide;
                                 int y = 7 - ((Convert.ToInt32(mousePos.Y) - 25) / UIConstants.squareSide);
+                                string lastMove = game.GetLastMove();
                                 game.ViewportClick(x + (y * 8));
+                                string newLastMove = game.GetLastMove();
+                                //play sounds
+                                if (lastMove != newLastMove && newLastMove.Contains('-'))
+                                {
+                                    Raylib.PlaySound(emptySquare);
+                                }else if (lastMove != newLastMove && newLastMove.Contains('X'))
+                                {
+                                    Raylib.PlaySound(captureSquare);
+                                }
                             }
 
                             //step through board using triangle buttons
@@ -683,6 +698,9 @@ namespace ThreeDimensionalChess
             {
                 Raylib.UnloadTexture(textures[i]);
             }
+            //unload sfx
+            Raylib.UnloadSound(emptySquare);
+            Raylib.UnloadSound(captureSquare);
 
 
             Raylib.CloseWindow();

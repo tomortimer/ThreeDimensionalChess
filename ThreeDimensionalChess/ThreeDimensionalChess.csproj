@@ -31,6 +31,12 @@
     <None Update="resources\BlR.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="resources\captureSquare.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\emptySquare.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="resources\WhB.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
