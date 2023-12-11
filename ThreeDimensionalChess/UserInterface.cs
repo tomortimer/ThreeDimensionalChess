@@ -177,6 +177,8 @@ namespace ThreeDimensionalChess
             camera.FovY = 45f;
             camera.Projection = CameraProjection.CAMERA_PERSPECTIVE;
             Vector3 CubePos = new Vector3(0f, 0f, 0f);
+            bool viewmodelWiresChoice = false;
+            Rectangle wiremodeToggleButton = new Rectangle(10, 510, 75, 75);
 
 
 
@@ -718,11 +720,9 @@ namespace ThreeDimensionalChess
                     case (int)UIModes.GameUI3D:
                         Raylib.UpdateCamera(ref camera, CameraMode.CAMERA_ORBITAL);
                         Raylib.BeginMode3D(camera);
-                        Update3DRepresentation(CubePos);
+                        Update3DRepresentation(CubePos, viewmodelWiresChoice);
                         Raylib.EndMode3D();
-                        //draw reverse toggle button
-                        Raylib.DrawRectangleLinesEx(viewmodeToggleButton, 1, Color.BLACK);
-                        Raylib.DrawText("2D", (int)viewmodeToggleButton.X + 10, (int)viewmodeToggleButton.Y + 15, 50, Color.BLACK);
+                        Update3DRepresentationControls(viewmodeToggleButton, wiremodeToggleButton, viewmodelWiresChoice);
                         break;
                 }
 
@@ -1314,7 +1314,7 @@ namespace ThreeDimensionalChess
             Raylib.DrawText(context, (int)confirm.X + 5, (int)confirm.Y - 32, 30, Color.BLACK);
         }
 
-        static void Update3DRepresentation(Vector3 cubePos)
+        static void Update3DRepresentation(Vector3 cubePos, bool wiresSelected)
         {
             Vector3 baseCubePos = new Vector3((Single)(-3.5), (Single)(-3.5), (Single)(-3.5));
             Raylib.DrawCubeWires(cubePos, 8, 8, 8, Color.BLACK);
@@ -1325,9 +1325,23 @@ namespace ThreeDimensionalChess
                     for (int y = 0; y < 8; y++)
                     {
                         Vector3 tmp = new Vector3(baseCubePos.X + x, baseCubePos.Y + y, baseCubePos.Z + z);
-                        Raylib.DrawCubeWires(tmp, 1, 1, 1, Color.BLACK);
+                        if (wiresSelected) { Raylib.DrawCubeWires(tmp, 1, 1, 1, Color.BLACK); }
                     }
                 }
+            }
+        }
+        static void Update3DRepresentationControls(Rectangle viewmodeToggle, Rectangle wireToggle, bool wireChoice)
+        {
+            //draw reverse toggle button
+            Raylib.DrawRectangleLinesEx(viewmodeToggle, 1, Color.BLACK);
+            Raylib.DrawText("2D", (int)viewmodeToggle.X + 10, (int)viewmodeToggle.Y + 15, 50, Color.BLACK);
+            //draw wire toggle button
+            Raylib.DrawRectangleLinesEx(wireToggle, 1, Color.BLACK);
+            Raylib.DrawText("Enable Wires", (int)wireToggle.X, (int)wireToggle.Y - 31, 30, Color.BLACK);
+            if (wireChoice)
+            {
+                Raylib.DrawLine((int)wireToggle.X, (int)wireToggle.Y, (int)wireToggle.X + (int)wireToggle.Width, (int)wireToggle.Y + (int)wireToggle.Height, Color.BLACK);
+                Raylib.DrawLine((int)wireToggle.X, (int)wireToggle.Y )
             }
         }
     }
