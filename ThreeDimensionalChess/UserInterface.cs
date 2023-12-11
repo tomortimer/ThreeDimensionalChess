@@ -658,9 +658,13 @@ namespace ThreeDimensionalChess
                         {
                             Vector2 mousePos = Raylib.GetMousePosition();
                             bool viewmodeTogglePressed = Raylib.CheckCollisionPointRec(mousePos, viewmodeToggleButton);
+                            bool wiremodeTogglepressed = Raylib.CheckCollisionPointRec(mousePos, wiremodeToggleButton);
                             if (viewmodeTogglePressed)
                             {
                                 mode = (int)UIModes.GameUI2D;
+                            }else if (wiremodeTogglepressed)
+                            {
+                                viewmodelWiresChoice = !viewmodelWiresChoice;
                             }
                         }
                         break;
@@ -720,7 +724,7 @@ namespace ThreeDimensionalChess
                     case (int)UIModes.GameUI3D:
                         Raylib.UpdateCamera(ref camera, CameraMode.CAMERA_ORBITAL);
                         Raylib.BeginMode3D(camera);
-                        Update3DRepresentation(CubePos, viewmodelWiresChoice);
+                        Update3DRepresentation(CubePos, viewmodelWiresChoice, game, camera, textures);
                         Raylib.EndMode3D();
                         Update3DRepresentationControls(viewmodeToggleButton, wiremodeToggleButton, viewmodelWiresChoice);
                         break;
@@ -1314,9 +1318,10 @@ namespace ThreeDimensionalChess
             Raylib.DrawText(context, (int)confirm.X + 5, (int)confirm.Y - 32, 30, Color.BLACK);
         }
 
-        static void Update3DRepresentation(Vector3 cubePos, bool wiresSelected)
+        static void Update3DRepresentation(Vector3 cubePos, bool wiresSelected, Chess game, Camera3D camera, List<Texture2D> textures)
         {
-            Vector3 baseCubePos = new Vector3((Single)(-3.5), (Single)(-3.5), (Single)(-3.5));
+            Vector3 baseCubePos = new Vector3(-3.5f, -3.5f, -3.5f);
+            Rectangle sourceRec = new Rectangle(0, 0, 60, 60); // for loading texture from source
             Raylib.DrawCubeWires(cubePos, 8, 8, 8, Color.BLACK);
             for(int z = 0; z < 8; z++)
             {
@@ -1324,8 +1329,68 @@ namespace ThreeDimensionalChess
                 {
                     for (int y = 0; y < 8; y++)
                     {
-                        Vector3 tmp = new Vector3(baseCubePos.X + x, baseCubePos.Y + y, baseCubePos.Z + z);
-                        if (wiresSelected) { Raylib.DrawCubeWires(tmp, 1, 1, 1, Color.BLACK); }
+                        Vector3 tmpVect = new Vector3(baseCubePos.X + x, baseCubePos.Y + y, baseCubePos.Z + z);
+                        Square cell = game.GetCell(x + (y * 8) + (z * 64));
+                        if (wiresSelected) { Raylib.DrawCubeWires(tmpVect, 1, 1, 1, Color.BLACK); }
+                        if(cell.GetPiecePointer() != -1)
+                        {
+                            Piece p = game.GetPieceDirect(cell.GetPiecePointer());
+
+                            string type = p.GetPieceType();
+                            int col = p.GetColour();
+                            Texture2D pieceText = new Texture2D();
+                            if (col == (int)Colours.White)
+                            {
+                                //select each piece
+                                switch (type)
+                                {
+                                    case "P":
+                                        pieceText = textures[0];
+                                        break;
+                                    case "R":
+                                        pieceText = textures[1];
+                                        break;
+                                    case "N":
+                                        pieceText = textures[2];
+                                        break;
+                                    case "B":
+                                        pieceText = textures[3];
+                                        break;
+                                    case "Q":
+                                        pieceText = textures[4];
+                                        break;
+                                    case "K":
+                                        pieceText = textures[5];
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                switch (type)
+                                {
+                                    case "P":
+                                        pieceText = textures[6];
+                                        break;
+                                    case "R":
+                                        pieceText = textures[7];
+                                        break;
+                                    case "N":
+                                        pieceText = textures[8];
+                                        break;
+                                    case "B":
+                                        pieceText = textures[9];
+                                        break;
+                                    case "Q":
+                                        pieceText = textures[10];
+                                        break;
+                                    case "K":
+                                        pieceText = textures[11];
+                                        break;
+                                }
+                            }
+                            //draw piece onto 3d board here
+                            Raylib.DrawBillboardRec(camera, pieceText, sourceRec, tmpVect, new Vector2(1f, 1f), Color.WHITE);
+                        }
                     }
                 }
             }
@@ -1341,7 +1406,7 @@ namespace ThreeDimensionalChess
             if (wireChoice)
             {
                 Raylib.DrawLine((int)wireToggle.X, (int)wireToggle.Y, (int)wireToggle.X + (int)wireToggle.Width, (int)wireToggle.Y + (int)wireToggle.Height, Color.BLACK);
-                Raylib.DrawLine((int)wireToggle.X, (int)wireToggle.Y )
+                Raylib.DrawLine((int)wireToggle.X, (int)wireToggle.Y + (int)wireToggle.Height, (int)wireToggle.X + (int)wireToggle.Width, (int)wireToggle.Y, Color.BLACK);
             }
         }
     }

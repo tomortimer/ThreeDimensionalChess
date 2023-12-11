@@ -470,5 +470,6 @@ namespace ThreeDimensionalChess
         public string GetWhitePlayerName() { return whitePlayer.GetName(); }
         public string GetBlackPlayerName() { return blackPlayer.GetName(); }
         public string GetLastMove() { return moveList.Peek(); }
+        public Square GetCell(int index) { return board.GetSquare(index); }
     }
 }
