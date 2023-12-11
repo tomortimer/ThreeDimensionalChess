@@ -1,6 +1,7 @@
 ﻿using Raylib_cs;
 using System;
 using System.Numerics;
+using System.Reflection.PortableExecutable;
 
 namespace ThreeDimensionalChess
 {
@@ -55,7 +56,8 @@ namespace ThreeDimensionalChess
             CreatePlayer, // 6
             GameUI2D, // 7
             PauseMenu, // 8
-            ConfirmForfeitStalemate // 9
+            ConfirmForfeitStalemate, // 9
+            GameUI3D // 10
         }
 
         static void Main()
@@ -166,6 +168,16 @@ namespace ThreeDimensionalChess
             Rectangle blackForfeitButton = new Rectangle(660, 500, 300, 75);
             // -- Forfeit/Draw Menu --
             int proposedOutcome = -1;
+            // -- Game Ui 3D --
+            Rectangle viewmodeToggleButton = new Rectangle(10, 595, 75, 75);
+            Camera3D camera = new Camera3D();
+            camera.Position = new Vector3(10f, 10f, 10f);
+            camera.Target = new Vector3(0f, 0f, 0f);
+            camera.Up = new Vector3(0f, 1f, 0f);
+            camera.FovY = 45f;
+            camera.Projection = CameraProjection.CAMERA_PERSPECTIVE;
+            Vector3 CubePos = new Vector3(0f, 0f, 0f);
+
 
 
             while (!Raylib.WindowShouldClose() && !exitButtonClicked)
@@ -545,6 +557,7 @@ namespace ThreeDimensionalChess
                             bool sideButtonPressed = Raylib.CheckCollisionPointRec(mousePos, sideButton);
                             bool pauseButtonPressed = Raylib.CheckCollisionPointRec(mousePos, backButton);
                             bool undoMovesPressed = Raylib.CheckCollisionPointRec(mousePos, undoMoveButton);
+                            bool viewmodeTogglePressed = Raylib.CheckCollisionPointRec(mousePos, viewmodeToggleButton);
                             if (frontButtonPressed)
                             {
                                 game.SetViewDirection((int)ViewDirections.Front);
@@ -562,6 +575,9 @@ namespace ThreeDimensionalChess
                             }else if (undoMovesPressed)
                             {
                                 game.UndoMove();
+                            }else if (viewmodeTogglePressed)
+                            {
+                                mode = (int)UIModes.GameUI3D;
                             }
 
                             if (game.GetGamestate() == (int)Gamestates.PendingPromo)
@@ -635,6 +651,17 @@ namespace ThreeDimensionalChess
                             }else if (backPressed) { mode = (int)UIModes.PauseMenu; proposedOutcome = -1; }
                         }
                         break;
+                    case (int)UIModes.GameUI3D:
+                        if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
+                        {
+                            Vector2 mousePos = Raylib.GetMousePosition();
+                            bool viewmodeTogglePressed = Raylib.CheckCollisionPointRec(mousePos, viewmodeToggleButton);
+                            if (viewmodeTogglePressed)
+                            {
+                                mode = (int)UIModes.GameUI2D;
+                            }
+                        }
+                        break;
                 }
 
                 // ------ draw here ------
@@ -680,13 +707,22 @@ namespace ThreeDimensionalChess
                         UpdateBoard(game, textures);
                         UpdateViewportControls(game, frontButton, topButton, sideButton);
                         if (state == (int)Gamestates.PendingPromo) { UpdatePromoWindow(game, queenPromoRec, rookPromoRec, bishopPromoRec, knightPromoRec, textures); }
-                        UpdateGameUI(backButton, moveListRec, game, undoMoveButton, game.GetIsUndoAllowed());
+                        UpdateGameUI(backButton, moveListRec, game, undoMoveButton, game.GetIsUndoAllowed(), viewmodeToggleButton);
                         break;
                     case (int)UIModes.PauseMenu:
                         UpdatePauseMenu(resumeButton, exitMenuButton, exitDesktopButton, whiteForfeitButton, blackForfeitButton, mutualAgreementStalemateButton, game.GetGamestate());
                         break;
                     case (int)UIModes.ConfirmForfeitStalemate:
                         UpdateConfirmForfeitStalemate(startGameButton, backButton, proposedOutcome);
+                        break;
+                    case (int)UIModes.GameUI3D:
+                        Raylib.UpdateCamera(ref camera, CameraMode.CAMERA_ORBITAL);
+                        Raylib.BeginMode3D(camera);
+                        Update3DRepresentation(CubePos);
+                        Raylib.EndMode3D();
+                        //draw reverse toggle button
+                        Raylib.DrawRectangleLinesEx(viewmodeToggleButton, 1, Color.BLACK);
+                        Raylib.DrawText("2D", (int)viewmodeToggleButton.X + 10, (int)viewmodeToggleButton.Y + 15, 50, Color.BLACK);
                         break;
                 }
 
@@ -1174,12 +1210,15 @@ namespace ThreeDimensionalChess
             Raylib.DrawText("Promotion", 40, 467, 30, Color.BLACK);
         }
 
-        static void UpdateGameUI(Rectangle pause, Rectangle moveList, Chess game, Rectangle undo, bool undoEnabled)
+        static void UpdateGameUI(Rectangle pause, Rectangle moveList, Chess game, Rectangle undo, bool undoEnabled, Rectangle viewmode)
         {
             //draw pause button
             Raylib.DrawRectangleLinesEx(pause, 1, Color.BLACK);
             Raylib.DrawRectangle((int)pause.X + 18, (int)pause.Y + 10, 15, (int)pause.Height - 20, Color.BLACK);
             Raylib.DrawRectangle((int)pause.X + (int)pause.Width - 32, (int)pause.Y + 10, 15, (int)pause.Height - 20, Color.BLACK);
+            //draw toggle button
+            Raylib.DrawRectangleLinesEx(viewmode, 1, Color.BLACK);
+            Raylib.DrawText("3D", (int)viewmode.X + 10, (int)viewmode.Y + 15, 50, Color.BLACK);
 
             //draw moveList
             Raylib.DrawRectangleLinesEx(moveList, 1, Color.BLACK);
@@ -1273,6 +1312,23 @@ namespace ThreeDimensionalChess
                     break;
             }
             Raylib.DrawText(context, (int)confirm.X + 5, (int)confirm.Y - 32, 30, Color.BLACK);
+        }
+
+        static void Update3DRepresentation(Vector3 cubePos)
+        {
+            Vector3 baseCubePos = new Vector3((Single)(-3.5), (Single)(-3.5), (Single)(-3.5));
+            Raylib.DrawCubeWires(cubePos, 8, 8, 8, Color.BLACK);
+            for(int z = 0; z < 8; z++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        Vector3 tmp = new Vector3(baseCubePos.X + x, baseCubePos.Y + y, baseCubePos.Z + z);
+                        Raylib.DrawCubeWires(tmp, 1, 1, 1, Color.BLACK);
+                    }
+                }
+            }
         }
     }
 }
