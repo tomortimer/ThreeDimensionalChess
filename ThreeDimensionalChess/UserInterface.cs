@@ -1391,6 +1391,22 @@ namespace ThreeDimensionalChess
                             //draw piece onto 3d board here
                             Raylib.DrawBillboardRec(camera, pieceText, sourceRec, tmpVect, new Vector2(1f, 1f), Color.WHITE);
                         }
+                        //now draw colour of cell
+                        Color cellCol = Color.BLANK;
+                        switch (cell.GetColour())
+                        {
+                            case (int)Colours.WhiteBlue: cellCol = Color.BLUE; break;
+                            case (int)Colours.BlackBlue: cellCol = Color.DARKBLUE; break;
+                            case (int)Colours.WhiteRed: cellCol = Color.RED; break;
+                            case (int)Colours.BlackRed: cellCol = Color.MAROON; break;
+                            case (int)Colours.WhiteYellow: cellCol = Color.YELLOW; break; // NOTE: need to fade this
+                            case (int)Colours.BlackYellow: cellCol = Color.YELLOW; break;
+                        }
+                        if (!cellCol.Equals(Color.BLANK)) 
+                        { 
+                            Raylib.DrawCube(tmpVect, 1f, 1f, 1f, Raylib.Fade(cellCol, 0.9f));
+                            if (!wiresSelected) { Raylib.DrawCubeWires(tmpVect, 1, 1, 1, Color.BLACK); }
+                        }
                     }
                 }
             }
