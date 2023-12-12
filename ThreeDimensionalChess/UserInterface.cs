@@ -499,6 +499,15 @@ namespace ThreeDimensionalChess
                             else if (deleteGamePressed && selectedGame != null) { database.DeleteGame(selectedGame.GetGameID()); selectedGame = null; }
                             else if (backButtonPressed) { mode = (int)UIModes.NewLoadChoice; selectedGame = null; }
                         }
+                        //use arrow keys to move up or down table
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN))
+                        {
+                            if (gameListIndex < games.Count() - 1) { gameListIndex++; }
+                        }
+                        if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP))
+                        {
+                            if (gameListIndex > 0) { gameListIndex--; }
+                        }
                         break;
                     case (int)UIModes.ConfirmGame:
                         if (Raylib.IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_LEFT))
