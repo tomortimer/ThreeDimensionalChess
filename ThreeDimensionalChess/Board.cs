@@ -276,7 +276,6 @@ namespace ThreeDimensionalChess
                         if (moveList[y] != -1)
                         {
                             //FILTER OUT SELF CHECK MOVES HERE
-                            //this may slow down everything a lot - creatre siumulatred board and try the move here
                             SimulatedBoard tmp = new SimulatedBoard(board, pieces);
                             bool legal = tmp.LegalMove(moveList[y], x, pieces[x].GetColour());
                             if (legal) { filteredMoves.Add(moveList[y]); }

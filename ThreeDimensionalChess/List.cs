@@ -41,7 +41,7 @@ namespace ThreeDimensionalChess
         //ALLOWS THE LIST TO BE ACCESSED BY INDEXERS?!?!?!?
         public T this[int i]
         {
-            //uses private methods - for readability I think?
+            //uses private methods
             get { return RetrieveAt(i, head); }
             set { SetAt(i, head, value); }
         }
@@ -124,7 +124,6 @@ namespace ThreeDimensionalChess
         public bool Contains(T inp)
         {
             //checks if it contains a thingy
-            // :)
             bool ret = false;
             if (this.Count(inp) > 0)
             {
