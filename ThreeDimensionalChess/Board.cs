@@ -434,6 +434,11 @@ namespace ThreeDimensionalChess
                 pointersMovedToFrom.RemoveAt(0);
                 pointersMovedToFrom.RemoveAt(0);
             }
+            currentPieceIndex = -1;
+            for (int x = 0; x < currentPossibleMoves.Count(); x++)
+            {
+                board[currentPossibleMoves[x]].NotUnderThreat();
+            }
         }
 
         public Square GetSquare(int ptr)
