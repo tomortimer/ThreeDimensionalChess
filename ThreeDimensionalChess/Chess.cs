@@ -184,7 +184,7 @@ namespace ThreeDimensionalChess
             //player turn is checked in board method
             string move = board.MovePiece(squareIndex, playerTurn);
 
-            //if the returning notation is not null, then the move has been affected, next player's turn
+            //if the returning notation is not null, then the move has been effected, next player's turn
             if (move != null)
             {
                 playerTurn = (playerTurn + 1) % 2;
