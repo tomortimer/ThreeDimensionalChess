@@ -191,12 +191,16 @@ DELETE FROM player WHERE playerID=$input;
             comm.CommandText = "SELECT gameID FROM gamesPlayers WHERE whitePlayerID=$input OR blackPlayerID=$input;";
             comm.Parameters.AddWithValue("$input", inp);
             SQLiteDataReader reader = comm.ExecuteReader();
+
+            //separate reading IDs and actual deletion to avoid DB lock
+            List<int> gamesToBeDeleted = new List<int>();
             while (reader.Read())
             {
-                int gameID = reader.GetInt32(0);
-                DeleteGame(gameID);
+                gamesToBeDeleted.Add(reader.GetInt32(0));
             }
             reader.Close();
+            for(int i = 0; i < gamesToBeDeleted.Count(); i++) { DeleteGame(gamesToBeDeleted[i]); }
+
             dbConnection.Close();
             return true;
         }
