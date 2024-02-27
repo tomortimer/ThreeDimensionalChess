@@ -185,13 +185,22 @@ WHERE playerID=$ID;";
             comm.CommandText = @"
 DELETE FROM player WHERE playerID=$input;
 
-DELETE FROM game, gamesPlayers WHERE gamesPlayers.whitePlayerID=$input OR gamesPlayers.blackPlayerID=$input AND game.gameID=gamesPlayers.gameID;
+SELECT gameID FROM gamesPlayers WHERE whitePlayerID=$input OR blackPlayerID=$input;
 ";
             comm.Parameters.AddWithValue("$input", inp);
 
             bool ret = true; 
             try
             {
+                SQLiteDataReader reader = comm.ExecuteReader();
+                int gameID = reader.GetInt32(0);
+                reader.Close();
+
+                comm.CommandText = @"
+DELETE FROM game WHERE gameID=$input;
+DELETE FROM gamesPlayers WHERE gameID=$input;
+";
+                comm.Parameters.AddWithValue("$input", gameID);
                 comm.ExecuteNonQuery();
             }
             catch(Exception e)
@@ -330,7 +339,10 @@ WHERE gameID=$ID";
             dbConnection.Open();
             SQLiteCommand comm = dbConnection.CreateCommand();
 
-            comm.CommandText = "DELETE FROM game, gamesPlayers WHERE game.gameID=$input AND game.gameID=gamesPlayers.gameID;";
+            comm.CommandText = @"
+DELETE FROM game WHERE gameID=$input;
+DELETE FROM gamesPlayers WHERE gameID=$input;
+";
             comm.Parameters.AddWithValue("$input", inp);
 
             bool ret = true;
