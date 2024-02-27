@@ -175,7 +175,6 @@ namespace ThreeDimensionalChess
         public void ViewportClick(int boardIndex)
         {
             Click(viewport[boardIndex]);
-            //board.SetSquareBlue(viewport[boardIndex]);
             UpdateViewport();
         }
 
@@ -305,13 +304,13 @@ namespace ThreeDimensionalChess
 
         private void UpdateViewport()
         {
-            int originPointer = 0;
+            int originPointer;
             //grab pointers for relevant slice of board
             switch (viewDir)
             {
                 case (int)ViewDirections.Front:
                     // first transform origin by viewlayer
-                    originPointer += (viewLayer * 64);
+                    originPointer = (viewLayer * 64);
                     //then fill out viewport coords from origin pointer
                     for(int y = 0; y < 8; y++)
                     {
@@ -323,7 +322,7 @@ namespace ThreeDimensionalChess
                     break;
                 case (int)ViewDirections.Side:
                     //transform origin by viewlayer
-                    originPointer += viewLayer; // is actually viewLayer * 1
+                    originPointer = viewLayer; // is actually viewLayer * 1
                     for (int y = 0; y < 8; y++)
                     {
                         for(int x = 0; x < 8; x++)
@@ -335,7 +334,7 @@ namespace ThreeDimensionalChess
                     break;
                 case (int)ViewDirections.Top:
                     //transform origin by viewlayer
-                    originPointer += (viewLayer * 8);
+                    originPointer = (viewLayer * 8);
                     for(int y = 0; y < 8; y++)
                     {
                         for(int x = 0; x < 8; x++)

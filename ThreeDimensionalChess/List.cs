@@ -5,7 +5,7 @@ namespace ThreeDimensionalChess
 {
     class List<T>
     {
-        //head node poiting to nothing by default
+        //head node pointing to nothing by default
         private ListNode<T> head = null;
 
         public List() { }
@@ -85,7 +85,6 @@ namespace ThreeDimensionalChess
             if (i == 0)
             {
                 if (tmp == null) { throw new ArgumentOutOfRangeException(); }
-                //funny :)
                 ret = head.GetData();
                 head = tmp.next;
             }
@@ -99,10 +98,9 @@ namespace ThreeDimensionalChess
                     if (tmp == null) { throw new ArgumentOutOfRangeException(); }
                     tmp = tmp.next;
                     i--;
-                    //funny >:)
                     if (tmp.next == null) { throw new ArgumentOutOfRangeException(); }
                 }
-                //less funny (dereferences next node and sets reference to next node over)
+                //dereferences next node and sets reference to next node over
                 ret = tmp.next.GetData();
                 tmp.next = tmp.next.next;
             }
@@ -113,7 +111,7 @@ namespace ThreeDimensionalChess
         //wanted to have these two options for count but functionality's different, so:
         public int Count()
         {
-            return Length(head);
+            return Length(head);    
         }
 
         public int Count(T inp)

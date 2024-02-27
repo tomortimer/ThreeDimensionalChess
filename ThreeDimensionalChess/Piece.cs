@@ -16,8 +16,6 @@ namespace ThreeDimensionalChess
 
     abstract class Piece
     {
-        //store movement as a three dimensional vector [x, y, z] - can be implemented in constructor of a piece, some don't need this
-        public int[] movementVect = new int[3];
         //stores current position on board
         public int currentPosition;
         public int colour;

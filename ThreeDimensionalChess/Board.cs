@@ -163,7 +163,6 @@ namespace ThreeDimensionalChess
 
                     currentPieceIndex = piecePtr;
                     moveList = pieces[piecePtr].GeneratePossibleMoves(board, pieces); //this only returns physically possible moves
-                    //should show moves protecting a piece????? highlight different colour : yellow
 
                     //filter out null moves
                     List<int> filteredMoves = new List<int>();
@@ -262,7 +261,7 @@ namespace ThreeDimensionalChess
 
         public int GetGamestate(int currentPlayer)
         {
-            int ret = 0;
+            int ret = (int)Gamestates.Stalemate;
 
             for (int x = 0; x < pieces.Count(); x++)
             {

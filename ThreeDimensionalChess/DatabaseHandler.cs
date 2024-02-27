@@ -11,6 +11,7 @@ namespace ThreeDimensionalChess
 
     class DatabaseHandler
     {
+        //constructor
         public DatabaseHandler()
         {
             //create tables, first init only
@@ -44,9 +45,13 @@ CREATE TABLE game (
     moveList TEXT NOT NULL,
     gamestate INTEGER NOT NULL,
     lastAccessed DATE NOT NULL,
-    whitePlayerID INTEGER NOT NULL,
-    blackPlayerID INTEGER NOT NULL,
     undoMoves BOOLEAN NOT NULL
+);
+
+CREATE TABLE gamesPlayers (
+    gameID INTEGER NOT NULL,
+    whitePlayerID INTEGER NOT NULL,
+    blackPlayerID INTEGER NOT NULL
 );
 
 INSERT INTO player (name, whiteLosses, blackLosses, whiteDraws, blackDraws, whiteWins, blackWins, date) 
@@ -180,7 +185,7 @@ WHERE playerID=$ID;";
             comm.CommandText = @"
 DELETE FROM player WHERE playerID=$input;
 
-DELETE FROM game WHERE whitePlayerID=$input OR blackPlayerID=$input;
+DELETE FROM game, gamesPlayers WHERE gamesPlayers.whitePlayerID=$input OR gamesPlayers.blackPlayerID=$input AND game.gameID=gamesPlayers.gameID;
 ";
             comm.Parameters.AddWithValue("$input", inp);
 
@@ -207,16 +212,14 @@ DELETE FROM game WHERE whitePlayerID=$input OR blackPlayerID=$input;
             SQLiteCommand comm = dbConnection.CreateCommand();
 
             comm.CommandText = @"
-INSERT INTO GAME (name, moveList, gamestate, lastAccessed, whitePlayerID, blackPlayerID, undoMoves) 
-VALUES ($name, $empty, $state, $date, $white, $black, $undo);";
+INSERT INTO game (name, moveList, gamestate, lastAccessed, undoMoves) 
+VALUES ($name, $empty, $state, $date, $undo);";
 
             //insert params
             comm.Parameters.AddWithValue("$name", name);
             comm.Parameters.AddWithValue("$empty", "");
             comm.Parameters.AddWithValue("$state", (int)Gamestates.Ongoing);
             comm.Parameters.AddWithValue("$date", DateTime.Today);
-            comm.Parameters.AddWithValue("$white", whiteID);
-            comm.Parameters.AddWithValue("$black", blackID);
             comm.Parameters.AddWithValue("$undo", undo);
 
             comm.ExecuteNonQuery();
@@ -227,6 +230,16 @@ VALUES ($name, $empty, $state, $date, $white, $black, $undo);";
             reader.Read();
             int ret = reader.GetInt32(0);
             reader.Close();
+
+            //update join table with game info
+            comm.CommandText = @"
+INSERT INTO gamesPlayers (gameID, whitePlayerID, blackPlayerID)
+VALUES ($game, $white, $black);";
+            comm.Parameters.AddWithValue("$game", ret);
+            comm.Parameters.AddWithValue("$white", whiteID);
+            comm.Parameters.AddWithValue("$black", blackID);
+            comm.ExecuteNonQuery();
+            
             dbConnection.Close();
             return ret;
         }
@@ -259,7 +272,7 @@ WHERE gameID=$ID";
             dbConnection.Open();
             SQLiteCommand comm = dbConnection.CreateCommand();
 
-            comm.CommandText = "SELECT * FROM game";
+            comm.CommandText = "SELECT game.gameID, game.name, game.moveList, game.gamestate, game.lastAccessed, game.undoMoves, gamesPlayers.whitePlayerID, gamesPlayers.blackPlayerID FROM game, gamesPlayers WHERE game.gameID=gamesPlayers.gameID;";
             SQLiteDataReader reader = comm.ExecuteReader();
 
             //iterate through all records
@@ -270,9 +283,10 @@ WHERE gameID=$ID";
                 string moveListRepr = reader.GetString(2);
                 int gamestate = reader.GetInt32(3);
                 DateTime lastAccessed = reader.GetDateTime(4);
-                int whiteID = reader.GetInt32(5);
-                int blackID = reader.GetInt32(6);
-                bool undoMoves = reader.GetBoolean(7);
+                bool undoMoves = reader.GetBoolean(5);
+                int whiteID = reader.GetInt32(6);
+                int blackID = reader.GetInt32(7);
+                
                 GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID, undoMoves);
                 ret.Add(tmp);
             }
@@ -288,7 +302,7 @@ WHERE gameID=$ID";
             dbConnection.Open();
             SQLiteCommand comm = dbConnection.CreateCommand();
 
-            comm.CommandText = "SELECT * FROM game WHERE gameID=$input;";
+            comm.CommandText = "SELECT game.gameID, game.name, game.moveList, game.gamestate, game.lastAccessed, game.undoMoves, gamesPlayers.whitePlayerID, gamesPlayers.blackPlayerID FROM game, gamesPlayers WHERE game.gameID=$input AND game.gameID=gamesPlayers.gameID;";
             comm.Parameters.AddWithValue("$input", inp);
             SQLiteDataReader reader = comm.ExecuteReader();
 
@@ -299,9 +313,10 @@ WHERE gameID=$ID";
             string moveListRepr = reader.GetString(2);
             int gamestate = reader.GetInt32(3);
             DateTime lastAccessed = reader.GetDateTime(4);
-            int whiteID = reader.GetInt32(5);
-            int blackID = reader.GetInt32(6);
-            bool undoMoves = reader.GetBoolean(7);
+            bool undoMoves = reader.GetBoolean(5);
+            int whiteID = reader.GetInt32(6);
+            int blackID = reader.GetInt32(7);
+            
             GameInfo tmp = new GameInfo(ID, name, moveListRepr, gamestate, lastAccessed, whiteID, blackID, undoMoves);
             reader.Close();
             dbConnection.Close();
@@ -315,7 +330,7 @@ WHERE gameID=$ID";
             dbConnection.Open();
             SQLiteCommand comm = dbConnection.CreateCommand();
 
-            comm.CommandText = "DELETE FROM game WHERE gameID=$input;";
+            comm.CommandText = "DELETE FROM game, gamesPlayers WHERE game.gameID=$input AND game.gameID=gamesPlayers.gameID;";
             comm.Parameters.AddWithValue("$input", inp);
 
             bool ret = true;
