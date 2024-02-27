@@ -184,34 +184,21 @@ WHERE playerID=$ID;";
             //delete player from db, make sure to delete any games referencing them too
             comm.CommandText = @"
 DELETE FROM player WHERE playerID=$input;
-
-SELECT gameID FROM gamesPlayers WHERE whitePlayerID=$input OR blackPlayerID=$input;
 ";
             comm.Parameters.AddWithValue("$input", inp);
+            comm.ExecuteNonQuery();
 
-            bool ret = true; 
-            try
+            comm.CommandText = "SELECT gameID FROM gamesPlayers WHERE whitePlayerID=$input OR blackPlayerID=$input;";
+            comm.Parameters.AddWithValue("$input", inp);
+            SQLiteDataReader reader = comm.ExecuteReader();
+            while (reader.Read())
             {
-                SQLiteDataReader reader = comm.ExecuteReader();
                 int gameID = reader.GetInt32(0);
-                reader.Close();
-
-                comm.CommandText = @"
-DELETE FROM game WHERE gameID=$input;
-DELETE FROM gamesPlayers WHERE gameID=$input;
-";
-                comm.Parameters.AddWithValue("$input", gameID);
-                comm.ExecuteNonQuery();
+                DeleteGame(gameID);
             }
-            catch(Exception e)
-            {
-                //probably expecting an SQLLogic or SQLArgument exception here
-                Console.WriteLine("Experienced Error: "+e.Message);
-                ret = false;
-            }
+            reader.Close();
             dbConnection.Close();
-
-            return ret;
+            return true;
         }
 
         public int CreateGame(string name, bool undo, int whiteID, int blackID)

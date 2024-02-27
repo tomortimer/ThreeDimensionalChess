@@ -407,6 +407,7 @@ namespace ThreeDimensionalChess
                                     if (entryStr == "") { entryStr = database.GetPlayer(whitePlayerID).GetName() + database.GetPlayer(blackPlayerID).GetName(); }
                                     game = new Chess(whitePlayerID, blackPlayerID, gameName, undoMovesChoice);
                                     mode = (int)UIModes.GameUI2D;
+                                    entryStr = "";
                                 }
                             }
                         }
