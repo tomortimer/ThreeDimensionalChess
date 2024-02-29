@@ -350,7 +350,6 @@ namespace ThreeDimensionalChess
         public Square GetViewportCell(int ptr)
         {
             //takes a one dimensional pointer for the viewport
-            //defensive programming
             if(ptr > -1 && ptr < 64)
             {
                 return board.GetSquare(viewport[ptr]);
